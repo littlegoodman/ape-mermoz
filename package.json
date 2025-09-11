@@ -10,6 +10,8 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@stitches/react": "^1.2.8",
+    "@tanstack/react-query": "^5.87.4",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "2.5.0",
     "@tauri-apps/plugin-sql": "~2",
