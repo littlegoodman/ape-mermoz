@@ -11,4 +11,15 @@ export class TeachersRepository {
   async findAll(): Promise<Teacher[]> {
     return this.db.select<Teacher[]>("SELECT * FROM teachers");
   }
+
+  async findById(id: string): Promise<Teacher> {
+    return this.db.select<Teacher>(`SELECT * FROM teachers WHERE id = ${id}`);
+  }
+
+  async create(teacher: Teacher): Promise<void> {
+    await this.db.execute("INSERT INTO teachers (name, phone) VALUES (?, ?)", [
+      teacher.name,
+      teacher.phone,
+    ]);
+  }
 }

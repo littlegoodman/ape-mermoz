@@ -18,4 +18,9 @@ export class ApeMermozDatabase {
     const db = await this.db();
     return db.select<T>(query);
   }
+
+  public async execute(query: string, params: any[]): Promise<void> {
+    const db = await this.db();
+    await db.execute(query, params);
+  }
 }
