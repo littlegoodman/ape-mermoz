@@ -1,31 +1,34 @@
 import { JSX } from "react";
-import { useTeachers } from "../hooks/use-teachers.hook";
-import { Modal } from "../../../platform/ui/components/modal";
+import { Teacher, useTeachers } from "../hooks/use-teachers.hook";
+import { Modal, useModal } from "../../../platform/ui/components/modal";
 
 export type TeacherEditionModalProps = {
-  id: string;
+  teacher: Teacher | undefined;
 };
 
-export const TeacherEditionModal = {
-  show: (props: TeacherEditionModalProps) =>
-    Modal.show(TeacherEditionModalContent, props),
-};
+export const TeacherEditionModal = useModal(
+  ({ teacher }: TeacherEditionModalProps): JSX.Element => {
+    const { create } = useTeachers();
+    //const { findById } = useTeachers();
+    //const { data: teacher } = findById({ id: props.id });
 
-export const TeacherEditionModalContent = (
-  props: TeacherEditionModalProps
-): JSX.Element => {
-  const { findById } = useTeachers();
-  const { data: teacher } = findById({ id: props.id });
-
-  if (!teacher) {
-    return <div>Teacher not found</div>;
+    if (!teacher) {
+      return (
+        <Modal
+          onSubmit={() => create({ name: "coucou", phone: "00 00 00 00 00" })}
+          onClose={() => {}}
+        >
+          <h2>Teacher not found</h2>
+          <p>This is a nice modal!</p>
+        </Modal>
+      );
+    }
+    return (
+      <div>
+        <h1>Teacher Edition</h1>
+        <p>Teacher: {teacher.name}</p>
+        <p>Phone: {teacher.phone}</p>
+      </div>
+    );
   }
-
-  return (
-    <div>
-      <h1>Teacher Edition</h1>
-      <p>Teacher: {teacher.name}</p>
-      <p>Phone: {teacher.phone}</p>
-    </div>
-  );
-};
+);

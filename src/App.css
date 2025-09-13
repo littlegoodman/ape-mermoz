@@ -182,3 +182,72 @@ tr:last-child td {
     background-color: #4f4f4f;
   }
 }
+
+/* Modal overlay styles for nice-modal-react */
+.nice-modal-overlay {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nice-modal-content {
+  position: relative;
+  z-index: 10000;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Modal styles */
+.modal {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal h1,
+.modal h2 {
+  margin-bottom: 1rem;
+  color: #2f2f2f;
+}
+
+.modal p {
+  margin-bottom: 0.5rem;
+  color: #4f4f4f;
+}
+
+.modal button {
+  margin-top: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .nice-modal-content,
+  .modal {
+    background-color: #3f3f3f;
+  }
+
+  .modal h1,
+  .modal h2 {
+    color: #f6f6f6;
+  }
+
+  .modal p {
+    color: #d0d0d0;
+  }
+}
