@@ -1,13 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import App from "./App";
-import NiceModal from "@ebay/nice-modal-react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { routes } from "./app/routes";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={new QueryClient()}>
-      <App />
+      <RouterProvider router={createBrowserRouter(routes)} />
     </QueryClientProvider>
   </React.StrictMode>
 );
