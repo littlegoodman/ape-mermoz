@@ -9,6 +9,7 @@ function App() {
   return (
     <main className="container">
       <div className="row">
+        <h1>Teachers</h1>
         <TeachersPage />
       </div>
     </main>

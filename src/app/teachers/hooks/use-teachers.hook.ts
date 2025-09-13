@@ -26,7 +26,7 @@ export const useTeachers = () => {
 
   const { mutate: create } = useMutation({
     mutationFn: (teacher: Teacher) => teachers.create(teacher),
-    onSettled: () => client.invalidateQueries({ queryKey: [...keys] }),
+    onSuccess: () => client.invalidateQueries({ queryKey: [...keys] }),
   });
 
   return { findAll, findById, create };

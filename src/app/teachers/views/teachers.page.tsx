@@ -1,6 +1,12 @@
 import { JSX } from "react";
 import { TeachersTable } from "./teachers.table";
+import { AddTeacherButton } from "./teacher-creation.button";
 
 export const TeachersPage = (): JSX.Element => {
-  return <TeachersTable />;
+  return (
+    <>
+      <AddTeacherButton />
+      <TeachersTable />
+    </>
+  );
 };
