@@ -108,7 +108,7 @@ export const theme = {
     8: "40px",
   },
   fontSizes: {
-    base: "14px",
+    base: "16px",
     lead: "18px",
     xs: "10px",
     s: "12px",
@@ -120,7 +120,7 @@ export const theme = {
     appname: "21px", // weird...
   },
   fonts: {
-    primary: "Quicksand, sans-serif",
+    primary: "Inter, Avenir, Helvetica, Arial, sans-serif",
     secondary: "Lato, sans-serif",
   },
   fontWeights: {
