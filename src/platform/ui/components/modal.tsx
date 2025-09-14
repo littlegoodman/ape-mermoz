@@ -8,7 +8,7 @@ export interface ShowModal<P extends {}> {
   show: (props: P) => Promise<React.FC<P & NiceModalHocProps>>;
 }
 
-export const useModal = <P extends {}>(
+export const createModal = <P extends {}>(
   Comp: React.ComponentType<P>
 ): ShowModal<P> => ({
   show: (props: P) => NiceModal.show(NiceModal.create(Comp), props),
@@ -20,7 +20,7 @@ export type ModalProps = {
   onSubmit?: () => void;
 };
 
-export const Modal = ({
+export const ModalContainer = ({
   children,
   onClose,
   onSubmit,

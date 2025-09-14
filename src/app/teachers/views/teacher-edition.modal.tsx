@@ -1,12 +1,15 @@
 import { JSX } from "react";
 import { Teacher, useTeachers } from "../hooks/use-teachers.hook";
-import { Modal, useModal } from "../../../platform/ui/components/modal";
+import {
+  ModalContainer,
+  createModal,
+} from "../../../platform/ui/components/modal";
 
 export type TeacherEditionModalProps = {
   teacher: Teacher | undefined;
 };
 
-export const TeacherEditionModal = useModal(
+export const TeacherEditionModal = createModal(
   ({ teacher }: TeacherEditionModalProps): JSX.Element => {
     const { create } = useTeachers();
     //const { findById } = useTeachers();
@@ -14,13 +17,13 @@ export const TeacherEditionModal = useModal(
 
     if (!teacher) {
       return (
-        <Modal
+        <ModalContainer
           onSubmit={() => create({ name: "coucou", phone: "00 00 00 00 00" })}
           onClose={() => {}}
         >
           <h2>Teacher not found</h2>
           <p>This is a nice modal!</p>
-        </Modal>
+        </ModalContainer>
       );
     }
     return (
