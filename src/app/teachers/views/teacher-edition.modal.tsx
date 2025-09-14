@@ -1,15 +1,12 @@
 import { JSX } from "react";
 import { Teacher, useTeachers } from "../hooks/use-teachers.hook";
-import {
-  ModalContainer,
-  createModal,
-} from "../../../platform/ui/components/modal";
+import { Modal, ModalContainer } from "../../../platform/ui/components/modal";
 
 export type TeacherEditionModalProps = {
   teacher: Teacher | undefined;
 };
 
-export const TeacherEditionModal = createModal(
+export const TeacherEditionModal = Modal.create(
   ({ teacher }: TeacherEditionModalProps): JSX.Element => {
     const { create } = useTeachers();
     //const { findById } = useTeachers();

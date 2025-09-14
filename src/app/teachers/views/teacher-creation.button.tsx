@@ -1,11 +1,10 @@
 import { JSX } from "react";
-import { useTeachers } from "../hooks/use-teachers.hook";
 import { Button } from "../../../platform/ui/components/button";
 import { TeacherEditionModal } from "./teacher-edition.modal";
+import { useTranslation } from "react-i18next";
 
 export const AddTeacherButton = (): JSX.Element => {
-  const { create } = useTeachers();
-
+  const { t } = useTranslation();
   return (
     <Button
       onClick={() =>
@@ -14,7 +13,7 @@ export const AddTeacherButton = (): JSX.Element => {
         })
       }
     >
-      Add Teacher
+      {t("Ajouter un professeur")}
     </Button>
   );
 };

@@ -8,11 +8,11 @@ export interface ShowModal<P extends {}> {
   show: (props: P) => Promise<React.FC<P & NiceModalHocProps>>;
 }
 
-export const createModal = <P extends {}>(
-  Comp: React.ComponentType<P>
-): ShowModal<P> => ({
-  show: (props: P) => NiceModal.show(NiceModal.create(Comp), props),
-});
+export const Modal = {
+  create: <P extends {}>(Comp: React.ComponentType<P>): ShowModal<P> => ({
+    show: (props: P) => NiceModal.show(NiceModal.create(Comp), props),
+  }),
+};
 
 export type ModalProps = {
   children: React.ReactNode;
