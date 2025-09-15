@@ -1,3 +1,4 @@
+import { globalCss } from "./stitches.config";
 import { palette } from "./palette";
 
 const { blue, green, yellow, red, darkblue, gray, sequential } = palette;
@@ -196,3 +197,31 @@ export const theme = {
     crosshairColor: blue.blue400,
   },
 };
+
+export const applyTheme = globalCss({
+  "*": {
+    margin: 0,
+    padding: 0,
+    fontFamily: "inherit",
+    fontSize: "inherit",
+    lineHeight: "inherit",
+  },
+
+  html: {
+    fontSize: "$base",
+    backgroundColor: "$background",
+    color: "$text",
+  },
+
+  body: {
+    WebkitFontSmoothing: "antialiased",
+    MozOsxFontSmoothing: "grayscale",
+    textRendering: "optimizeLegibility",
+    fontSize: "$base",
+    lineHeight: "$m",
+    letterSpacing: "$base",
+    fontFamily: "$primary",
+    backgroundColor: "$background",
+    color: "$text",
+  },
+});

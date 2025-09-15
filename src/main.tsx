@@ -4,9 +4,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./i18n";
 import { routes } from "./app/routes";
-import { applyGlobalStyles } from "./platform/ui/theme/global-styles";
+import { applyTheme } from "./platform/ui/theme";
 
-applyGlobalStyles();
+applyTheme();
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

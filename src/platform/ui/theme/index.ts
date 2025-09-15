@@ -1,2 +1,2 @@
-export * from './stitches.config';
-export * from './global-styles';
+export { applyTheme } from "./theme";
+export { styled } from "./stitches.config";
