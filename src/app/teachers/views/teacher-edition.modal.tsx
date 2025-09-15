@@ -1,6 +1,9 @@
 import { JSX } from "react";
 import { Teacher, useTeachers } from "../hooks/use-teachers.hook";
-import { Modal, ModalContainer } from "../../../platform/ui/components/modal";
+import {
+  Modal,
+  ModalContainer,
+} from "../../../platform/ui/components/modal/modal";
 
 export type TeacherEditionModalProps = {
   teacher: Teacher | undefined;

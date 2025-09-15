@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { Table } from "../../../platform/ui/components/table";
+import { Table } from "../../../platform/ui/components/table/table";
 import { useTeachers } from "../hooks/use-teachers.hook";
 
 export const TeachersTable = (): JSX.Element => {

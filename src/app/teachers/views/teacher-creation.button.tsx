@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { Button } from "../../../platform/ui/components/button";
+import { Button } from "../../../platform/ui/components/button/button";
 import { TeacherEditionModal } from "./teacher-edition.modal";
 import { useTranslation } from "react-i18next";
 
