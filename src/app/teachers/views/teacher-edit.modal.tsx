@@ -5,12 +5,12 @@ import {
   ModalContainer,
 } from "../../../platform/ui/components/modal/modal";
 
-export type TeacherEditionModalProps = {
+export type TeacherEditModalProps = {
   teacher: Teacher | undefined;
 };
 
-export const TeacherEditionModal = Modal.create(
-  ({ teacher }: TeacherEditionModalProps): JSX.Element => {
+export const TeacherEditModal = Modal.create(
+  ({ teacher }: TeacherEditModalProps): JSX.Element => {
     const { create } = useTeachers();
     //const { findById } = useTeachers();
     //const { data: teacher } = findById({ id: props.id });
@@ -27,11 +27,10 @@ export const TeacherEditionModal = Modal.create(
       );
     }
     return (
-      <div>
-        <h1>Teacher Edition</h1>
-        <p>Teacher: {teacher.name}</p>
-        <p>Phone: {teacher.phone}</p>
-      </div>
+      <ModalContainer onSubmit={() => create(teacher)} onClose={() => {}}>
+        <h2>Teacher Edit</h2>
+        <p>This is a nice modal!</p>
+      </ModalContainer>
     );
   }
 );

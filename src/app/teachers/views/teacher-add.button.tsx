@@ -1,14 +1,14 @@
 import { JSX } from "react";
 import { Button } from "../../../platform/ui/components/button/button";
-import { TeacherEditionModal } from "./teacher-edition.modal";
+import { TeacherEditModal } from "./teacher-edit.modal";
 import { useTranslation } from "react-i18next";
 
-export const AddTeacherButton = (): JSX.Element => {
+export const TeacherAddButton = (): JSX.Element => {
   const { t } = useTranslation();
   return (
     <Button
       onClick={() =>
-        TeacherEditionModal.show({
+        TeacherEditModal.show({
           teacher: undefined,
         })
       }

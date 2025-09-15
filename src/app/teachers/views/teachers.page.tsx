@@ -1,7 +1,7 @@
 import { JSX } from "react";
 import { Page } from "../../common/layout";
 import { TeachersTable } from "./teachers.table";
-import { AddTeacherButton } from "./teacher-creation.button";
+import { TeacherAddButton } from "./add-teacher.button";
 import { TeachersSearchInput } from "./teachers.search-input";
 import { Stack, Row } from "../../../platform/ui/components";
 
@@ -11,7 +11,7 @@ export const TeachersPage = (): JSX.Element => {
       <Stack>
         <Row>
           <TeachersSearchInput />
-          <AddTeacherButton />
+          <TeacherAddButton />
         </Row>
         <TeachersTable />
       </Stack>

@@ -1,11 +1,16 @@
+import { StyledTable } from "./table.style";
+import { TableRow } from "./table-row";
+
 export type TableProps = {
   headers: React.ReactNode[];
   rows: React.ReactNode[][];
+  onEdit?: (rowIndex: number) => void;
+  onDelete?: (rowIndex: number) => void;
 };
 
-export const Table = ({ headers, rows }: TableProps) => {
+export const Table = ({ headers, rows, onEdit, onDelete }: TableProps) => {
   return (
-    <table>
+    <StyledTable>
       <thead>
         <tr>
           {headers.map((header, index) => (
@@ -15,13 +20,14 @@ export const Table = ({ headers, rows }: TableProps) => {
       </thead>
       <tbody>
         {rows.map((row, rowIndex) => (
-          <tr key={rowIndex}>
-            {row.map((cell, cellIndex) => (
-              <td key={`${rowIndex}-${cellIndex}`}>{cell}</td>
-            ))}
-          </tr>
+          <TableRow
+            key={rowIndex}
+            cells={row}
+            onEdit={onEdit ? () => onEdit(rowIndex) : undefined}
+            onDelete={onDelete ? () => onDelete(rowIndex) : undefined}
+          />
         ))}
       </tbody>
-    </table>
+    </StyledTable>
   );
 };
