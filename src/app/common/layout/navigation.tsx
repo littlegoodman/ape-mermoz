@@ -22,6 +22,12 @@ export const Navigation = () => {
           <button onClick={() => navigateTo("/students")}>{t("Élèves")}</button>
         </li>
       </ul>
+      <li>{t("Les Événements")}</li>
+      <ul>
+        <li>
+          <button>{t("Chocolats 2025")}</button>
+        </li>
+      </ul>
     </ul>
   );
 };

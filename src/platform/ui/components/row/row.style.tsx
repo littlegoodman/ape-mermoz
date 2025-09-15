@@ -4,6 +4,7 @@ export const StyledRow = styled("div", {
   boxSizing: "border-box",
   display: "flex",
   flexDirection: "row",
+  width: "100%",
   variants: {
     spacing: {
       1: { gap: "$space$1" },

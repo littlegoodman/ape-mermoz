@@ -1,6 +1,7 @@
 import { JSX } from "react";
 import { Table } from "../../../platform/ui/components/table/table";
 import { useTeachers } from "../hooks/use-teachers.hook";
+import { EditableTable } from "../../../platform/ui/components/table/editable-table";
 
 export const TeachersTable = (): JSX.Element => {
   const { findAll } = useTeachers();
@@ -10,26 +11,18 @@ export const TeachersTable = (): JSX.Element => {
     return <div>Loading...</div>;
   }
 
+  if (!teachers) {
+    return <div>No teachers found</div>;
+  }
+
   if (error) {
     return <div>Error: {error.message}</div>;
   }
 
   return (
-    <Table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Phone</th>
-        </tr>
-      </thead>
-      <tbody>
-        {teachers?.map((teacher, index) => (
-          <tr key={index}>
-            <td>{teacher.name}</td>
-            <td>{teacher.phone}</td>
-          </tr>
-        ))}
-      </tbody>
-    </Table>
+    <Table
+      headers={["Name", "Phone"]}
+      rows={teachers?.map((teacher) => [teacher.name, teacher.phone])}
+    />
   );
 };

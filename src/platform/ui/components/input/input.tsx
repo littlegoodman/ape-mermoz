@@ -1,4 +1,4 @@
-import { StyledInput } from "./input.styles";
+import { StyledInput } from "./input.style";
 import { ReactNode } from "react";
 
 export type InputProps = {

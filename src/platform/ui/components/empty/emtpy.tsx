@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { ImageWrapper, Title, Subtitle, Container } from "./empty.styles";
+import { ImageWrapper, Title, Subtitle, Container } from "./empty.style";
 import { Stack } from "../stack/stack";
 
 export type EmptyProps = {

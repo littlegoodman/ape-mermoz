@@ -1,2 +1,1 @@
-export { applyTheme } from "./theme";
-export { styled } from "./stitches.config";
+export { styled, applyTheme } from "./stitches.config";

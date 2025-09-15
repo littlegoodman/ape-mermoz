@@ -4,6 +4,7 @@ export const StyledStack = styled("div", {
   boxSizing: "border-box",
   display: "flex",
   flexDirection: "column",
+  width: "100%",
   variants: {
     spacing: {
       1: { gap: "$space$1" },
