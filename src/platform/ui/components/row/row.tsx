@@ -1,4 +1,4 @@
-import { StyledRow } from "./row.style";
+import { RowContainer } from "./row.style";
 
 export type RowProps = {
   spacing?: 1 | 2 | 3 | 4 | 5 | 6 | 7;
@@ -14,8 +14,8 @@ export const Row = ({
   justify = "start",
 }: RowProps) => {
   return (
-    <StyledRow spacing={spacing} align={align} justify={justify}>
+    <RowContainer spacing={spacing} align={align} justify={justify}>
       {children}
-    </StyledRow>
+    </RowContainer>
   );
 };

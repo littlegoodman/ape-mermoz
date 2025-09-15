@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { TeachersRepository } from "../../../platform/repositories/teachers.repository";
 
-export interface Teacher {
-  id: string;
+export type TeacherId = number;
+export type Teacher = {
+  id: TeacherId;
   name: string;
   phone: string;
-}
+};
 
 const teachers = TeachersRepository.load();
 
@@ -25,8 +26,9 @@ export const useTeachers = () => {
       queryFn: () => teachers.findById(params.id),
     });
 
-  const { mutate: create } = useMutation({
-    mutationFn: (teacher: Omit<Teacher, "id">) => teachers.create(teacher),
+  const { mutate: upsert } = useMutation({
+    mutationFn: (teacher: Teacher & { id?: TeacherId }) =>
+      teachers.upsert(teacher),
     onSuccess: () => client.invalidateQueries({ queryKey: [...keys] }),
   });
 
@@ -35,5 +37,5 @@ export const useTeachers = () => {
     onSuccess: () => client.invalidateQueries({ queryKey: [...keys] }),
   });
 
-  return { findAll, findById, create, del };
+  return { findAll, findById, upsert, del };
 };

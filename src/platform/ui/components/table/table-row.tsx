@@ -1,5 +1,8 @@
 import { Trash2 } from "lucide-react";
-import { StyledEditableTableRow, StyledTableRow } from "./table-row.style";
+import {
+  EditableTableRow as StyledEditableTableRow,
+  ImmutableTableRow as StyledImmutableTableRow,
+} from "./table-row.style";
 import { Button } from "../button";
 
 export type TableRowProps = {
@@ -11,16 +14,16 @@ export type TableRowProps = {
 export const TableRow = ({ cells, onEdit, onDelete }: TableRowProps) => {
   return onEdit || onDelete
     ? EditableTableRow({ cells, onEdit, onDelete })
-    : DisplayTableRow({ cells });
+    : ImmutableTableRow({ cells });
 };
 
-const DisplayTableRow = ({ cells }: TableRowProps) => {
+const ImmutableTableRow = ({ cells }: TableRowProps) => {
   return (
-    <StyledTableRow>
+    <StyledImmutableTableRow>
       {cells.map((cell, cellIndex) => (
         <td key={cellIndex}>{cell}</td>
       ))}
-    </StyledTableRow>
+    </StyledImmutableTableRow>
   );
 };
 

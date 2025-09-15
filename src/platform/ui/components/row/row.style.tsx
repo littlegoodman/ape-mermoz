@@ -1,6 +1,6 @@
 import { styled } from "../../theme";
 
-export const StyledRow = styled("div", {
+export const RowContainer = styled("div", {
   boxSizing: "border-box",
   display: "flex",
   flexDirection: "row",

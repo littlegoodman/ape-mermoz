@@ -1,17 +1,28 @@
 import { StyledInput } from "./input.style";
-import { ReactNode } from "react";
+import { ReactNode, forwardRef, ComponentPropsWithoutRef } from "react";
 
-export type InputProps = {
-  value: string;
+export type InputProps = ComponentPropsWithoutRef<"input"> & {
   endAdornment?: ReactNode;
-  onChange: (value: string) => void;
+  disabled?: boolean;
+  focused?: boolean;
+  multiline?: boolean;
+  error?: boolean;
 };
 
-export const Input = ({ value, onChange, endAdornment }: InputProps) => {
-  return (
-    <div>
-      <StyledInput value={value} onChange={(e) => onChange(e.target.value)} />
-      {endAdornment}
-    </div>
-  );
-};
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ endAdornment, disabled, focused, multiline, error, ...props }, ref) => {
+    return (
+      <div>
+        <StyledInput
+          ref={ref}
+          disabled={disabled}
+          focused={focused}
+          multiline={multiline}
+          error={error}
+          {...props}
+        />
+        {endAdornment}
+      </div>
+    );
+  }
+);

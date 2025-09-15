@@ -1,9 +1,13 @@
 import { JSX } from "react";
 import { Teacher, useTeachers } from "../hooks/use-teachers.hook";
+import { useTranslation } from "react-i18next";
+import { useForm } from "react-hook-form";
 import {
   Modal,
   ModalContainer,
-} from "../../../platform/ui/components/modal/modal";
+  Input,
+  FormControl,
+} from "../../../platform/ui/components";
 
 export type TeacherEditModalProps = {
   teacher: Teacher | undefined;
@@ -11,25 +15,44 @@ export type TeacherEditModalProps = {
 
 export const TeacherEditModal = Modal.create(
   ({ teacher }: TeacherEditModalProps): JSX.Element => {
-    const { create } = useTeachers();
+    const { t } = useTranslation();
+    const { upsert } = useTeachers();
     //const { findById } = useTeachers();
     //const { data: teacher } = findById({ id: props.id });
 
-    if (!teacher) {
-      return (
-        <ModalContainer
-          onSubmit={() => create({ name: "coucou", phone: "00 00 00 00 00" })}
-          onClose={() => {}}
-        >
-          <h2>Teacher not found</h2>
-          <p>This is a nice modal!</p>
-        </ModalContainer>
-      );
-    }
+    const {
+      register,
+      handleSubmit,
+      reset,
+      formState: { isValid, errors },
+    } = useForm<Teacher>({
+      defaultValues: teacher,
+    });
+
     return (
-      <ModalContainer onSubmit={() => create(teacher)} onClose={() => {}}>
-        <h2>Teacher Edit</h2>
-        <p>This is a nice modal!</p>
+      <ModalContainer
+        isValid={isValid}
+        onSubmit={handleSubmit((data) => upsert(data))}
+        onClose={() => reset()}
+      >
+        <FormControl
+          mandatory
+          label={t("Nom")}
+          error={!!errors.name}
+          helperText={errors.name?.message}
+        >
+          <Input {...register("name", { required: t("Le nom est requis") })} />
+        </FormControl>
+        <FormControl
+          mandatory
+          label={t("Téléphone")}
+          error={!!errors.phone}
+          helperText={errors.phone?.message}
+        >
+          <Input
+            {...register("phone", { required: t("Le téléphone est requis") })}
+          />
+        </FormControl>
       </ModalContainer>
     );
   }

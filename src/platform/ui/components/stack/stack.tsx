@@ -1,4 +1,4 @@
-import { StyledStack } from "./stack.style";
+import { StackContainer } from "./stack.style";
 
 export type StackProps = {
   spacing?: 1 | 2 | 3 | 4 | 5 | 6 | 7;
@@ -14,8 +14,8 @@ export const Stack = ({
   justify = "start",
 }: StackProps) => {
   return (
-    <StyledStack spacing={spacing} align={align} justify={justify}>
+    <StackContainer spacing={spacing} align={align} justify={justify}>
       {children}
-    </StyledStack>
+    </StackContainer>
   );
 };

@@ -1,4 +1,4 @@
-import { StyledTable } from "./table.style";
+import { TableContainer } from "./table.style";
 import { TableRow } from "./table-row";
 
 export type TableProps = {
@@ -10,7 +10,7 @@ export type TableProps = {
 
 export const Table = ({ headers, rows, onEdit, onDelete }: TableProps) => {
   return (
-    <StyledTable>
+    <TableContainer>
       <thead>
         <tr>
           {headers.map((header, index) => (
@@ -28,6 +28,6 @@ export const Table = ({ headers, rows, onEdit, onDelete }: TableProps) => {
           />
         ))}
       </tbody>
-    </StyledTable>
+    </TableContainer>
   );
 };

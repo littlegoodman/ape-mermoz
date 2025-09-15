@@ -63,18 +63,6 @@ export const StyledInput = styled("input", {
   },
 
   variants: {
-    variant: {
-      transparent: {
-        $$inputPadding: "0 !important",
-        backgroundColor: "transparent",
-        borderColor: "transparent",
-        width: "100%",
-        "&:focus-within": {
-          backgroundColor: "transparent",
-          borderColor: "transparent",
-        },
-      },
-    },
     disabled: {
       true: {
         $$inputTextColor: "$colors$textWeak",
@@ -107,36 +95,5 @@ export const StyledInput = styled("input", {
         },
       },
     },
-    size: {
-      small: {
-        $$inputHeight: "$space$6",
-        $$inputPadding: "$space$1",
-      },
-      large: {
-        $$inputHeight: "36px",
-      },
-      xl: {
-        $$inputHeight: "$space$8",
-        $$inputPadding: "$space$3",
-        fontSize: "24px",
-      },
-    },
   },
-  compoundVariants: [
-    {
-      variant: "transparent",
-      disabled: true,
-      css: {
-        background: "transparent",
-      },
-    },
-    {
-      variant: "transparent",
-      focused: true,
-      css: {
-        background: "transparent",
-        borderColor: "transparent",
-      },
-    },
-  ],
 });

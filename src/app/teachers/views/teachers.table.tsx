@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { Table } from "../../../platform/ui/components/table/table";
+import { Table } from "../../../platform/ui/components/";
 import { useTeachers } from "../hooks/use-teachers.hook";
 import { TeacherEditModal } from "./teacher-edit.modal";
 import { useTranslation } from "react-i18next";

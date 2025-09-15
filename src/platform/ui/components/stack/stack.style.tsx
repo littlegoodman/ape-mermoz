@@ -1,6 +1,6 @@
 import { styled } from "../../theme";
 
-export const StyledStack = styled("div", {
+export const StackContainer = styled("div", {
   boxSizing: "border-box",
   display: "flex",
   flexDirection: "column",
