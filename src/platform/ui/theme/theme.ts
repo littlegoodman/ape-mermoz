@@ -1,4 +1,3 @@
-import { globalCss } from "./stitches.config";
 import { palette } from "./palette";
 
 const { blue, green, yellow, red, darkblue, gray, sequential } = palette;

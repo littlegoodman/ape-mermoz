@@ -6,6 +6,7 @@ export type Teacher = {
   id: number;
   name: string;
   phone: string;
+  class: string;
 };
 
 const teachers = TeachersRepository.load();

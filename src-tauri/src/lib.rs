@@ -8,6 +8,12 @@ pub fn run() {
             description: "create_teachers_table",
             sql: "CREATE TABLE teachers (id INTEGER PRIMARY KEY, name TEXT, phone TEXT);",
             kind: MigrationKind::Up,
+        },
+        Migration {
+            version: 2,
+            description: "add_class_to_teachers_table",
+            sql: "ALTER TABLE teachers ADD COLUMN class TEXT NOT NULL DEFAULT '';",
+            kind: MigrationKind::Up,
         }
     ];
 
