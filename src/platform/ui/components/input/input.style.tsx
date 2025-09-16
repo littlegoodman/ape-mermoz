@@ -16,7 +16,72 @@ const inputVariables = {
   $$inputSeparatorColor: "$colors$neutralBorderHover",
 };
 
-export const StyledInput = styled("input", {
+export const Adornment = styled("span", {
+  display: "flex",
+  alignItems: "center",
+  boxSizing: "content-box",
+  height: "100%",
+  margin: 0,
+  color: "$$inputTextColor",
+  cursor: "default",
+  position: "relative",
+  padding: "0 4px 0 4px",
+  "&:after": {
+    content: "",
+    position: "absolute",
+    top: "50%",
+    transform: "translate(0, -50%)",
+    zIndex: "$2",
+    height: "calc($$inputHeight - 2 * $space$2)",
+    width: 1,
+    background: "$$inputSeparatorColor",
+    pointerEvents: "none",
+  },
+  variants: {
+    left: {
+      true: {
+        "&:after": {
+          right: 0,
+        },
+      },
+    },
+    right: {
+      true: {
+        "&:after": {
+          left: 0,
+        },
+      },
+    },
+    separator: {
+      false: {
+        "&:after": {
+          visibility: "hidden",
+        },
+      },
+    },
+    transparent: {
+      true: {},
+    },
+  },
+  compoundVariants: [
+    {
+      transparent: true,
+      left: true,
+      css: {
+        paddingLeft: 0,
+      },
+    },
+    {
+      transparent: true,
+      right: true,
+      css: {
+        paddingRight: 0,
+      },
+    },
+  ],
+});
+
+export const InputWrapper = styled("div", {
   ...inputVariables,
   $$inputFontSize: "$fontSizes$base", // so we can change it depending on an eventual 'size' variant
   $$inputHeight: "$space$7",
@@ -95,5 +160,24 @@ export const StyledInput = styled("input", {
         },
       },
     },
+  },
+});
+
+export const Input = styled("input", {
+  fontSize: "inherit",
+  fontWeight: "inherit",
+  color: "$$inputTextColor",
+  lineHeight: "$$inputLineHeight",
+  width: "100%",
+  height: "100%",
+  padding: "0 $$inputPadding",
+  background: "transparent",
+  border: "none",
+  borderRadius: 0,
+  outline: "none",
+  minWidth: 0,
+  appearance: "none",
+  "&::placeholder": {
+    color: "$$inputPlaceholderColor",
   },
 });

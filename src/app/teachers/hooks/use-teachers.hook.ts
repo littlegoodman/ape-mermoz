@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { TeachersRepository } from "../../../platform/repositories/teachers.repository";
+import { useFilteredQuery } from "../../common/hooks";
 
-export type TeacherId = number;
 export type Teacher = {
-  id: TeacherId;
+  id: number;
   name: string;
   phone: string;
 };
@@ -14,10 +14,11 @@ export const useTeachers = () => {
   const client = useQueryClient();
   const keys = ["teachers"];
 
-  const findAll = () =>
-    useQuery<Teacher[]>({
+  const findAll = (filter?: string) =>
+    useFilteredQuery<Teacher[], { filter: string }>({
       queryKey: [...keys, "findAll"],
-      queryFn: () => teachers.findAll(),
+      queryFn: (params) => teachers.findAll(params),
+      filter,
     });
 
   const findById = (params: { id: string }) =>
@@ -27,7 +28,7 @@ export const useTeachers = () => {
     });
 
   const { mutate: upsert } = useMutation({
-    mutationFn: (teacher: Teacher & { id?: TeacherId }) =>
+    mutationFn: (teacher: Teacher & { id?: Teacher["id"] }) =>
       teachers.upsert(teacher),
     onSuccess: () => client.invalidateQueries({ queryKey: [...keys] }),
   });

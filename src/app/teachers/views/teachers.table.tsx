@@ -1,13 +1,22 @@
 import { JSX } from "react";
 import { Table } from "../../../platform/ui/components/";
-import { useTeachers } from "../hooks/use-teachers.hook";
+import { Teacher, useTeachers } from "../hooks/use-teachers.hook";
 import { TeacherEditModal } from "./teacher-edit.modal";
 import { useTranslation } from "react-i18next";
 
-export const TeachersTable = (): JSX.Element => {
+export type TeachersTableProps = {
+  teachers: Teacher[];
+  isLoading: boolean;
+  error: Error | null;
+};
+
+export const TeachersTable = ({
+  teachers,
+  isLoading,
+  error,
+}: TeachersTableProps): JSX.Element => {
   const { t } = useTranslation();
-  const { findAll, del } = useTeachers();
-  const { data: teachers, isLoading, error } = findAll();
+  const { del } = useTeachers();
 
   const handleEdit = (rowIndex: number) => {
     const teacher = teachers?.[rowIndex];

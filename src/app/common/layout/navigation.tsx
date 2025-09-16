@@ -15,7 +15,7 @@ export const Navigation = () => {
       <ul>
         <li>
           <button onClick={() => navigateTo("/professors")}>
-            {t("Professeurs")}
+            {t("Enseignants")}
           </button>
         </li>
         <li>

@@ -1,7 +1,4 @@
-import type {
-  Teacher,
-  TeacherId,
-} from "../../app/teachers/hooks/use-teachers.hook";
+import type { Teacher } from "../../app/teachers/hooks/use-teachers.hook";
 import { ApeMermozDatabase } from "./db";
 
 export class TeachersRepository {
@@ -11,15 +8,19 @@ export class TeachersRepository {
 
   constructor(private readonly db: ApeMermozDatabase) {}
 
-  async findAll(): Promise<Teacher[]> {
-    return this.db.select<Teacher[]>("SELECT * FROM teachers");
+  async findAll(params: { filter?: string }): Promise<Teacher[]> {
+    let query = "SELECT * FROM teachers";
+    if (params.filter) {
+      query += ` WHERE name LIKE '%${params.filter}%'`;
+    }
+    return this.db.select<Teacher[]>(query);
   }
 
   async findById(id: string): Promise<Teacher> {
     return this.db.select<Teacher>(`SELECT * FROM teachers WHERE id = ${id}`);
   }
 
-  async upsert(teacher: Teacher & { id?: TeacherId }): Promise<void> {
+  async upsert(teacher: Teacher & { id?: Teacher["id"] }): Promise<void> {
     await this.db.execute(
       "INSERT OR REPLACE INTO teachers (id, name, phone) VALUES (?, ?, ?)",
       [teacher.id, teacher.name, teacher.phone]
