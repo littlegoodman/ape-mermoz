@@ -1,9 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "./i18n";
+import { routes } from "./app/routes";
+import { applyTheme } from "./platform/ui/theme";
+
+applyTheme();
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+    <QueryClientProvider client={new QueryClient()}>
+      <RouterProvider router={createBrowserRouter(routes)} />
+    </QueryClientProvider>
+  </React.StrictMode>
 );

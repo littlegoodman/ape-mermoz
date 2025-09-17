@@ -1,32 +1,25 @@
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-use serde::{Deserialize, Serialize};
-
-#[derive(Serialize, Deserialize)]
-struct Contact {
-    name: String,
-    phone: String,
-}
-
-#[tauri::command]
-fn find_chocolate_commands() -> Vec<Contact> {
-    vec![
-        Contact {
-            name: "John Doe".to_string(),
-            phone: "06 11 22 33 44".to_string(),
-        },
-        Contact {
-            name: "Jane Doe".to_string(),
-            phone: "06 11 22 33 44".to_string(),
-        },
-    ]
-}
+use tauri_plugin_sql::{ Migration, MigrationKind };
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let migrations = vec![
+        Migration {
+            version: 1,
+            description: "create_teachers_table",
+            sql: "CREATE TABLE teachers (id INTEGER PRIMARY KEY, name TEXT, phone TEXT);",
+            kind: MigrationKind::Up,
+        },
+        Migration {
+            version: 2,
+            description: "add_class_to_teachers_table",
+            sql: "ALTER TABLE teachers ADD COLUMN class TEXT NOT NULL DEFAULT '';",
+            kind: MigrationKind::Up,
+        }
+    ];
+
     tauri::Builder::default()
-        .plugin(tauri_plugin_sql::Builder::new().build())
+        .plugin(tauri_plugin_sql::Builder::default().add_migrations("sqlite:ape-mermoz.db", migrations).build())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![find_chocolate_commands])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
