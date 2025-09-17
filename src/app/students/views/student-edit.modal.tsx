@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { Teacher, useTeachers } from "../hooks/use-teachers.hook";
+import { Student, useStudents } from "../hooks/use-students.hook";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import {
@@ -11,14 +11,14 @@ import {
   Item,
 } from "../../../platform/ui/components";
 
-export type TeacherEditModalProps = {
-  teacher: Teacher | undefined;
+export type StudentEditModalProps = {
+  student: Student | undefined;
 };
 
-export const TeacherEditModal = Modal.create(
-  ({ teacher }: TeacherEditModalProps): JSX.Element => {
+export const StudentEditModal = Modal.create(
+  ({ student }: StudentEditModalProps): JSX.Element => {
     const { t } = useTranslation();
-    const { upsert } = useTeachers();
+    const { upsert } = useStudents();
 
     const {
       register,
@@ -26,8 +26,8 @@ export const TeacherEditModal = Modal.create(
       reset,
       watch,
       formState: { isValid, errors },
-    } = useForm<Teacher>({
-      defaultValues: teacher,
+    } = useForm<Student>({
+      defaultValues: student,
     });
 
     return (
