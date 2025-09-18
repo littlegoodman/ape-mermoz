@@ -24,9 +24,19 @@ export const Navigation = () => {
       </ul>
       <li>{t("Les Événements")}</li>
       <ul>
-        <li>
-          <button>{t("Chocolats 2025")}</button>
-        </li>
+        <li>{t("Chocolats 2025")}</li>
+        <ul>
+          <li>
+            <button onClick={() => navigateTo("/commands-summary")}>
+              {t("Récapitulatif des commandes")}
+            </button>
+          </li>
+          <li>
+            <button onClick={() => navigateTo("/commands")}>
+              {t("Commandes")}
+            </button>
+          </li>
+        </ul>
       </ul>
     </ul>
   );

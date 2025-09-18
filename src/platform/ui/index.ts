@@ -1,5 +1,9 @@
 export { styled } from "./theme/stitches.config";
-export * from "./components/button/button";
-export * from "./components/table/table";
-export * from "./components/modal/modal";
+export * from "./components/button";
+export * from "./components/table";
+export * from "./components/modal";
+export * from "./components/empty";
+export * from "./components/stack";
+export * from "./components/row";
+export * from "./components/input";
 export * from "./theme";

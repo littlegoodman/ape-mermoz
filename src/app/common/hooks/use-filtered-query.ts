@@ -39,7 +39,7 @@ export const useFilteredQuery = <
 }): FilteredQueryResult<T, S> => {
   const [params, setParams] = React.useState<S>(defaultParams ?? ({} as S));
   const [filter, setFilter] = React.useState<string | undefined>(defaultFilter);
-  const debouncedFilter = useDebounce<string | undefined>(filter, 300);
+  const debouncedFilter = useDebounce<string | undefined>(filter, 500);
 
   const setParam = (
     key: string,

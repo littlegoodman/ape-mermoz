@@ -1,5 +1,5 @@
-import type { Teacher } from "../../app/teachers/hooks/use-teachers.hook";
-import { ApeMermozDatabase } from "./db";
+import type { Teacher } from "../hooks/use-teachers.hook";
+import { ApeMermozDatabase } from "../../../platform/databases/ape-mermoz.database";
 
 export class TeachersRepository {
   public static load(): TeachersRepository {

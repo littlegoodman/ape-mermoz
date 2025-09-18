@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { TeachersRepository } from "../../../platform/repositories/teachers.repository";
+import { TeachersRepository } from "../infra/teachers.repository";
 import { useFilteredQuery } from "../../common/hooks";
 
 export type Teacher = {
