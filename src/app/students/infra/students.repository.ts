@@ -9,16 +9,17 @@ export class StudentsRepository {
   constructor(private readonly db: ApeMermozDatabase) {}
 
   async findAll(params: { filter?: string }): Promise<Student[]> {
-    let query = "SELECT * FROM students";
+    let query =
+      "SELECT id, first_name as firstName, last_name as lastName, class FROM students";
     if (params.filter) {
-      query += ` WHERE firstName LIKE '%${params.filter}%' OR lastName LIKE '%${params.filter}%'`;
+      query += ` WHERE first_name LIKE '%${params.filter}%' OR last_name LIKE '%${params.filter}%'`;
     }
     return this.db.select<Student[]>(query);
   }
 
   async upsert(student: Student & { id?: Student["id"] }): Promise<void> {
     await this.db.execute(
-      "INSERT OR REPLACE INTO students (id, firstName, lastName, class) VALUES (?, ?, ?, ?)",
+      "INSERT OR REPLACE INTO students (id, first_name, last_name, class) VALUES (?, ?, ?, ?)",
       [student.id, student.firstName, student.lastName, student.class]
     );
   }

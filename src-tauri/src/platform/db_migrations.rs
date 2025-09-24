@@ -5,47 +5,39 @@ pub fn get_migrations() -> Vec<Migration> {
         Migration {
             version: 1,
             description: "create_teachers_table",
-            sql: "CREATE TABLE teachers (id INTEGER PRIMARY KEY, name TEXT, phone TEXT);",
+            sql: "CREATE TABLE teachers ( \
+                id INTEGER PRIMARY KEY, \
+                last_name TEXT NOT NULL, \
+                first_name TEXT NOT NULL, \
+                class TEXT NOT NULL \
+            );",
             kind: MigrationKind::Up,
         },
         Migration {
             version: 2,
-            description: "add_class_to_teachers_table",
-            sql: "ALTER TABLE teachers ADD COLUMN class TEXT NOT NULL DEFAULT '';",
+            description: "create_students_table",
+            sql: "CREATE TABLE students ( \
+                id INTEGER PRIMARY KEY, \
+                last_name TEXT NOT NULL, \
+                first_name TEXT NOT NULL, \
+                class TEXT NOT NULL \
+            );",
             kind: MigrationKind::Up,
         },
         Migration {
             version: 3,
-            description: "add_lastName_and_firstName_to_teachers_table",
-            sql: "ALTER TABLE teachers ADD COLUMN lastName TEXT NOT NULL DEFAULT ''; ALTER TABLE teachers ADD COLUMN firstName TEXT NOT NULL DEFAULT '';",
+            description: "create_articles_table",
+            sql: "CREATE TABLE articles ( \
+                id INTEGER PRIMARY KEY, \
+                name TEXT NOT NULL, \
+                description TEXT NOT NULL, \
+                price REAL NOT NULL, \
+                preferential_price REAL NOT NULL \
+            );",
             kind: MigrationKind::Up,
         },
         Migration {
             version: 4,
-            description: "remove_phone_from_teachers_table",
-            sql: "ALTER TABLE teachers DROP COLUMN phone;",
-            kind: MigrationKind::Up,
-        },
-        Migration {
-            version: 5,
-            description: "remove_name_from_teachers_table",
-            sql: "ALTER TABLE teachers DROP COLUMN name;",
-            kind: MigrationKind::Up,
-        },
-        Migration {
-            version: 6,
-            description: "create_students_table",
-            sql: "CREATE TABLE students (id INTEGER PRIMARY KEY, firstName TEXT NOT NULL, lastName TEXT NOT NULL, class TEXT NOT NULL);",
-            kind: MigrationKind::Up,
-        },
-        Migration {
-            version: 7,
-            description: "create_and_fill_articles_table",
-            sql: "CREATE TABLE articles (id INTEGER PRIMARY KEY, name TEXT NOT NULL, description TEXT NOT NULL, price REAL NOT NULL, preferential_price REAL NOT NULL);",
-            kind: MigrationKind::Up,
-        },
-        Migration {
-            version: 8,
             description: "insert_chocolate_articles",
             sql: "INSERT INTO articles (name, description, price, preferential_price) VALUES \
             ('Le ballotin 250 g net', '21 chocolats assortis - 21 recettes', 16.20, 11.45), \
@@ -77,22 +69,36 @@ pub fn get_migrations() -> Vec<Migration> {
             kind: MigrationKind::Up,
         },
         Migration {
-            version: 9,
+            version: 5,
             description: "create_commands_table",
-            sql: "CREATE TABLE commands (\
-                parent TEXT,\
-                command_id INTEGER NOT NULL,\
-                student_id INTEGER NOT NULL REFERENCES students(id),\
-                article_id INTEGER NOT NULL REFERENCES articles(id),\
-                quantity INTEGER NOT NULL,\
+            sql: "CREATE TABLE commands ( \
+                id INTEGER PRIMARY KEY, \
+                parent TEXT, \
+                student_id INTEGER NOT NULL REFERENCES students(id) \
+            );",
+            kind: MigrationKind::Up,
+        },
+       Migration {
+            version: 6,
+            description: "create_commands_articles_table",
+            sql: "CREATE TABLE commands_articles ( \
+                command_id INTEGER NOT NULL REFERENCES commands(id), \
+                article_id INTEGER NOT NULL REFERENCES articles(id), \
+                quantity INTEGER NOT NULL, \
                 PRIMARY KEY (command_id, article_id)\
             );",
             kind: MigrationKind::Up,
         },
         Migration {
-            version: 10,
-            description: "make_command_id_a_string",
-            sql: "ALTER TABLE commands ALTER COLUMN command_id TEXT;",
+            version: 7,
+            description: "add_not_null_constraint_to_parent",
+            sql: "ALTER TABLE commands ALTER COLUMN parent TEXT NOT NULL;",
+            kind: MigrationKind::Up,
+        },
+        Migration {
+            version: 8,
+            description: "add_unique_constraint_to_commands",
+            sql: "ALTER TABLE commands ADD UNIQUE (parent, student_id);",
             kind: MigrationKind::Up,
         },
     ]

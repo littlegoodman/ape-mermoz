@@ -1,5 +1,4 @@
 import { JSX } from "react";
-import { v4 } from "uuid";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import {
@@ -9,7 +8,7 @@ import {
   FormControl,
 } from "../../../../platform/ui/components";
 import { Select, Item } from "../../../../platform/ui/components/select";
-import { Article, Command, useArticles, useCommands } from "../../hooks";
+import { Article, Command, useCommands } from "../../hooks";
 import { useStudents, Student } from "../../../students/hooks";
 import { CommandArticlesEditGrid } from "./command-articles-edit.grid";
 
@@ -32,10 +31,8 @@ export const CommandEditModal = Modal.create(
     const { t } = useTranslation();
     const { upsert } = useCommands();
     const { findAll: findAllStudents } = useStudents();
-    const { findAll: findAllArticles } = useArticles();
 
     const { data: students } = findAllStudents();
-    const { data: articles } = findAllArticles();
 
     const {
       register,
@@ -46,8 +43,7 @@ export const CommandEditModal = Modal.create(
       formState: { isValid, errors },
     } = useForm<Command | NewCommand>({
       defaultValues: command ?? {
-        id: v4(),
-        articles: articles?.map((article) => ({ article, quantity: 0 })) ?? [],
+        articles: [],
       },
     });
 

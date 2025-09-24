@@ -86,9 +86,11 @@ export const CommandArticlesEditGrid = ({
   const handleQuantityChange = useCallback(
     (articleId: number, value: string) => {
       const quantity = parseInt(value) || 0;
-      onArticlesChange?.(
-        articles.map((article) =>
-          article.article.id === articleId ? { ...article, quantity } : article
+      onArticlesChange(
+        (allArticles ?? []).map((article) =>
+          article.id === articleId
+            ? { article, quantity }
+            : { article, quantity: commandQuantities[article.id] || 0 }
         )
       );
     },

@@ -5,7 +5,7 @@ import { useFilteredQuery } from "../../common/hooks/use-filtered-query";
 import { Article } from "./use-articles.hook";
 
 export type Command = {
-  id: string;
+  id: number;
   parent: string;
   student: Student;
   articles: {

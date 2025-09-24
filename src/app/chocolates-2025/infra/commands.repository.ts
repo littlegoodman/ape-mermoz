@@ -3,8 +3,8 @@ import type { CommandsSummary, Command } from "../hooks";
 
 type StudentPersisted = {
   id: number;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   class: string;
 };
 
@@ -16,12 +16,17 @@ type ArticlePersisted = {
   preferential_price: number;
 };
 
-type CommandPersisted = {
-  command_id: string;
-  parent: string;
-  student_id: number;
+type CommandArticlePersisted = {
+  id: number;
+  command_id: number;
   article_id: number;
   quantity: number;
+};
+
+type CommandPersisted = {
+  id: string;
+  parent: string;
+  student_id: number;
 };
 
 export class CommandsRepository {
@@ -32,8 +37,8 @@ export class CommandsRepository {
   constructor(private readonly db: ApeMermozDatabase) {}
 
   async getCommandsSummary(): Promise<CommandsSummary> {
-    const commands = await this.db.select<CommandPersisted[]>(
-      "SELECT * FROM commands"
+    const commands = await this.db.select<CommandArticlePersisted[]>(
+      "SELECT * FROM commands_articles"
     );
     const articles = await this.db.select<ArticlePersisted[]>(
       "SELECT * FROM articles"
@@ -78,9 +83,16 @@ export class CommandsRepository {
 
   async findAll(params: { filter?: string }): Promise<Command[]> {
     const commands = await this.db.select<
-      (CommandPersisted & StudentPersisted & ArticlePersisted)[]
+      (CommandPersisted &
+        StudentPersisted &
+        CommandArticlePersisted &
+        ArticlePersisted)[]
     >(
-      "SELECT * FROM commands INNER JOIN students ON commands.student_id = students.id INNER JOIN articles ON commands.article_id = articles.id"
+      "SELECT * FROM commands \
+      INNER JOIN students ON commands.student_id = students.id \
+      INNER JOIN commands_articles ON commands.id = commands_articles.command_id \
+      INNER JOIN articles ON commands_articles.article_id = articles.id \
+    "
     );
     return Object.values(
       commands.reduce<Record<string, Command>>((acc, command) => {
@@ -90,8 +102,8 @@ export class CommandsRepository {
             parent: command.parent,
             student: {
               id: command.student_id,
-              firstName: command.firstName,
-              lastName: command.lastName,
+              firstName: command.first_name,
+              lastName: command.last_name,
               class: command.class,
             },
             articles: [],
@@ -113,25 +125,25 @@ export class CommandsRepository {
   }
 
   async upsert(command: Command): Promise<void> {
+    const { lastInsertId } = await this.db.execute(
+      "INSERT OR REPLACE INTO commands (id, parent, student_id) VALUES (?, ?, ?)",
+      [command.id, command.parent, command.student.id]
+    );
     await Promise.all(
       command.articles.map((article) =>
         this.db.execute(
-          "INSERT OR REPLACE INTO commands (command_id, parent, student_id, article_id, quantity) VALUES (?, ?, ?, ?, ?)",
-          [
-            command.id,
-            command.parent,
-            command.student.id,
-            article.article.id,
-            article.quantity,
-          ]
+          "INSERT OR REPLACE INTO commands_articles (command_id, article_id, quantity) VALUES (?, ?, ?)",
+          [lastInsertId, article.article.id, article.quantity]
         )
       )
     );
   }
 
   async delete(command: Command): Promise<void> {
-    await this.db.execute("DELETE FROM commands WHERE command_id = ?", [
-      command.id,
-    ]);
+    await this.db.execute(
+      "DELETE FROM commands_articles WHERE command_id = ?",
+      [command.id]
+    );
+    await this.db.execute("DELETE FROM commands WHERE id = ?", [command.id]);
   }
 }

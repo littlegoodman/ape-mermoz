@@ -47,16 +47,29 @@ export const CommandsTable = ({
   return (
     <Table
       headers={[t("Classe"), t("Élève"), t("Parent"), t("Quantité"), t("Prix")]}
-      rows={commands?.map((command) => [
-        command.student.class,
-        `${command.student.firstName} ${command.student.lastName}`,
-        command.parent,
-        command.articles.reduce((acc, article) => acc + article.quantity, 0),
-        command.articles.reduce(
+      rows={commands?.map((command) => {
+        const quantity = command.articles.reduce(
+          (acc, article) => acc + article.quantity,
+          0
+        );
+        const price = command.articles.reduce(
           (acc, article) => acc + article.article.price * article.quantity,
           0
-        ),
-      ])}
+        );
+        const preferentialPrice = command.articles.reduce(
+          (acc, article) =>
+            acc + article.article.preferentialPrice * article.quantity,
+          0
+        );
+        return [
+          command.student.class,
+          `${command.student.firstName} ${command.student.lastName}`,
+          command.parent,
+          quantity,
+          `${price.toFixed(2)} €`,
+          `${preferentialPrice.toFixed(2)} €`,
+        ];
+      })}
       onEdit={handleEdit}
       onDelete={handleDelete}
     />

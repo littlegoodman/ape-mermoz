@@ -4,8 +4,10 @@ import { useCommands } from "../../hooks/use-commands.hook";
 import { CommandsAddButton } from "./commands-add.button";
 import { CommandsSearchInput } from "./commands.search-input";
 import { CommandsTable } from "./commands.table";
+import { useTranslation } from "react-i18next";
 
 export const CommandsPage = () => {
+  const { t } = useTranslation();
   const { findAll } = useCommands();
   const {
     data: commands,
@@ -17,7 +19,7 @@ export const CommandsPage = () => {
   } = findAll();
 
   return (
-    <Page title={"Récapitulatif des commandes"}>
+    <Page title={t("Commandes")}>
       <Stack>
         <Row>
           <CommandsSearchInput
