@@ -89,5 +89,11 @@ pub fn get_migrations() -> Vec<Migration> {
             );",
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 10,
+            description: "make_command_id_a_string",
+            sql: "ALTER TABLE commands ALTER COLUMN command_id TEXT;",
+            kind: MigrationKind::Up,
+        },
     ]
 }

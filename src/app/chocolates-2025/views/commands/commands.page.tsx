@@ -1,6 +1,6 @@
-import { Stack, Row } from "../../../platform/ui";
-import { Page } from "../../common/layout/page";
-import { useCommands } from "../hooks/use-commands.hook";
+import { Stack, Row } from "../../../../platform/ui";
+import { Page } from "../../../common/layout/page";
+import { useCommands } from "../../hooks/use-commands.hook";
 import { CommandsAddButton } from "./commands-add.button";
 import { CommandsSearchInput } from "./commands.search-input";
 import { CommandsTable } from "./commands.table";

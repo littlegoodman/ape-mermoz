@@ -3,8 +3,8 @@ import type { CommandsSummary, Command } from "../hooks";
 
 type StudentPersisted = {
   id: number;
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   class: string;
 };
 
@@ -17,7 +17,7 @@ type ArticlePersisted = {
 };
 
 type CommandPersisted = {
-  command_id: number;
+  command_id: string;
   parent: string;
   student_id: number;
   article_id: number;
@@ -83,15 +83,15 @@ export class CommandsRepository {
       "SELECT * FROM commands INNER JOIN students ON commands.student_id = students.id INNER JOIN articles ON commands.article_id = articles.id"
     );
     return Object.values(
-      commands.reduce<Record<number, Command>>((acc, command) => {
+      commands.reduce<Record<string, Command>>((acc, command) => {
         if (!acc[command.command_id]) {
           acc[command.command_id] = {
             id: command.command_id,
             parent: command.parent,
             student: {
               id: command.student_id,
-              firstName: command.first_name,
-              lastName: command.last_name,
+              firstName: command.firstName,
+              lastName: command.lastName,
               class: command.class,
             },
             articles: [],
@@ -113,13 +113,19 @@ export class CommandsRepository {
   }
 
   async upsert(command: Command): Promise<void> {
-    await this.db.execute(
-      "INSERT OR REPLACE INTO commands (student_id, article_id, quantity) VALUES (?, ?, ?)",
-      command.articles.map((article) => [
-        command.student.id,
-        article.article.id,
-        article.quantity,
-      ])
+    await Promise.all(
+      command.articles.map((article) =>
+        this.db.execute(
+          "INSERT OR REPLACE INTO commands (command_id, parent, student_id, article_id, quantity) VALUES (?, ?, ?, ?, ?)",
+          [
+            command.id,
+            command.parent,
+            command.student.id,
+            article.article.id,
+            article.quantity,
+          ]
+        )
+      )
     );
   }
 

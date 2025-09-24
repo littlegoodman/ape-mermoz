@@ -3,8 +3,8 @@ import { Providers } from "./providers";
 import { TeachersPage } from "./teachers/views/teachers.page";
 import { StudentsPage } from "./students/views/students.page";
 import { WelcomePage } from "./welcome/view/welcome.page";
-import { CommandsSummaryPage } from "./chocolates-2025/views/commands-summary.page";
-import { CommandsPage } from "./chocolates-2025/views/commands.page";
+import { CommandsSummaryPage } from "./chocolates-2025/views/summary/commands-summary.page";
+import { CommandsPage } from "./chocolates-2025/views/commands/commands.page";
 
 export const routes = createRoutesFromElements(
   <Route element={<Providers />}>

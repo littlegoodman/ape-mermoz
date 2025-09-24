@@ -1,5 +1,5 @@
-import { Page } from "../../common/layout/page";
-import { useCommands } from "../hooks/use-commands.hook";
+import { Page } from "../../../common/layout/page";
+import { useCommands } from "../../hooks/use-commands.hook";
 import { CommandArticlesGrid } from "./command-articles.grid";
 
 export const CommandsSummaryPage = () => {

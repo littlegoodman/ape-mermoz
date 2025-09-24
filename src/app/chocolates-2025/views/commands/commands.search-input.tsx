@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { SearchInput } from "../../../platform/ui/components";
+import { SearchInput } from "../../../../platform/ui/components";
 import { useTranslation } from "react-i18next";
 
 export type CommandsSearchInputProps = {

@@ -1,6 +1,6 @@
 import { JSX } from "react";
-import { Button } from "../../../platform/ui/components/button/button";
-import { CommandEditModal } from "./command-edit.modal";
+import { Button } from "../../../../platform/ui/components/button/button";
+import { CommandEditModal } from "../command/command-edit.modal";
 import { Plus } from "lucide-react";
 
 export const CommandsAddButton = (): JSX.Element => {

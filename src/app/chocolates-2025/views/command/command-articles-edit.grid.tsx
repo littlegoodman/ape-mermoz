@@ -1,11 +1,11 @@
 import { JSX, useCallback } from "react";
-import { Command, useArticles, Article } from "../hooks";
-import { Empty, Input } from "../../../platform/ui";
-import { styled } from "../../../platform/ui/theme/stitches.config";
+import { Command, useArticles, Article } from "../../hooks";
+import { Empty, Input } from "../../../../platform/ui";
+import { styled } from "../../../../platform/ui/theme/stitches.config";
 
 interface CommandArticlesEditGridProps {
-  command?: Command;
-  onQuantityChange?: (articleId: number, quantity: number) => void;
+  articles: Command["articles"];
+  onArticlesChange: (articles: Command["articles"]) => void;
   isLoading?: boolean;
   error?: Error | null;
 }
@@ -65,8 +65,8 @@ const QuantityInput = styled(Input, {
 });
 
 export const CommandArticlesEditGrid = ({
-  command,
-  onQuantityChange,
+  articles,
+  onArticlesChange,
   isLoading = false,
   error = null,
 }: CommandArticlesEditGridProps): JSX.Element => {
@@ -78,7 +78,7 @@ export const CommandArticlesEditGrid = ({
   } = findAll();
 
   // Create a map of article quantities from the command
-  const commandQuantities = (command?.articles || []).reduce((acc, item) => {
+  const commandQuantities = articles.reduce((acc, item) => {
     acc[item.article.id] = item.quantity;
     return acc;
   }, {} as Record<number, number>);
@@ -86,9 +86,13 @@ export const CommandArticlesEditGrid = ({
   const handleQuantityChange = useCallback(
     (articleId: number, value: string) => {
       const quantity = parseInt(value) || 0;
-      onQuantityChange?.(articleId, quantity);
+      onArticlesChange?.(
+        articles.map((article) =>
+          article.article.id === articleId ? { ...article, quantity } : article
+        )
+      );
     },
-    [onQuantityChange]
+    [onArticlesChange]
   );
 
   if (isLoading || articlesLoading) {

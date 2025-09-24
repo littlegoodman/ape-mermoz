@@ -1,6 +1,6 @@
 import { JSX } from "react";
-import { CommandsSummary } from "../hooks";
-import { Empty, Row, Stack } from "../../../platform/ui";
+import { CommandsSummary } from "../../hooks";
+import { Empty, Row, Stack } from "../../../../platform/ui";
 
 interface CommandArticlesGridProps {
   articles: CommandsSummary["articles"];

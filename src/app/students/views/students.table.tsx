@@ -46,11 +46,11 @@ export const StudentsTable = ({
 
   return (
     <Table
-      headers={[t("Prénom"), t("Nom"), t("Classe")]}
+      headers={[t("Classe"), t("Prénom"), t("Nom")]}
       rows={students?.map((student) => [
+        student.class,
         student.firstName,
         student.lastName,
-        student.class,
       ])}
       onEdit={handleEdit}
       onDelete={handleDelete}
