@@ -9,7 +9,7 @@ import { CommandsPage } from "./chocolates-2025/views/commands/commands.page";
 export const routes = createRoutesFromElements(
   <Route element={<Providers />}>
     <Route path="/" element={<WelcomePage />} />
-    <Route path="/professors" element={<TeachersPage />} />
+    <Route path="/teachers" element={<TeachersPage />} />
     <Route path="/students" element={<StudentsPage />} />
     <Route path="/commands-summary" element={<CommandsSummaryPage />} />
     <Route path="/commands" element={<CommandsPage />} />

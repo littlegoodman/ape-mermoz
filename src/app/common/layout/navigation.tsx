@@ -1,5 +1,12 @@
+import { BabyIcon, GraduationCapIcon } from "lucide-react";
+import {
+  List,
+  ListHeader,
+  ListItem,
+  ListItemButton,
+} from "../../../platform/ui";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 export const Navigation = () => {
   const { t } = useTranslation();
@@ -10,34 +17,46 @@ export const Navigation = () => {
   };
 
   return (
-    <ul>
-      <li>{t("L'École")}</li>
-      <ul>
-        <li>
-          <button onClick={() => navigateTo("/professors")}>
-            {t("Enseignants")}
-          </button>
-        </li>
-        <li>
-          <button onClick={() => navigateTo("/students")}>{t("Élèves")}</button>
-        </li>
-      </ul>
-      <li>{t("Les Événements")}</li>
-      <ul>
-        <li>{t("Chocolats 2025")}</li>
-        <ul>
-          <li>
-            <button onClick={() => navigateTo("/commands-summary")}>
-              {t("Récapitulatif des commandes")}
-            </button>
-          </li>
-          <li>
-            <button onClick={() => navigateTo("/commands")}>
-              {t("Commandes")}
-            </button>
-          </li>
-        </ul>
-      </ul>
-    </ul>
+    <List variant="navigation">
+      <ListHeader noMarginTop>{t("L'École")}</ListHeader>
+      <ListItem>
+        <ListItemButton
+          as={NavLink}
+          startIcon={<GraduationCapIcon />}
+          to="/teachers"
+        >
+          {t("Enseignants")}
+        </ListItemButton>
+        <ListItemButton as={NavLink} startIcon={<BabyIcon />} to="/students">
+          {t("Élèves")}
+        </ListItemButton>
+      </ListItem>
+      <ListHeader>{t("Les Événements")}</ListHeader>
+      <ListItem>
+        <ListItemButton
+          as={NavLink}
+          startIcon={<GraduationCapIcon />}
+          to="/commands-summary"
+        >
+          {t("Chocolats 2025")}
+        </ListItemButton>
+        <List variant="subnav">
+          <ListItem>
+            <ListItemButton
+              as={NavLink}
+              color="secondary"
+              to="/commands-summary"
+            >
+              {t("Bon de commande")}
+            </ListItemButton>
+          </ListItem>
+          <ListItem>
+            <ListItemButton as={NavLink} color="secondary" to="/commands">
+              {t("Détail des articles")}
+            </ListItemButton>
+          </ListItem>
+        </List>
+      </ListItem>
+    </List>
   );
 };

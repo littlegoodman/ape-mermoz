@@ -19,7 +19,7 @@ export const CommandsPage = () => {
   } = findAll();
 
   return (
-    <Page title={t("Commandes")}>
+    <Page title={t("Détail des articles")}>
       <Stack>
         <Row>
           <CommandsSearchInput

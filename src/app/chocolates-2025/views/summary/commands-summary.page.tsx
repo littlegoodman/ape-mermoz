@@ -7,7 +7,7 @@ export const CommandsSummaryPage = () => {
   const { data: summary, isLoading, error } = getSummary();
 
   return (
-    <Page title={"Récapitulatif des commandes"}>
+    <Page title={"Bon de commande"}>
       <CommandArticlesGrid
         articles={summary?.articles ?? []}
         isLoading={isLoading}
