@@ -1,4 +1,9 @@
-import { BabyIcon, GraduationCapIcon } from "lucide-react";
+import {
+  BabyIcon,
+  CandyCaneIcon,
+  CandyIcon,
+  GraduationCapIcon,
+} from "lucide-react";
 import {
   List,
   ListHeader,
@@ -35,7 +40,7 @@ export const Navigation = () => {
       <ListItem>
         <ListItemButton
           as={NavLink}
-          startIcon={<GraduationCapIcon />}
+          startIcon={<CandyIcon />}
           to="/commands-summary"
         >
           {t("Chocolats 2025")}

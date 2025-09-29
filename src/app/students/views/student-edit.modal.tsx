@@ -9,6 +9,8 @@ import {
   FormControl,
   Select,
   Item,
+  Row,
+  Stack,
 } from "../../../platform/ui/components";
 
 export type StudentEditModalProps = {
@@ -36,47 +38,55 @@ export const StudentEditModal = Modal.create(
         onSubmit={handleSubmit((data) => upsert(data))}
         onClose={() => reset()}
       >
-        <FormControl
-          mandatory
-          label={t("Prénom")}
-          error={!!errors.firstName}
-          helperText={errors.firstName?.message}
-        >
-          <Input
-            {...register("firstName", { required: t("Le prénom est requis") })}
-          />
-        </FormControl>
-        <FormControl
-          mandatory
-          label={t("Nom")}
-          error={!!errors.lastName}
-          helperText={errors.lastName?.message}
-        >
-          <Input
-            {...register("lastName", { required: t("Le nom est requis") })}
-          />
-        </FormControl>
-        <FormControl
-          mandatory
-          label={t("Classe")}
-          error={!!errors.class}
-          helperText={errors.class?.message}
-        >
-          <Select
-            label={t("Classe")}
-            {...register("class", { required: t("La classe est requise") })}
-            value={watch("class")}
-            items={[
-              { id: "CE1", label: "CE1" },
-              { id: "CE2", label: "CE2" },
-              { id: "CM1", label: "CM1" },
-              { id: "CM2a", label: "CM2a" },
-              { id: "CM2b", label: "CM2b" },
-            ]}
-          >
-            {(item) => <Item key={item.id}>{item.label}</Item>}
-          </Select>
-        </FormControl>
+        <Stack>
+          <Row>
+            <FormControl
+              mandatory
+              label={t("Prénom")}
+              error={!!errors.firstName}
+              helperText={errors.firstName?.message}
+            >
+              <Input
+                {...register("firstName", {
+                  required: t("Le prénom est requis"),
+                })}
+              />
+            </FormControl>
+            <FormControl
+              mandatory
+              label={t("Nom")}
+              error={!!errors.lastName}
+              helperText={errors.lastName?.message}
+            >
+              <Input
+                {...register("lastName", { required: t("Le nom est requis") })}
+              />
+            </FormControl>
+          </Row>
+          <Row>
+            <FormControl
+              mandatory
+              label={t("Classe")}
+              error={!!errors.class}
+              helperText={errors.class?.message}
+            >
+              <Select
+                label={t("Classe")}
+                {...register("class", { required: t("La classe est requise") })}
+                value={watch("class")}
+                items={[
+                  { id: "CE1", label: "CE1" },
+                  { id: "CE2", label: "CE2" },
+                  { id: "CM1", label: "CM1" },
+                  { id: "CM2a", label: "CM2a" },
+                  { id: "CM2b", label: "CM2b" },
+                ]}
+              >
+                {(item) => <Item key={item.id}>{item.label}</Item>}
+              </Select>
+            </FormControl>
+          </Row>
+        </Stack>
       </ModalContainer>
     );
   }

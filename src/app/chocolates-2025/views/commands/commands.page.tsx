@@ -1,4 +1,10 @@
 import { Stack, Row } from "../../../../platform/ui";
+import { ScrollArea } from "../../../../platform/ui/components/scroll-area";
+import { Surface } from "../../../../platform/ui/components/surface/surface";
+import {
+  Toolbar,
+  ToolbarSlot,
+} from "../../../../platform/ui/components/toolbar";
 import { Page } from "../../../common/layout/page";
 import { useCommands } from "../../hooks/use-commands.hook";
 import { CommandsAddButton } from "./commands-add.button";
@@ -21,21 +27,30 @@ export const CommandsPage = () => {
   return (
     <Page title={t("Détail des articles")}>
       <Stack>
-        <Row>
-          <CommandsSearchInput
-            onSearch={setFilter}
-            onClear={clearFilter}
-            value={filter || ""}
-            disabled={isLoading}
-          />
-          <CommandsAddButton />
-        </Row>
+        <Toolbar>
+          <ToolbarSlot position="left">
+            <CommandsSearchInput
+              onSearch={setFilter}
+              onClear={clearFilter}
+              value={filter || ""}
+              disabled={isLoading}
+            />
+            <ToolbarSlot position="center" />
+            <ToolbarSlot position="right">
+              <CommandsAddButton />
+            </ToolbarSlot>
+          </ToolbarSlot>
+        </Toolbar>
+        <ScrollArea>
+          <Surface>
+            <CommandsTable
+              commands={commands ?? []}
+              isLoading={isLoading}
+              error={error}
+            />
+          </Surface>
+        </ScrollArea>
       </Stack>
-      <CommandsTable
-        commands={commands ?? []}
-        isLoading={isLoading}
-        error={error}
-      />
     </Page>
   );
 };

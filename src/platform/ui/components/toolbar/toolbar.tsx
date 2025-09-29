@@ -36,9 +36,6 @@ const Container = styled("div", {
       },
     },
   },
-  defaultVariants: {
-    variant: "flat",
-  },
 });
 
 const Content = styled("div", {

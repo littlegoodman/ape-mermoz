@@ -5,6 +5,9 @@ import { useStudents } from "../hooks";
 import { StudentAddButton } from "./student-add.button";
 import { StudentsTable } from "./students.table";
 import { StudentsSearchInput } from "./students.search-input";
+import { Toolbar, ToolbarSlot } from "../../../platform/ui/components/toolbar";
+import { Surface } from "../../../platform/ui/components/surface/surface";
+import { ScrollArea } from "../../../platform/ui/components/scroll-area";
 
 export const StudentsPage = (): JSX.Element => {
   const { findAll } = useStudents();
@@ -20,20 +23,29 @@ export const StudentsPage = (): JSX.Element => {
   return (
     <Page title={"Élèves"}>
       <Stack>
-        <Row>
-          <StudentsSearchInput
-            onSearch={setFilter}
-            onClear={clearFilter}
-            value={filter || ""}
-            disabled={isLoading}
-          />
-          <StudentAddButton />
-        </Row>
-        <StudentsTable
-          students={students ?? []}
-          isLoading={isLoading}
-          error={error}
-        />
+        <Toolbar>
+          <ToolbarSlot position="left">
+            <StudentsSearchInput
+              onSearch={setFilter}
+              onClear={clearFilter}
+              value={filter || ""}
+              disabled={isLoading}
+            />
+          </ToolbarSlot>
+          <ToolbarSlot position="center" />
+          <ToolbarSlot position="right">
+            <StudentAddButton />
+          </ToolbarSlot>
+        </Toolbar>
+        <ScrollArea>
+          <Surface>
+            <StudentsTable
+              students={students ?? []}
+              isLoading={isLoading}
+              error={error}
+            />
+          </Surface>
+        </ScrollArea>
       </Stack>
     </Page>
   );

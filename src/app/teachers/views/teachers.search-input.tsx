@@ -19,7 +19,7 @@ export const TeachersSearchInput = ({
 
   return (
     <SearchInput
-      placeholder={t("Rechercher un professeur")}
+      placeholder={t("Rechercher un enseignant")}
       onSearch={onSearch}
       onClear={onClear}
       value={value}

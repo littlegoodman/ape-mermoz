@@ -3,10 +3,11 @@ import { Page } from "../../common/layout";
 import { TeachersTable } from "./teachers.table";
 import { TeacherAddButton } from "./teacher-add.button";
 import { TeachersSearchInput } from "./teachers.search-input";
-import { Stack, Row } from "../../../platform/ui/components";
+import { Stack } from "../../../platform/ui/components";
 import { useTeachers } from "../hooks";
 import { Toolbar, ToolbarSlot } from "../../../platform/ui/components/toolbar";
-import { t } from "i18next";
+import { ScrollArea } from "../../../platform/ui/components/scroll-area";
+import { Surface } from "../../../platform/ui/components/surface/surface";
 
 export const TeachersPage = (): JSX.Element => {
   const { findAll } = useTeachers();
@@ -36,11 +37,15 @@ export const TeachersPage = (): JSX.Element => {
             <TeacherAddButton />
           </ToolbarSlot>
         </Toolbar>
-        <TeachersTable
-          teachers={teachers ?? []}
-          isLoading={isLoading}
-          error={error}
-        />
+        <ScrollArea>
+          <Surface>
+            <TeachersTable
+              teachers={teachers ?? []}
+              isLoading={isLoading}
+              error={error}
+            />
+          </Surface>
+        </ScrollArea>
       </Stack>
     </Page>
   );
