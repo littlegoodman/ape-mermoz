@@ -113,7 +113,7 @@ export function Page({
       {sidebarVisible && (
         <AppSidebar>
           <SidebarHeader>
-            <Button onClick={toggleSidebar}>
+            <Button variant="light" color="neutral" onClick={toggleSidebar}>
               <MenuIcon />
             </Button>
           </SidebarHeader>
