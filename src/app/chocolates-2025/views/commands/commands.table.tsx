@@ -56,18 +56,12 @@ export const CommandsTable = ({
           (acc, article) => acc + article.article.price * article.quantity,
           0
         );
-        const preferentialPrice = command.articles.reduce(
-          (acc, article) =>
-            acc + article.article.preferentialPrice * article.quantity,
-          0
-        );
         return [
           command.student.class,
           `${command.student.firstName} ${command.student.lastName}`,
           command.parent,
           quantity,
           `${price.toFixed(2)} €`,
-          `${preferentialPrice.toFixed(2)} €`,
         ];
       })}
       onEdit={handleEdit}

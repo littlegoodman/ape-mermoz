@@ -10,7 +10,9 @@ export class StudentsRepository {
 
   async findAll(params: { filter?: string }): Promise<Student[]> {
     let query =
-      "SELECT id, first_name as firstName, last_name as lastName, class FROM students";
+      "SELECT students.id, first_name as firstName, last_name as lastName, classes.name as class \
+      FROM students \
+      INNER JOIN classes ON students.class_id = classes.id";
     if (params.filter) {
       query += ` WHERE first_name LIKE '%${params.filter}%' OR last_name LIKE '%${params.filter}%'`;
     }
@@ -19,7 +21,7 @@ export class StudentsRepository {
 
   async upsert(student: Student & { id?: Student["id"] }): Promise<void> {
     await this.db.execute(
-      "INSERT OR REPLACE INTO students (id, first_name, last_name, class) VALUES (?, ?, ?, ?)",
+      "INSERT OR REPLACE INTO students (id, first_name, last_name, class_id) VALUES (?, ?, ?, (SELECT id FROM classes WHERE name = ?))",
       [student.id, student.firstName, student.lastName, student.class]
     );
   }

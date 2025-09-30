@@ -17,7 +17,6 @@ type ArticlePersisted = {
 };
 
 type CommandArticlePersisted = {
-  id: number;
   command_id: number;
   article_id: number;
   quantity: number;
@@ -25,8 +24,8 @@ type CommandArticlePersisted = {
 
 type CommandPersisted = {
   id: string;
-  parent: string;
   student_id: number;
+  parent: string;
 };
 
 export class CommandsRepository {
@@ -88,17 +87,18 @@ export class CommandsRepository {
         CommandArticlePersisted &
         ArticlePersisted)[]
     >(
-      "SELECT * FROM commands \
+      "SELECT commands.id, commands.parent, students.id as student_id, students.first_name as first_name, students.last_name as last_name, classes.name as class, commands_articles.article_id as article_id, articles.name as name, articles.description as description, articles.price as price, articles.preferential_price as preferential_price, commands_articles.quantity as quantity FROM commands \
       INNER JOIN students ON commands.student_id = students.id \
+      INNER JOIN classes ON students.class_id = classes.id \
       INNER JOIN commands_articles ON commands.id = commands_articles.command_id \
       INNER JOIN articles ON commands_articles.article_id = articles.id \
     "
     );
     return Object.values(
       commands.reduce<Record<string, Command>>((acc, command) => {
-        if (!acc[command.command_id]) {
-          acc[command.command_id] = {
-            id: command.command_id,
+        if (!acc[command.id]) {
+          acc[command.id] = {
+            id: command.id,
             parent: command.parent,
             student: {
               id: command.student_id,
@@ -109,7 +109,7 @@ export class CommandsRepository {
             articles: [],
           };
         }
-        acc[command.command_id].articles.push({
+        acc[command.id].articles.push({
           article: {
             id: command.article_id,
             name: command.name,
@@ -126,8 +126,8 @@ export class CommandsRepository {
 
   async upsert(command: Command): Promise<void> {
     const { lastInsertId } = await this.db.execute(
-      "INSERT OR REPLACE INTO commands (id, parent, student_id) VALUES (?, ?, ?)",
-      [command.id, command.parent, command.student.id]
+      "INSERT OR REPLACE INTO commands (id, happening_id, student_id, parent) VALUES (?, (SELECT id FROM happenings WHERE name = 'Chocolats 2025'), ?, ?)",
+      [command.id, command.student.id, command.parent]
     );
     await Promise.all(
       command.articles.map((article) =>
