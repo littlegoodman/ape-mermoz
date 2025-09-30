@@ -1,9 +1,10 @@
-import { Trash2 } from "lucide-react";
+import { Trash2Icon } from "lucide-react";
 import {
   EditableTableRow as StyledEditableTableRow,
   ImmutableTableRow as StyledImmutableTableRow,
 } from "./table-row.style";
 import { Button } from "../button";
+import { TableCell } from "./table-cell";
 
 export type TableRowProps = {
   cells: React.ReactNode[];
@@ -21,7 +22,7 @@ const ImmutableTableRow = ({ cells }: TableRowProps) => {
   return (
     <StyledImmutableTableRow>
       {cells.map((cell, cellIndex) => (
-        <td key={cellIndex}>{cell}</td>
+        <TableCell key={cellIndex}>{cell}</TableCell>
       ))}
     </StyledImmutableTableRow>
   );
@@ -31,19 +32,20 @@ const EditableTableRow = ({ cells, onEdit, onDelete }: TableRowProps) => {
   return (
     <StyledEditableTableRow onClick={() => onEdit?.()}>
       {cells.map((cell, cellIndex) => (
-        <td key={cellIndex}>{cell}</td>
+        <TableCell key={cellIndex}>{cell}</TableCell>
       ))}
       {onDelete && (
-        <td>
+        <TableCell>
           <Button
+            variant="light"
+            size="small"
+            icon={<Trash2Icon size={16} />}
             onClick={(e) => {
               e.stopPropagation();
               onDelete?.();
             }}
-          >
-            <Trash2 size={16} />
-          </Button>
-        </td>
+          />
+        </TableCell>
       )}
     </StyledEditableTableRow>
   );

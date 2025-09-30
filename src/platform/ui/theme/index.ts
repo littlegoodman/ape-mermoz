@@ -1,1 +1,1 @@
-export { styled, applyTheme } from "./stitches.config";
+export { styled, keyframes, applyTheme } from "./stitches.config";

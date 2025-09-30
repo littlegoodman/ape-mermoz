@@ -4,6 +4,9 @@ import NiceModal, {
   useModal as useNiceModal,
 } from "@ebay/nice-modal-react";
 import { ModalContent, ModalOverlay } from "./modal.style";
+import { Row } from "../row";
+import { Button } from "../button";
+import { useTranslation } from "react-i18next";
 export { ModalContent };
 
 export interface ShowModal<P extends {}> {
@@ -29,32 +32,36 @@ export const ModalContainer = ({
   onClose,
   onSubmit,
 }: ModalProps): JSX.Element => {
+  const { t } = useTranslation();
   const modal = useNiceModal();
 
   return (
     <ModalOverlay onClick={() => modal.remove()}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
         {children}
-        {onSubmit && (
-          <button
-            disabled={!isValid}
+        <Row justify="end">
+          <Button
+            variant="light"
             onClick={() => {
-              onSubmit();
+              onClose?.();
               modal.remove();
             }}
           >
-            Submit
-          </button>
-        )}
-
-        <button
-          onClick={() => {
-            onClose?.();
-            modal.remove();
-          }}
-        >
-          Close
-        </button>
+            {t("Annuler")}
+          </Button>
+          {onSubmit && (
+            <Button
+              variant="contained"
+              disabled={!isValid}
+              onClick={() => {
+                onSubmit();
+                modal.remove();
+              }}
+            >
+              {t("Valider")}
+            </Button>
+          )}
+        </Row>
       </ModalContent>
     </ModalOverlay>
   );

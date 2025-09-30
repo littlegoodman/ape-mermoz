@@ -1,5 +1,8 @@
 import { TableContainer } from "./table.style";
 import { TableRow } from "./table-row";
+import { TableHeaderRow } from "./table-header-row";
+import { TableHeaderCell } from "./table-header-cell";
+import { TableBody } from "./table-body";
 
 export type TableProps = {
   headers: React.ReactNode[];
@@ -11,14 +14,12 @@ export type TableProps = {
 export const Table = ({ headers, rows, onEdit, onDelete }: TableProps) => {
   return (
     <TableContainer>
-      <thead>
-        <tr>
-          {headers.map((header, index) => (
-            <th key={index}>{header}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
+      <TableHeaderRow>
+        {headers.map((header, index) => (
+          <TableHeaderCell key={index}>{header}</TableHeaderCell>
+        ))}
+      </TableHeaderRow>
+      <TableBody>
         {rows.map((row, rowIndex) => (
           <TableRow
             key={rowIndex}
@@ -27,7 +28,7 @@ export const Table = ({ headers, rows, onEdit, onDelete }: TableProps) => {
             onDelete={onDelete ? () => onDelete(rowIndex) : undefined}
           />
         ))}
-      </tbody>
+      </TableBody>
     </TableContainer>
   );
 };

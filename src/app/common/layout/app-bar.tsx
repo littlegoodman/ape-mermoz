@@ -88,7 +88,7 @@ export const AppBar = ({
       <AppBarContent>
         {!sidebarVisible && onSidebarToggle && (
           <OpenNavigationButton>
-            <Button onClick={onSidebarToggle}>
+            <Button variant="light" color="neutral" onClick={onSidebarToggle}>
               <Menu />
             </Button>
           </OpenNavigationButton>

@@ -7,6 +7,6 @@ export const EditableTableRow = styled("tr", {
   transition: "background-color 0.2s ease",
 
   "&:hover": {
-    backgroundColor: "$gray100",
+    backgroundColor: "$neutralLightHover",
   },
 });

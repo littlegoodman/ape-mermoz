@@ -1,4 +1,4 @@
-import Database from "@tauri-apps/plugin-sql";
+import Database, { QueryResult } from "@tauri-apps/plugin-sql";
 
 export class ApeMermozDatabase {
   private db_?: Database;
@@ -19,8 +19,8 @@ export class ApeMermozDatabase {
     return db.select<T>(query);
   }
 
-  public async execute(query: string, params: any[]): Promise<void> {
+  public async execute(query: string, params: any[]): Promise<QueryResult> {
     const db = await this.db();
-    await db.execute(query, params);
+    return db.execute(query, params);
   }
 }
