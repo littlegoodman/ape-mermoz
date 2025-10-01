@@ -17,8 +17,8 @@ pub fn get_migrations() -> Vec<Migration> {
             description: "create_teachers_table",
             sql: "CREATE TABLE teachers ( \
                 id INTEGER PRIMARY KEY, \
+                title TEXT NOT NULL, \
                 last_name TEXT NOT NULL, \
-                first_name TEXT NOT NULL, \
                 class_id INTEGER NOT NULL REFERENCES classes(id) \
             );",
             kind: MigrationKind::Up,

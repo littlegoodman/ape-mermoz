@@ -1,4 +1,4 @@
-import { Stack, Row } from "../../../../platform/ui";
+import { Stack } from "../../../../platform/ui";
 import { ScrollArea } from "../../../../platform/ui/components/scroll-area";
 import { Surface } from "../../../../platform/ui/components/surface/surface";
 import {

@@ -6,22 +6,46 @@ pub fn get_seeds() -> Vec<Migration> {
             version: 8,
             description: "seed_classes",
             sql: "INSERT INTO classes (name) VALUES \
-            ('CP'), \
-            ('CM1'), \
-            ('CM2a'), \
-            ('CM2b'), \
+            ('PS'), \
+            ('PS MS A'), \
+            ('PS MS B'), \
+            ('MS'), \
+            ('GS A'), \
+            ('GS B'), \
+            ('CP A'), \
+            ('CP B'), \
+            ('CP CE1'), \
             ('CE1'), \
-            ('CE2'), \
-            ('CE3');",
+            ('ULIS'), \
+            ('CE2 A'), \
+            ('CE2 B'), \
+            ('CM1 A'), \
+            ('CM1 B'), \
+            ('CM2 B'), \
+            ('CM2 A');",
             kind: MigrationKind::Up,
         },
        Migration {
             version: 9,
             description: "seed_teachers",
-            sql: "INSERT INTO teachers (first_name, last_name, class_id) VALUES \
-            ('Rémi', 'Rességuier', 1), \
-            ('Mme Martin', 'Martin', 2), \
-            ('Mme Durand', 'Durand', 3);",
+            sql: "INSERT INTO teachers (title, last_name, class_id) VALUES \
+            ('Mme', 'Francescatto', 1), \
+            ('Mme', 'Mathieu', 2), \
+            ('Mme', 'Martias', 3), \
+            ('Mme', 'Dubourg', 4), \
+            ('Mme', 'Mariani', 5), \
+            ('Mme', 'Boudigou', 6), \
+            ('Mme', 'Rousseau', 7), \
+            ('Mme', 'Eynaud', 8), \
+            ('Mme', 'Petitjean', 9), \
+            ('Mme', 'Barthélémy', 10), \
+            ('Mme', 'Feuillerat', 11), \
+            ('Mme', 'Camblanne', 12), \
+            ('Mme', 'Durand', 13), \
+            ('Mr', 'Resseguier', 14), \
+            ('Mme', 'Sarrazin', 15), \
+            ('Mr', 'Jourdan', 16), \
+            ('Mme', 'Grand', 17);",
             kind: MigrationKind::Up,
         },
        Migration {

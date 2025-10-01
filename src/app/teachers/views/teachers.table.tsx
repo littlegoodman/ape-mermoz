@@ -46,10 +46,10 @@ export const TeachersTable = ({
 
   return (
     <Table
-      headers={[t("Classe"), t("Prénom"), t("Nom")]}
+      headers={[t("Classe"), t("Titre"), t("Nom")]}
       rows={teachers?.map((teacher) => [
-        teacher.class,
-        teacher.firstName,
+        teacher.class.name,
+        teacher.title,
         teacher.lastName,
       ])}
       onEdit={handleEdit}

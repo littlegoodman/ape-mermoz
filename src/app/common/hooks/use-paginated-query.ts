@@ -77,8 +77,10 @@ export const usePaginatedQuery = <
   const [page, setPage] = React.useState(1);
   const [params, setParams] = React.useState<S>(defaultParams ?? ({} as S));
   const [filter, setFilter] = React.useState<string | undefined>(undefined);
-  const debouncedFilter = useDebounce<string | undefined>(filter, 500, () =>
-    setPage(1)
+  const debouncedFilter = useDebounce<string | undefined>(
+    filter,
+    undefined,
+    () => setPage(1)
   );
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>();
 
