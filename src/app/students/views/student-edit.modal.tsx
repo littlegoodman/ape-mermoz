@@ -12,6 +12,7 @@ import {
   Row,
   Stack,
 } from "../../../platform/ui/components";
+import { useClasses } from "../../common/hooks";
 
 export type StudentEditModalProps = {
   student: Student | undefined;
@@ -21,21 +22,58 @@ export const StudentEditModal = Modal.create(
   ({ student }: StudentEditModalProps): JSX.Element => {
     const { t } = useTranslation();
     const { upsert } = useStudents();
+    const { findAll } = useClasses();
 
     const {
       register,
       handleSubmit,
       reset,
       watch,
+      setValue,
       formState: { isValid, errors },
     } = useForm<Student>({
       defaultValues: student,
     });
 
+    const { data: classes } = findAll();
+    if (!classes) {
+      return <div>Loading...</div>;
+    }
+
+    const selectedClassId = watch("class.id");
+
+    const handleClassChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const classId = parseInt(event.target.value);
+      const selectedClass = classes.find((c) => c.id === classId);
+      if (selectedClass) {
+        setValue("class.id", classId);
+        setValue("class.name", selectedClass.name);
+      }
+    };
+
+    const onSubmit = (data: Student) => {
+      // Ensure we have the complete class object
+      const selectedClass = classes.find((c) => c.id === data.class.id);
+      if (selectedClass) {
+        upsert({
+          ...data,
+          class: {
+            id: selectedClass.id,
+            name: selectedClass.name,
+          },
+        });
+      }
+    };
+
+    // Add validation for class selection
+    const isClassSelected = Boolean(
+      selectedClassId && classes.some((c) => c.id === selectedClassId)
+    );
+
     return (
       <ModalContainer
-        isValid={isValid}
-        onSubmit={handleSubmit((data) => upsert(data))}
+        isValid={isValid && isClassSelected}
+        onSubmit={handleSubmit(onSubmit)}
         onClose={() => reset()}
       >
         <Stack>
@@ -63,29 +101,24 @@ export const StudentEditModal = Modal.create(
               />
             </FormControl>
           </Row>
-          <Row>
-            <FormControl
-              mandatory
+          <FormControl
+            mandatory
+            label={t("Classe")}
+            error={!isClassSelected}
+            helperText={
+              !isClassSelected ? t("La classe est requise") : undefined
+            }
+          >
+            <Select
               label={t("Classe")}
-              error={!!errors.class}
-              helperText={errors.class?.message}
+              name="class.id"
+              value={selectedClassId?.toString()}
+              onChange={handleClassChange}
+              items={classes}
             >
-              <Select
-                label={t("Classe")}
-                {...register("class", { required: t("La classe est requise") })}
-                value={watch("class")}
-                items={[
-                  { id: "CE1", label: "CE1" },
-                  { id: "CE2", label: "CE2" },
-                  { id: "CM1", label: "CM1" },
-                  { id: "CM2a", label: "CM2a" },
-                  { id: "CM2b", label: "CM2b" },
-                ]}
-              >
-                {(item) => <Item key={item.id}>{item.label}</Item>}
-              </Select>
-            </FormControl>
-          </Row>
+              {(item) => <Item key={item.id}>{item.name}</Item>}
+            </Select>
+          </FormControl>
         </Stack>
       </ModalContainer>
     );

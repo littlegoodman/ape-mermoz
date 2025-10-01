@@ -80,7 +80,7 @@ export const TeacherEditModal = Modal.create(
           <Row>
             <FormControl
               mandatory
-              label={t("Prénom")}
+              label={t("Titre")}
               error={!!errors.title}
               helperText={errors.title?.message}
             >

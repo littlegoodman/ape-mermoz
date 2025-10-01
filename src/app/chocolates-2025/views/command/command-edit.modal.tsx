@@ -79,7 +79,7 @@ export const CommandEditModal = Modal.create(
                 key={student.id}
                 textValue={`${student.firstName} ${student.lastName} (${student.class})`}
               >
-                {student.firstName} {student.lastName} ({student.class})
+                {student.firstName} {student.lastName} ({student.class.name})
               </Item>
             ))}
           </Select>

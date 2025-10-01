@@ -58,7 +58,7 @@ pub fn get_migrations() -> Vec<Migration> {
             );",
             kind: MigrationKind::Up,
         },
-        Migration {
+        Migration { // tel - email - mode de paiement
             version: 6,
             description: "create_commands_table",
             sql: "CREATE TABLE commands ( \
