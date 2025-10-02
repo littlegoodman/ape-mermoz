@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 export function useDebounce<T>(
   value: T,
@@ -13,7 +13,7 @@ export function useDebounce<T>(
       if (value !== debouncedValue) {
         onValueChange?.(value);
       }
-    }, delay || 500);
+    }, delay || 300);
 
     return () => {
       clearTimeout(timer);

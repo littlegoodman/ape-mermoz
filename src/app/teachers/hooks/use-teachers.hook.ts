@@ -1,12 +1,15 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TeachersRepository } from "../infra/teachers.repository";
 import { useFilteredQuery } from "../../common/hooks";
 
 export type Teacher = {
   id: number;
-  firstName: string;
+  title: string;
   lastName: string;
-  class: string;
+  class: {
+    id: number;
+    name: string;
+  };
 };
 
 const teachers = TeachersRepository.load();

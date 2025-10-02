@@ -1,6 +1,6 @@
 import { JSX } from "react";
 import { Page } from "../../common/layout";
-import { Stack, Row } from "../../../platform/ui/components";
+import { Stack } from "../../../platform/ui/components";
 import { useStudents } from "../hooks";
 import { StudentAddButton } from "./student-add.button";
 import { StudentsTable } from "./students.table";

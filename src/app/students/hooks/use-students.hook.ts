@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { StudentsRepository } from "../infra/students.repository";
 import { useFilteredQuery } from "../../common/hooks";
 
@@ -6,7 +6,10 @@ export type Student = {
   id: number;
   firstName: string;
   lastName: string;
-  class: string;
+  class: {
+    id: number;
+    name: string;
+  };
 };
 
 const students = StudentsRepository.load();
