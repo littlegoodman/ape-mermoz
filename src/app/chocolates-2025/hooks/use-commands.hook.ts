@@ -20,6 +20,7 @@ export type CommandsSummary = {
     quantity: number;
     price: number;
     preferentialPrice: number;
+    imageLink?: string;
   }[];
   totalPrice: number;
   totalPreferentialPrice: number;

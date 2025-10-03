@@ -54,7 +54,8 @@ pub fn get_migrations() -> Vec<Migration> {
                 name TEXT NOT NULL, \
                 description TEXT NOT NULL, \
                 price REAL NOT NULL, \
-                preferential_price REAL NOT NULL \
+                preferential_price REAL NOT NULL, \
+                image_link TEXT \
             );",
             kind: MigrationKind::Up,
         },

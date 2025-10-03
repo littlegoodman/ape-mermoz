@@ -2,6 +2,64 @@ import { JSX } from "react";
 import { CommandsSummary } from "../../hooks";
 import { Empty, Row, Stack } from "../../../../platform/ui";
 
+import articleImage1 from "../../../../assets/articles/1.png";
+import articleImage2 from "../../../../assets/articles/2.png";
+import articleImage3 from "../../../../assets/articles/3.png";
+import articleImage4 from "../../../../assets/articles/4.png";
+import articleImage5 from "../../../../assets/articles/5.png";
+import articleImage6 from "../../../../assets/articles/6.png";
+import articleImage7 from "../../../../assets/articles/7.png";
+import articleImage8 from "../../../../assets/articles/8.png";
+import articleImage9 from "../../../../assets/articles/9.png";
+import articleImage10 from "../../../../assets/articles/10.png";
+import articleImage11 from "../../../../assets/articles/11.png";
+import articleImage12 from "../../../../assets/articles/12.png";
+import articleImage13 from "../../../../assets/articles/13.png";
+import articleImage14 from "../../../../assets/articles/14.png";
+import articleImage15 from "../../../../assets/articles/15.png";
+import articleImage16 from "../../../../assets/articles/16.png";
+import articleImage17 from "../../../../assets/articles/17.png";
+import articleImage18 from "../../../../assets/articles/18.png";
+import articleImage19 from "../../../../assets/articles/19.png";
+import articleImage20 from "../../../../assets/articles/20.png";
+import articleImage21 from "../../../../assets/articles/21.png";
+import articleImage22 from "../../../../assets/articles/22.png";
+import articleImage23 from "../../../../assets/articles/23.png";
+import articleImage24 from "../../../../assets/articles/24.png";
+import articleImage25 from "../../../../assets/articles/25.png";
+import articleImage26 from "../../../../assets/articles/26.png";
+import articleImage27 from "../../../../assets/articles/27.png";
+
+const ARTICLES_IMAGES = {
+  "articles/1.png": articleImage1,
+  "articles/2.png": articleImage2,
+  "articles/3.png": articleImage3,
+  "articles/4.png": articleImage4,
+  "articles/5.png": articleImage5,
+  "articles/6.png": articleImage6,
+  "articles/7.png": articleImage7,
+  "articles/8.png": articleImage8,
+  "articles/9.png": articleImage9,
+  "articles/10.png": articleImage10,
+  "articles/11.png": articleImage11,
+  "articles/12.png": articleImage12,
+  "articles/13.png": articleImage13,
+  "articles/14.png": articleImage14,
+  "articles/15.png": articleImage15,
+  "articles/16.png": articleImage16,
+  "articles/17.png": articleImage17,
+  "articles/18.png": articleImage18,
+  "articles/19.png": articleImage19,
+  "articles/20.png": articleImage20,
+  "articles/21.png": articleImage21,
+  "articles/22.png": articleImage22,
+  "articles/23.png": articleImage23,
+  "articles/24.png": articleImage24,
+  "articles/25.png": articleImage25,
+  "articles/26.png": articleImage26,
+  "articles/27.png": articleImage27,
+};
+
 // Styled Components
 const QuantityHeader = () => (
   <div style={{ textAlign: "center", width: "50px" }}>
@@ -72,6 +130,51 @@ const ArticleHeaders = () => (
     </Row>
   </div>
 );
+
+const ArticleImage = ({
+  article,
+}: {
+  article: CommandsSummary["articles"][0]["article"];
+}) => {
+  console.log(
+    "link",
+    article.imageLink,
+    ARTICLES_IMAGES[article.imageLink as keyof typeof ARTICLES_IMAGES]
+  );
+  if (!article.imageLink) {
+    return null;
+  }
+
+  return (
+    <div
+      style={{
+        width: "60px",
+        height: "60px",
+        marginRight: "12px",
+        flexShrink: 0,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <img
+        src={ARTICLES_IMAGES[article.imageLink as keyof typeof ARTICLES_IMAGES]}
+        alt={article.name}
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          borderRadius: "4px",
+          border: "1px solid #e5e7eb",
+        }}
+        onError={(e) => {
+          // Hide the image if it fails to load
+          e.currentTarget.style.display = "none";
+        }}
+      />
+    </div>
+  );
+};
 
 const ArticleDescription = ({
   article,
@@ -510,7 +613,10 @@ const ArticleCard = ({
     }}
   >
     <Row justify="space" align="center">
-      <ArticleDescription article={article.article} />
+      <div style={{ display: "flex", alignItems: "center", flex: 1 }}>
+        <ArticleImage article={article.article} />
+        <ArticleDescription article={article.article} />
+      </div>
       <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
         <Quantity quantity={article.quantity} />
         <Price price={article.price} />

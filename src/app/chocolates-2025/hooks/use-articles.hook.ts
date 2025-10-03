@@ -7,6 +7,7 @@ export type Article = {
   description: string;
   price: number;
   preferentialPrice: number;
+  imageLink?: string;
 };
 
 const repository = ArticlesRepository.load();
