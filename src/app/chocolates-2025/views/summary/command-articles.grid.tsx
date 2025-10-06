@@ -104,7 +104,7 @@ const PreferentialPriceHeader = () => (
         letterSpacing: "0.05em",
       }}
     >
-      Prix préférentiel
+      Prix préf.
     </div>
   </div>
 );
@@ -602,14 +602,7 @@ const ArticleCard = ({
       width: "100%",
       display: "flex",
       alignItems: "center",
-      borderLeft: "4px solid #3b82f6",
       transition: "all 0.2s ease-in-out",
-    }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.borderLeftColor = "#1d4ed8";
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.borderLeftColor = "#3b82f6";
     }}
   >
     <Row justify="space" align="center">
@@ -702,7 +695,7 @@ export const CommandArticlesGrid = ({
   );
 
   return (
-    <>
+    <div>
       {/* Articles Grid */}
       <div style={{ display: "flex", gap: "16px" }}>
         <ArticlesColumn articles={firstColumnArticles} />
@@ -720,6 +713,6 @@ export const CommandArticlesGrid = ({
         firstColumnArticles={firstColumnArticles}
         secondColumnArticles={secondColumnArticles}
       />
-    </>
+    </div>
   );
 };
