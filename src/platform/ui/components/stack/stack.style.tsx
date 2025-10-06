@@ -7,6 +7,7 @@ export const StackContainer = styled("div", {
   width: "100%",
   variants: {
     spacing: {
+      0: { gap: "$space$0" },
       1: { gap: "$space$1" },
       2: { gap: "$space$2" },
       3: { gap: "$space$3" },

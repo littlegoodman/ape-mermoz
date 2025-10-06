@@ -1,6 +1,6 @@
 import { JSX } from "react";
 import { CommandsSummary } from "../../hooks";
-import { Empty, Row, Stack } from "../../../../platform/ui";
+import { Empty, Row, Stack, styled } from "../../../../platform/ui";
 
 import articleImage1 from "../../../../assets/articles/1.png";
 import articleImage2 from "../../../../assets/articles/2.png";
@@ -60,59 +60,57 @@ const ARTICLES_IMAGES = {
   "articles/27.png": articleImage27,
 };
 
-// Styled Components
 const QuantityHeader = () => (
-  <div style={{ textAlign: "center", width: "50px" }}>
-    <div
-      style={{
-        fontSize: "13px",
-        fontWeight: "700",
-        color: "#374151",
-        textTransform: "uppercase",
-        letterSpacing: "0.05em",
-      }}
-    >
-      Quantité
-    </div>
+  <div
+    style={{
+      textAlign: "center",
+      width: "50px",
+      fontSize: "13px",
+      fontWeight: "700",
+      color: "#374151",
+      textTransform: "uppercase",
+      letterSpacing: "0.05em",
+    }}
+  >
+    Quantité
   </div>
 );
 
 const PriceHeader = () => (
-  <div style={{ textAlign: "center", width: "60px" }}>
-    <div
-      style={{
-        fontSize: "13px",
-        fontWeight: "700",
-        color: "#374151",
-        textTransform: "uppercase",
-        letterSpacing: "0.05em",
-      }}
-    >
-      Prix
-    </div>
+  <div
+    style={{
+      fontSize: "13px",
+      fontWeight: "700",
+      color: "#374151",
+      textTransform: "uppercase",
+      letterSpacing: "0.05em",
+      textAlign: "center",
+      width: "60px",
+    }}
+  >
+    Prix
   </div>
 );
 
 const PreferentialPriceHeader = () => (
-  <div style={{ textAlign: "center", width: "80px" }}>
-    <div
-      style={{
-        fontSize: "13px",
-        fontWeight: "700",
-        color: "#374151",
-        textTransform: "uppercase",
-        letterSpacing: "0.05em",
-      }}
-    >
-      Prix préf.
-    </div>
+  <div
+    style={{
+      textAlign: "center",
+      width: "80px",
+      fontSize: "13px",
+      fontWeight: "700",
+      color: "#374151",
+      textTransform: "uppercase",
+      letterSpacing: "0.05em",
+    }}
+  >
+    Prix préf.
   </div>
 );
 
 const ArticleHeaders = () => (
   <div
     style={{
-      padding: "8px 12px",
       marginBottom: "8px",
       height: "auto",
       width: "100%",
@@ -146,33 +144,17 @@ const ArticleImage = ({
   }
 
   return (
-    <div
+    <img
+      src={ARTICLES_IMAGES[article.imageLink as keyof typeof ARTICLES_IMAGES]}
+      alt={article.name}
       style={{
-        width: "60px",
-        height: "60px",
-        marginRight: "12px",
-        flexShrink: 0,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        width: "45px",
+        height: "45px",
+        objectFit: "cover",
+        borderRadius: "4px",
+        border: "1px solid #e5e7eb",
       }}
-    >
-      <img
-        src={ARTICLES_IMAGES[article.imageLink as keyof typeof ARTICLES_IMAGES]}
-        alt={article.name}
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          borderRadius: "4px",
-          border: "1px solid #e5e7eb",
-        }}
-        onError={(e) => {
-          // Hide the image if it fails to load
-          e.currentTarget.style.display = "none";
-        }}
-      />
-    </div>
+    />
   );
 };
 
@@ -181,31 +163,48 @@ const ArticleDescription = ({
 }: {
   article: CommandsSummary["articles"][0]["article"];
 }) => (
-  <div style={{ flex: 1 }}>
+  <Stack spacing={0}>
     <h4
       style={{
         margin: "0 0 4px 0",
-        fontSize: "15px",
+        fontSize: "14px",
         fontWeight: "500",
         color: "#1f2937",
-        lineHeight: "1.4",
+        lineHeight: "1.3",
         letterSpacing: "0.025em",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
       }}
     >
       {article.name}
     </h4>
-    <div style={{ fontSize: "11px", color: "#6b7280", lineHeight: "1.3" }}>
-      <div style={{ marginBottom: "2px" }}>{article.description}</div>
-      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-        <span style={{ textDecoration: "line-through", color: "#9ca3af" }}>
+    <div style={{ fontSize: "10px", color: "#6b7280", lineHeight: "1.2" }}>
+      <div
+        style={{
+          marginBottom: "2px",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {article.description}
+      </div>
+      <Row>
+        <span
+          style={{
+            textDecoration: "line-through",
+            color: "#9ca3af",
+            fontSize: "9px",
+          }}
+        >
           {article.price.toFixed(2)} €
         </span>
-        <span style={{ color: "#059669", fontWeight: "500" }}>
+        <span style={{ color: "#059669", fontWeight: "500", fontSize: "9px" }}>
           {article.preferentialPrice.toFixed(2)} €
         </span>
-      </div>
+      </Row>
     </div>
-  </div>
+  </Stack>
 );
 
 const Quantity = ({ quantity }: { quantity: number }) => (
@@ -215,10 +214,6 @@ const Quantity = ({ quantity }: { quantity: number }) => (
         fontSize: "16px",
         fontWeight: "600",
         color: "#374151",
-        backgroundColor: "#f3f4f6",
-        padding: "4px 8px",
-        borderRadius: "4px",
-        border: "1px solid #e5e7eb",
       }}
     >
       {quantity}
@@ -233,10 +228,6 @@ const Price = ({ price }: { price: number }) => (
         fontSize: "16px",
         fontWeight: "600",
         color: "#374151",
-        backgroundColor: "#f3f4f6",
-        padding: "4px 8px",
-        borderRadius: "4px",
-        border: "1px solid #e5e7eb",
       }}
     >
       {price.toFixed(2)} €
@@ -251,10 +242,6 @@ const PreferentialPrice = ({ price }: { price: number }) => (
         fontSize: "16px",
         fontWeight: "600",
         color: "#059669",
-        backgroundColor: "#ecfdf5",
-        padding: "4px 8px",
-        borderRadius: "4px",
-        border: "1px solid #a7f3d0",
       }}
     >
       {price.toFixed(2)} €
@@ -276,24 +263,30 @@ const Subtotal = ({ articles }: { articles: CommandsSummary["articles"] }) => {
   return (
     <div
       style={{
-        border: "2px solid #3b82f6",
+        border: "1px solid #3b82f6",
         borderRadius: "4px",
-        padding: "8px 10px",
         marginTop: "8px",
         backgroundColor: "#eff6ff",
-        height: "70px",
+        height: "50px",
         width: "100%",
         display: "flex",
         alignItems: "center",
         fontWeight: "600",
       }}
     >
-      <Row justify="space" align="center">
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+          gap: "8px",
+        }}
+      >
         <div style={{ flex: 1 }}>
           <h4
             style={{
               margin: "0",
-              fontSize: "15px",
+              fontSize: "13px",
               fontWeight: "600",
               color: "#1e40af",
             }}
@@ -301,54 +294,48 @@ const Subtotal = ({ articles }: { articles: CommandsSummary["articles"] }) => {
             Sous-total
           </h4>
         </div>
-        <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-          <div style={{ textAlign: "center", width: "50px" }}>
+        <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+          <div
+            style={{ textAlign: "center", minWidth: "35px", flex: "0 0 35px" }}
+          >
             <div
               style={{
-                fontSize: "16px",
+                fontSize: "12px",
                 fontWeight: "600",
                 color: "#1e40af",
-                backgroundColor: "#dbeafe",
-                padding: "4px 8px",
-                borderRadius: "4px",
-                border: "1px solid #93c5fd",
               }}
             >
               {totalQuantity}
             </div>
           </div>
-          <div style={{ textAlign: "center", width: "60px" }}>
+          <div
+            style={{ textAlign: "center", minWidth: "45px", flex: "0 0 45px" }}
+          >
             <div
               style={{
-                fontSize: "16px",
+                fontSize: "12px",
                 fontWeight: "600",
                 color: "#1e40af",
-                backgroundColor: "#dbeafe",
-                padding: "4px 8px",
-                borderRadius: "4px",
-                border: "1px solid #93c5fd",
               }}
             >
               {totalPrice.toFixed(2)} €
             </div>
           </div>
-          <div style={{ textAlign: "center", width: "80px" }}>
+          <div
+            style={{ textAlign: "center", minWidth: "55px", flex: "0 0 55px" }}
+          >
             <div
               style={{
-                fontSize: "16px",
+                fontSize: "12px",
                 fontWeight: "600",
                 color: "#059669",
-                backgroundColor: "#ecfdf5",
-                padding: "4px 8px",
-                borderRadius: "4px",
-                border: "1px solid #a7f3d0",
               }}
             >
               {totalPreferentialPrice.toFixed(2)} €
             </div>
           </div>
         </div>
-      </Row>
+      </div>
     </div>
   );
 };
@@ -381,12 +368,11 @@ const GlobalTotal = ({
   return (
     <div
       style={{
-        border: "3px solid #1d4ed8",
-        borderRadius: "6px",
-        padding: "12px 16px",
-        marginTop: "16px",
+        border: "2px solid #1d4ed8",
+        borderRadius: "4px",
+        marginTop: "12px",
         backgroundColor: "#1e40af",
-        height: "80px",
+        height: "60px",
         width: "100%",
         display: "flex",
         alignItems: "center",
@@ -394,12 +380,19 @@ const GlobalTotal = ({
         color: "white",
       }}
     >
-      <Row justify="space" align="center">
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+          gap: "8px",
+        }}
+      >
         <div style={{ flex: 1 }}>
           <h3
             style={{
               margin: "0",
-              fontSize: "18px",
+              fontSize: "16px",
               fontWeight: "700",
               color: "white",
             }}
@@ -407,54 +400,48 @@ const GlobalTotal = ({
             TOTAL GÉNÉRAL
           </h3>
         </div>
-        <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-          <div style={{ textAlign: "center", width: "50px" }}>
+        <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+          <div
+            style={{ textAlign: "center", minWidth: "35px", flex: "0 0 35px" }}
+          >
             <div
               style={{
-                fontSize: "18px",
+                fontSize: "14px",
                 fontWeight: "700",
                 color: "white",
-                backgroundColor: "rgba(255, 255, 255, 0.2)",
-                padding: "6px 10px",
-                borderRadius: "6px",
-                border: "2px solid rgba(255, 255, 255, 0.3)",
               }}
             >
               {totalQuantity}
             </div>
           </div>
-          <div style={{ textAlign: "center", width: "60px" }}>
+          <div
+            style={{ textAlign: "center", minWidth: "45px", flex: "0 0 45px" }}
+          >
             <div
               style={{
-                fontSize: "18px",
+                fontSize: "14px",
                 fontWeight: "700",
                 color: "white",
-                backgroundColor: "rgba(255, 255, 255, 0.2)",
-                padding: "6px 10px",
-                borderRadius: "6px",
-                border: "2px solid rgba(255, 255, 255, 0.3)",
               }}
             >
               {totalPrice.toFixed(2)} €
             </div>
           </div>
-          <div style={{ textAlign: "center", width: "80px" }}>
+          <div
+            style={{ textAlign: "center", minWidth: "55px", flex: "0 0 55px" }}
+          >
             <div
               style={{
-                fontSize: "18px",
+                fontSize: "14px",
                 fontWeight: "700",
                 color: "#10b981",
-                backgroundColor: "rgba(16, 185, 129, 0.2)",
-                padding: "6px 10px",
-                borderRadius: "6px",
-                border: "2px solid rgba(16, 185, 129, 0.4)",
               }}
             >
               {totalPreferentialPrice.toFixed(2)} €
             </div>
           </div>
         </div>
-      </Row>
+      </div>
     </div>
   );
 };
@@ -485,12 +472,11 @@ const TotalBenefit = ({
   return (
     <div
       style={{
-        border: "3px solid #059669",
-        borderRadius: "6px",
-        padding: "12px 16px",
+        border: "2px solid #059669",
+        borderRadius: "4px",
         marginTop: "8px",
         backgroundColor: "#059669",
-        height: "80px",
+        height: "60px",
         width: "100%",
         display: "flex",
         alignItems: "center",
@@ -498,12 +484,19 @@ const TotalBenefit = ({
         color: "white",
       }}
     >
-      <Row justify="space" align="center">
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+          gap: "8px",
+        }}
+      >
         <div style={{ flex: 1 }}>
           <h3
             style={{
               margin: "0",
-              fontSize: "18px",
+              fontSize: "16px",
               fontWeight: "700",
               color: "white",
             }}
@@ -511,54 +504,48 @@ const TotalBenefit = ({
             BÉNÉFICE TOTAL
           </h3>
         </div>
-        <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-          <div style={{ textAlign: "center", width: "50px" }}>
+        <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+          <div
+            style={{ textAlign: "center", minWidth: "35px", flex: "0 0 35px" }}
+          >
             <div
               style={{
-                fontSize: "18px",
+                fontSize: "14px",
                 fontWeight: "700",
                 color: "white",
-                backgroundColor: "rgba(255, 255, 255, 0.2)",
-                padding: "6px 10px",
-                borderRadius: "6px",
-                border: "2px solid rgba(255, 255, 255, 0.3)",
               }}
             >
               -
             </div>
           </div>
-          <div style={{ textAlign: "center", width: "60px" }}>
+          <div
+            style={{ textAlign: "center", minWidth: "45px", flex: "0 0 45px" }}
+          >
             <div
               style={{
-                fontSize: "18px",
+                fontSize: "14px",
                 fontWeight: "700",
                 color: "white",
-                backgroundColor: "rgba(255, 255, 255, 0.2)",
-                padding: "6px 10px",
-                borderRadius: "6px",
-                border: "2px solid rgba(255, 255, 255, 0.3)",
               }}
             >
               -
             </div>
           </div>
-          <div style={{ textAlign: "center", width: "80px" }}>
+          <div
+            style={{ textAlign: "center", minWidth: "55px", flex: "0 0 55px" }}
+          >
             <div
               style={{
-                fontSize: "18px",
+                fontSize: "14px",
                 fontWeight: "700",
                 color: "white",
-                backgroundColor: "rgba(255, 255, 255, 0.2)",
-                padding: "6px 10px",
-                borderRadius: "6px",
-                border: "2px solid rgba(255, 255, 255, 0.3)",
               }}
             >
               {totalBenefit.toFixed(2)} €
             </div>
           </div>
         </div>
-      </Row>
+      </div>
     </div>
   );
 };
@@ -570,14 +557,16 @@ const ArticlesColumn = ({
 }) => (
   <div
     style={{
-      flex: 1,
       display: "flex",
       flexDirection: "column",
       justifyContent: "flex-end",
+      minWidth: 0,
+      overflow: "hidden",
+      width: "100%",
     }}
   >
     <ArticleHeaders />
-    <Stack spacing={2}>
+    <Stack spacing={1}>
       {articles.map((article) => (
         <ArticleCard key={article.article.id} article={article} />
       ))}
@@ -586,37 +575,27 @@ const ArticlesColumn = ({
   </div>
 );
 
+//const FramedArticleCard = styled(Row, {
+//  border: "1px solid #d1d5db",
+//  borderRadius: "4px",
+//  padding: "8px 12px",
+//  marginBottom: "4px",
+//  backgroundColor: "#ffffff",
+//  height: "70px",
+//});
+
 const ArticleCard = ({
   article,
 }: {
   article: CommandsSummary["articles"][0];
 }) => (
-  <div
-    style={{
-      border: "1px solid #d1d5db",
-      borderRadius: "4px",
-      padding: "4px 6px",
-      marginBottom: "3px",
-      backgroundColor: "#ffffff",
-      height: "70px",
-      width: "100%",
-      display: "flex",
-      alignItems: "center",
-      transition: "all 0.2s ease-in-out",
-    }}
-  >
-    <Row justify="space" align="center">
-      <div style={{ display: "flex", alignItems: "center", flex: 1 }}>
-        <ArticleImage article={article.article} />
-        <ArticleDescription article={article.article} />
-      </div>
-      <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-        <Quantity quantity={article.quantity} />
-        <Price price={article.price} />
-        <PreferentialPrice price={article.preferentialPrice} />
-      </div>
-    </Row>
-  </div>
+  <Row>
+    <ArticleImage article={article.article} />
+    <ArticleDescription article={article.article} />
+    <Quantity quantity={article.quantity} />
+    <Price price={article.price} />
+    <PreferentialPrice price={article.preferentialPrice} />
+  </Row>
 );
 
 const ARTICLES_FIRST_COLUMN = [
@@ -695,24 +674,19 @@ export const CommandArticlesGrid = ({
   );
 
   return (
-    <div>
-      {/* Articles Grid */}
-      <div style={{ display: "flex", gap: "16px" }}>
+    <Stack>
+      <Row>
         <ArticlesColumn articles={firstColumnArticles} />
         <ArticlesColumn articles={secondColumnArticles} />
-      </div>
-
-      {/* Global Total */}
+      </Row>
       <GlobalTotal
         firstColumnArticles={firstColumnArticles}
         secondColumnArticles={secondColumnArticles}
       />
-
-      {/* Total Benefit */}
       <TotalBenefit
         firstColumnArticles={firstColumnArticles}
         secondColumnArticles={secondColumnArticles}
       />
-    </div>
+    </Stack>
   );
 };
