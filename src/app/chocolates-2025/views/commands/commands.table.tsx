@@ -57,7 +57,7 @@ export const CommandsTable = ({
           0
         );
         return [
-          command.student.class,
+          command.student.class.name,
           `${command.student.firstName} ${command.student.lastName}`,
           command.parent,
           quantity,

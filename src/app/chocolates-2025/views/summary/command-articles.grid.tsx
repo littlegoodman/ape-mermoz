@@ -1,6 +1,6 @@
 import { JSX } from "react";
-import { CommandsSummary } from "../../hooks";
-import { Empty, Row, Stack, styled } from "../../../../platform/ui";
+import { Article, CommandsSummary } from "../../hooks";
+import { Card, Empty, Row, Stack, Text } from "../../../../platform/ui";
 
 import articleImage1 from "../../../../assets/articles/1.png";
 import articleImage2 from "../../../../assets/articles/2.png";
@@ -134,11 +134,6 @@ const ArticleImage = ({
 }: {
   article: CommandsSummary["articles"][0]["article"];
 }) => {
-  console.log(
-    "link",
-    article.imageLink,
-    ARTICLES_IMAGES[article.imageLink as keyof typeof ARTICLES_IMAGES]
-  );
   if (!article.imageLink) {
     return null;
   }
@@ -158,95 +153,41 @@ const ArticleImage = ({
   );
 };
 
-const ArticleDescription = ({
-  article,
-}: {
-  article: CommandsSummary["articles"][0]["article"];
-}) => (
+const ArticleDescription = ({ article }: { article: Article }) => (
   <Stack spacing={0}>
-    <h4
-      style={{
-        margin: "0 0 4px 0",
-        fontSize: "14px",
-        fontWeight: "500",
-        color: "#1f2937",
-        lineHeight: "1.3",
-        letterSpacing: "0.025em",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-      }}
-    >
-      {article.name}
-    </h4>
-    <div style={{ fontSize: "10px", color: "#6b7280", lineHeight: "1.2" }}>
-      <div
-        style={{
-          marginBottom: "2px",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
-      >
+    <Text variant="bodyAlternate">{article.name}</Text>
+    <div style={{ maxWidth: 150 }}>
+      <Text color="neutral" size="xs" ellipsis={true}>
         {article.description}
-      </div>
-      <Row>
-        <span
-          style={{
-            textDecoration: "line-through",
-            color: "#9ca3af",
-            fontSize: "9px",
-          }}
-        >
-          {article.price.toFixed(2)} €
-        </span>
-        <span style={{ color: "#059669", fontWeight: "500", fontSize: "9px" }}>
-          {article.preferentialPrice.toFixed(2)} €
-        </span>
-      </Row>
+      </Text>
     </div>
+    <Row>
+      <Text color="neutral" size="xs" crossedOut={true}>
+        {article.price.toFixed(2)} €
+      </Text>
+      <Text color="primary" size="xs">
+        {article.preferentialPrice.toFixed(2)} €
+      </Text>
+    </Row>
   </Stack>
 );
 
 const Quantity = ({ quantity }: { quantity: number }) => (
-  <div style={{ textAlign: "center", width: "50px" }}>
-    <div
-      style={{
-        fontSize: "16px",
-        fontWeight: "600",
-        color: "#374151",
-      }}
-    >
-      {quantity}
-    </div>
-  </div>
+  <Text size="s" weight="bold" noWrap>
+    {quantity}
+  </Text>
 );
 
 const Price = ({ price }: { price: number }) => (
-  <div style={{ textAlign: "center", width: "60px" }}>
-    <div
-      style={{
-        fontSize: "16px",
-        fontWeight: "600",
-        color: "#374151",
-      }}
-    >
-      {price.toFixed(2)} €
-    </div>
-  </div>
+  <Text size="s" weight="bold" noWrap>
+    {price.toFixed(2)} €
+  </Text>
 );
 
 const PreferentialPrice = ({ price }: { price: number }) => (
-  <div style={{ textAlign: "center", width: "80px" }}>
-    <div
-      style={{
-        fontSize: "16px",
-        fontWeight: "600",
-        color: "#059669",
-      }}
-    >
-      {price.toFixed(2)} €
-    </div>
-  </div>
+  <Text size="s" weight="bold" color="primary" noWrap>
+    {price.toFixed(2)} €
+  </Text>
 );
 
 const Subtotal = ({ articles }: { articles: CommandsSummary["articles"] }) => {
@@ -561,7 +502,6 @@ const ArticlesColumn = ({
       flexDirection: "column",
       justifyContent: "flex-end",
       minWidth: 0,
-      overflow: "hidden",
       width: "100%",
     }}
   >
@@ -575,27 +515,20 @@ const ArticlesColumn = ({
   </div>
 );
 
-//const FramedArticleCard = styled(Row, {
-//  border: "1px solid #d1d5db",
-//  borderRadius: "4px",
-//  padding: "8px 12px",
-//  marginBottom: "4px",
-//  backgroundColor: "#ffffff",
-//  height: "70px",
-//});
-
 const ArticleCard = ({
   article,
 }: {
   article: CommandsSummary["articles"][0];
 }) => (
-  <Row>
-    <ArticleImage article={article.article} />
-    <ArticleDescription article={article.article} />
-    <Quantity quantity={article.quantity} />
-    <Price price={article.price} />
-    <PreferentialPrice price={article.preferentialPrice} />
-  </Row>
+  <Card fullWidth>
+    <Row>
+      <ArticleImage article={article.article} />
+      <ArticleDescription article={article.article} />
+      <Quantity quantity={article.quantity} />
+      <Price price={article.price} />
+      <PreferentialPrice price={article.preferentialPrice} />
+    </Row>
+  </Card>
 );
 
 const ARTICLES_FIRST_COLUMN = [

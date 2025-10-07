@@ -1,9 +1,4 @@
-import {
-  BabyIcon,
-  CandyCaneIcon,
-  CandyIcon,
-  GraduationCapIcon,
-} from "lucide-react";
+import { BabyIcon, CandyIcon, GraduationCapIcon } from "lucide-react";
 import {
   List,
   ListHeader,
@@ -11,15 +6,10 @@ import {
   ListItemButton,
 } from "../../../platform/ui";
 import { useTranslation } from "react-i18next";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export const Navigation = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-
-  const navigateTo = (route: string) => {
-    navigate(route);
-  };
 
   return (
     <List variant="navigation">
