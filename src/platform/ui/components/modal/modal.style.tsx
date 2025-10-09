@@ -33,4 +33,17 @@ export const ModalContent = styled("div", {
   "& button": {
     marginTop: "1rem",
   },
+  variants: {
+    size: {
+      s: {
+        minWidth: "300px",
+      },
+      m: {
+        minWidth: "500px",
+      },
+      l: {
+        minWidth: "1000px",
+      },
+    },
+  },
 });

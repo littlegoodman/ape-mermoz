@@ -46,7 +46,14 @@ export const CommandsTable = ({
 
   return (
     <Table
-      headers={[t("Classe"), t("Élève"), t("Parent"), t("Quantité"), t("Prix")]}
+      headers={[
+        t("Classe"),
+        t("Élève"),
+        t("Parent"),
+        t("Quantité"),
+        t("Prix"),
+        t("Moyen de Paiement"),
+      ]}
       rows={commands?.map((command) => {
         const quantity = command.articles.reduce(
           (acc, article) => acc + article.quantity,
@@ -62,6 +69,7 @@ export const CommandsTable = ({
           command.parent,
           quantity,
           `${price.toFixed(2)} €`,
+          t(""), // TODO: add payment method
         ];
       })}
       onEdit={handleEdit}

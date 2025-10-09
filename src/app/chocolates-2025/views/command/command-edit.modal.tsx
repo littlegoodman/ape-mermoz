@@ -51,6 +51,7 @@ export const CommandEditModal = Modal.create(
 
     return (
       <ModalContainer
+        size="l"
         isValid={isValid}
         onSubmit={handleSubmit((data) => upsert(data as Command))}
         onClose={() => reset()}
