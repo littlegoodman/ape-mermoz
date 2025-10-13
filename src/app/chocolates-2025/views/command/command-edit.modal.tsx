@@ -6,11 +6,13 @@ import {
   ModalContainer,
   Input,
   FormControl,
+  Stack,
+  Row,
 } from "../../../../platform/ui/components";
-import { Select, Item } from "../../../../platform/ui/components/select";
 import { Article, Command, useCommands } from "../../hooks";
 import { useStudents, Student } from "../../../students/hooks";
 import { CommandArticlesEditGrid } from "./command-articles-edit.grid";
+import { ComboBox } from "../../../../platform/ui";
 
 export type CommandEditModalProps = {
   command: Command | undefined;
@@ -47,7 +49,7 @@ export const CommandEditModal = Modal.create(
       },
     });
 
-    const selectedStudentId = watch("student.id");
+    const student = watch("student");
 
     return (
       <ModalContainer
@@ -56,54 +58,66 @@ export const CommandEditModal = Modal.create(
         onSubmit={handleSubmit((data) => upsert(data as Command))}
         onClose={() => reset()}
       >
-        <FormControl
-          mandatory
-          label={t("Student")}
-          error={!!errors.student}
-          helperText={errors.student?.message}
-        >
-          <Select
-            label="Student"
-            placeholder="Sélectionner un étudiant"
-            {...register("student.id", { required: true })}
-            value={selectedStudentId?.toString()}
-            onChange={(e) => {
-              const studentId = parseInt(e.target.value);
-              const selectedStudent = students?.find((s) => s.id === studentId);
-              if (selectedStudent) {
-                setValue("student", selectedStudent);
-              }
+        <Stack>
+          <Row>
+            <FormControl
+              mandatory
+              width="large"
+              label={t("Student")}
+              error={!!errors.student}
+              helperText={errors.student?.message}
+            >
+              <ComboBox
+                items={
+                  students
+                    ?.sort((a, b) => a.lastName.localeCompare(b.lastName))
+                    .map((s) => ({
+                      key: s.id.toString(),
+                      value: `${s.lastName} ${s.firstName} (${s.class.name})`,
+                    })) ?? []
+                }
+                placeholder={t("Sélectionner un étudiant")}
+                value={
+                  student
+                    ? `${student?.lastName} ${student?.firstName} (${student?.class?.name})`
+                    : ""
+                }
+                onSelectionChange={(key) => {
+                  console.log("key", key);
+                  if (key) {
+                    const studentId = parseInt(key as string);
+                    const selectedStudent = students?.find(
+                      (s) => s.id === studentId
+                    );
+                    if (selectedStudent) {
+                      setValue("student", selectedStudent);
+                    }
+                  }
+                }}
+                error={!!errors.student}
+              />
+            </FormControl>
+
+            <FormControl
+              mandatory
+              label={t("Parent")}
+              error={!!errors.parent}
+              helperText={errors.parent?.message}
+            >
+              <Input {...register("parent", { required: false })} />
+            </FormControl>
+          </Row>
+
+          <CommandArticlesEditGrid
+            {...register("articles")}
+            articles={watch("articles")}
+            onArticlesChange={(articles) => {
+              setValue("articles", articles);
             }}
-          >
-            {students?.map((student: Student) => (
-              <Item
-                key={student.id}
-                textValue={`${student.firstName} ${student.lastName} (${student.class})`}
-              >
-                {student.firstName} {student.lastName} ({student.class.name})
-              </Item>
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl
-          mandatory
-          label={t("Parent")}
-          error={!!errors.parent}
-          helperText={errors.parent?.message}
-        >
-          <Input {...register("parent", { required: false })} />
-        </FormControl>
-
-        <CommandArticlesEditGrid
-          {...register("articles")}
-          articles={watch("articles")}
-          onArticlesChange={(articles) => {
-            setValue("articles", articles);
-          }}
-          isLoading={false}
-          error={null}
-        />
+            isLoading={false}
+            error={null}
+          />
+        </Stack>
       </ModalContainer>
     );
   }

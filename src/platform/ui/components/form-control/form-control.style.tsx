@@ -35,5 +35,19 @@ export const FormControlContainer = styled("div", {
         },
       },
     },
+    width: {
+      small: {
+        width: "200px",
+      },
+      medium: {
+        width: "300px",
+      },
+      large: {
+        width: "400px",
+      },
+      full: {
+        width: "100%",
+      },
+    },
   },
 });

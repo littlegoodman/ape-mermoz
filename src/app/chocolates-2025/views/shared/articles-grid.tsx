@@ -102,128 +102,233 @@ export const getArticlesByColumn = (
   return articles.filter((article) => columnArticles.includes(article.name));
 };
 
+// Helper function to calculate column subtotal
+export const calculateColumnSubtotal = (
+  articles: Article[],
+  quantities: Record<number, number>,
+  usePreferentialPrice: boolean = true
+) => {
+  return articles.reduce((total, article) => {
+    const quantity = quantities[article.id] || 0;
+    const price = usePreferentialPrice
+      ? article.preferentialPrice
+      : article.price;
+    return total + quantity * price;
+  }, 0);
+};
+
+// Styled components for elegant headers
+const HeaderCell = styled("div", {
+  textAlign: "center",
+  fontSize: "10px",
+  fontWeight: "$bold",
+  color: "$slate600",
+  textTransform: "uppercase",
+  letterSpacing: "$base",
+  padding: "$1",
+  borderBottom: "1px solid $pink200",
+  background: "linear-gradient(135deg, $pink50 0%, $purple50 100%)",
+  borderRadius: "$1 $1 0 0",
+});
+
 const QuantityHeader = () => (
-  <div
-    style={{
-      textAlign: "center",
-      width: "50px",
-      fontSize: "13px",
-      fontWeight: "700",
-      color: "#374151",
-      textTransform: "uppercase",
-      letterSpacing: "0.05em",
-    }}
-  >
-    Quantité
-  </div>
+  <HeaderCell css={{ width: "40px", minWidth: "40px" }}>Qté</HeaderCell>
 );
 
 const PriceHeader = () => (
-  <div
-    style={{
-      fontSize: "13px",
-      fontWeight: "700",
-      color: "#374151",
-      textTransform: "uppercase",
-      letterSpacing: "0.05em",
-      textAlign: "center",
-      width: "60px",
-    }}
-  >
-    Prix
-  </div>
+  <HeaderCell css={{ width: "50px", minWidth: "50px" }}>Prix</HeaderCell>
 );
 
 const PreferentialPriceHeader = () => (
-  <div
-    style={{
-      textAlign: "center",
-      width: "80px",
-      fontSize: "13px",
-      fontWeight: "700",
-      color: "#374151",
-      textTransform: "uppercase",
-      letterSpacing: "0.05em",
-    }}
-  >
-    Prix préf.
-  </div>
+  <HeaderCell css={{ width: "60px", minWidth: "60px" }}>Prix préf.</HeaderCell>
 );
 
+const StyledHeaderRow = styled(Row, {
+  marginBottom: "$2",
+  padding: "$1 $2",
+  background: "linear-gradient(135deg, $pink100 0%, $purple100 100%)",
+  borderRadius: "$2",
+  boxShadow: "$vlt",
+});
+
+const StyledHeaderActions = styled(Row, {
+  gap: "$2",
+});
+
 const ArticleHeaders = ({ showPrices = false }: { showPrices?: boolean }) => (
-  <div
-    style={{
-      marginBottom: "8px",
-      height: "auto",
-      width: "100%",
-      display: "flex",
-      alignItems: "center",
-    }}
-  >
-    <Row justify="space" align="center">
-      <div style={{ flex: 1 }}></div>
-      <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-        <QuantityHeader />
-        {showPrices && <PriceHeader />}
-        {showPrices && <PreferentialPriceHeader />}
-      </div>
-    </Row>
-  </div>
+  <StyledHeaderRow justify="space" align="center">
+    <div style={{ flex: 1 }}></div>
+    <StyledHeaderActions align="center">
+      <QuantityHeader />
+      {showPrices && <PriceHeader />}
+      {showPrices && <PreferentialPriceHeader />}
+    </StyledHeaderActions>
+  </StyledHeaderRow>
 );
+
+const StyledArticleImage = styled("img", {
+  width: "40px",
+  height: "40px",
+  objectFit: "cover",
+  borderRadius: "$2",
+  border: "1px solid $pink200",
+  boxShadow: "$vlt",
+  transition: "all 0.2s ease-in-out",
+  "&:hover": {
+    transform: "scale(1.05)",
+    boxShadow: "$soft",
+  },
+});
 
 const ArticleImage = ({ article }: { article: Article }) => {
   if (!article.imageLink) {
-    return null;
+    return (
+      <div
+        style={{
+          width: "40px",
+          height: "40px",
+          borderRadius: "6px",
+          background: "linear-gradient(135deg, $pink200 0%, $purple200 100%)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "$slate500",
+          fontSize: "10px",
+          fontWeight: "bold",
+        }}
+      >
+        ?
+      </div>
+    );
   }
 
   return (
-    <img
+    <StyledArticleImage
       src={ARTICLES_IMAGES[article.imageLink as keyof typeof ARTICLES_IMAGES]}
       alt={article.name}
-      style={{
-        width: "45px",
-        height: "45px",
-        objectFit: "cover",
-        borderRadius: "4px",
-        border: "1px solid #e5e7eb",
-      }}
     />
   );
 };
 
+const StyledDescriptionStack = styled(Stack, {
+  flex: 1,
+  minWidth: 0,
+  maxWidth: "200px",
+  width: "100%",
+});
+
+const StyledPriceRow = styled(Row, {
+  gap: "$2",
+});
+
 const ArticleDescription = ({ article }: { article: Article }) => (
-  <Stack spacing={0}>
-    <Text variant="bodyAlternate">{article.name}</Text>
-    <div style={{ maxWidth: 150 }}>
-      <Text color="neutral" size="xs" ellipsis={true}>
+  <StyledDescriptionStack spacing={0}>
+    <Text
+      variant="bodyAlternate"
+      css={{
+        fontWeight: "$medium",
+        color: "$slate700",
+        fontSize: "$xs",
+        lineHeight: "$s",
+      }}
+    >
+      {article.name}
+    </Text>
+    <div style={{ maxWidth: 160 }}>
+      <Text
+        color="neutral"
+        size="xs"
+        ellipsis={true}
+        css={{
+          color: "$slate500",
+          lineHeight: "$xs",
+          fontSize: "10px",
+        }}
+      >
         {article.description}
       </Text>
     </div>
-    <Row>
-      <Text color="neutral" size="xs" crossedOut={true}>
+    <StyledPriceRow align="center">
+      <Text
+        color="neutral"
+        size="xs"
+        crossedOut={true}
+        css={{
+          color: "$slate400",
+          fontSize: "10px",
+        }}
+      >
         {article.price.toFixed(2)} €
       </Text>
-      <Text color="primary" size="xs">
+      <Text
+        color="primary"
+        size="xs"
+        css={{
+          fontWeight: "$bold",
+          color: "$pink600",
+          fontSize: "$xs",
+        }}
+      >
         {article.preferentialPrice.toFixed(2)} €
       </Text>
-    </Row>
-  </Stack>
+    </StyledPriceRow>
+  </StyledDescriptionStack>
 );
 
 const QuantityDisplay = ({ quantity }: { quantity: number }) => (
-  <Text size="s" weight="bold" noWrap>
+  <Text
+    size="xs"
+    weight="bold"
+    noWrap
+    css={{
+      textAlign: "center",
+      padding: "$1",
+      background: quantity > 0 ? "$pink100" : "$slate100",
+      color: quantity > 0 ? "$pink700" : "$slate500",
+      borderRadius: "$1",
+      minWidth: "30px",
+      fontSize: "$xs",
+    }}
+  >
     {quantity}
   </Text>
 );
 
 const PriceDisplay = ({ price }: { price: number }) => (
-  <Text size="s" weight="bold" noWrap>
+  <Text
+    size="xs"
+    weight="bold"
+    noWrap
+    css={{
+      textAlign: "center",
+      padding: "$1",
+      background: "$slate100",
+      color: "$slate700",
+      borderRadius: "$1",
+      minWidth: "50px",
+      fontSize: "$xs",
+    }}
+  >
     {price.toFixed(2)} €
   </Text>
 );
 
 const PreferentialPriceDisplay = ({ price }: { price: number }) => (
-  <Text size="s" weight="bold" color="primary" noWrap>
+  <Text
+    size="xs"
+    weight="bold"
+    color="primary"
+    noWrap
+    css={{
+      textAlign: "center",
+      padding: "$1",
+      background: "$pink100",
+      color: "$pink700",
+      borderRadius: "$1",
+      minWidth: "60px",
+      fontSize: "$xs",
+    }}
+  >
     {price.toFixed(2)} €
   </Text>
 );
@@ -231,6 +336,18 @@ const PreferentialPriceDisplay = ({ price }: { price: number }) => (
 const QuantityInput = styled(Input, {
   width: "50px",
   textAlign: "center",
+  fontSize: "$xs",
+  fontWeight: "$medium",
+  border: "1px solid $pink200",
+  borderRadius: "$1",
+  padding: "$1",
+  "&:focus": {
+    borderColor: "$pink400",
+    boxShadow: "0 0 0 2px rgba(244, 114, 182, 0.1)",
+  },
+  "&:hover": {
+    borderColor: "$pink300",
+  },
 });
 
 interface ArticleCardProps {
@@ -242,6 +359,36 @@ interface ArticleCardProps {
   onQuantityChange?: (articleId: number, value: string) => void;
 }
 
+const StyledArticleCard = styled(Card, {
+  fullWidth: true,
+  padding: "$2",
+  marginBottom: "$1",
+  background: "linear-gradient(135deg, $white 0%, $pink50 100%)",
+  border: "1px solid $pink200",
+  borderRadius: "$2",
+  boxShadow: "$vlt",
+  width: "100%",
+  transition: "all 0.2s ease-in-out",
+  minHeight: "60px",
+  display: "flex",
+  alignItems: "center",
+  "&:hover": {
+    transform: "translateY(-1px)",
+    boxShadow: "$soft",
+    borderColor: "$pink300",
+  },
+});
+
+const StyledCardRow = styled(Row, {
+  gap: "$2",
+});
+
+const StyledActionsRow = styled(Row, {
+  gap: "$1",
+  minWidth: "120px",
+  justifyContent: "flex-end",
+});
+
 const ArticleCard = ({
   article,
   quantity,
@@ -250,31 +397,33 @@ const ArticleCard = ({
   mode,
   onQuantityChange,
 }: ArticleCardProps) => (
-  <Card fullWidth>
-    <Row>
+  <StyledArticleCard>
+    <StyledCardRow align="center">
       <ArticleImage article={article} />
       <ArticleDescription article={article} />
-      {mode === "edit" ? (
-        <QuantityInput
-          type="number"
-          min="0"
-          value={quantity}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            onQuantityChange?.(article.id, e.target.value)
-          }
-          placeholder="0"
-        />
-      ) : (
-        <>
-          <QuantityDisplay quantity={quantity} />
-          {price !== undefined && <PriceDisplay price={price} />}
-          {preferentialPrice !== undefined && (
-            <PreferentialPriceDisplay price={preferentialPrice} />
-          )}
-        </>
-      )}
-    </Row>
-  </Card>
+      <StyledActionsRow align="center">
+        {mode === "edit" ? (
+          <QuantityInput
+            type="number"
+            min="0"
+            value={quantity}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              onQuantityChange?.(article.id, e.target.value)
+            }
+            placeholder="0"
+          />
+        ) : (
+          <>
+            <QuantityDisplay quantity={quantity} />
+            {price !== undefined && <PriceDisplay price={price} />}
+            {preferentialPrice !== undefined && (
+              <PreferentialPriceDisplay price={preferentialPrice} />
+            )}
+          </>
+        )}
+      </StyledActionsRow>
+    </StyledCardRow>
+  </StyledArticleCard>
 );
 
 interface ArticlesColumnProps {
@@ -287,6 +436,19 @@ interface ArticlesColumnProps {
   onQuantityChange?: (articleId: number, value: string) => void;
 }
 
+const StyledColumn = styled("div", {
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "flex-start",
+  minWidth: 0,
+  width: "100%",
+  flex: "1 1 50%",
+  padding: "$1",
+  background: "linear-gradient(135deg, $pink25 0%, $purple25 100%)",
+  borderRadius: "$3",
+  border: "1px solid $pink100",
+});
+
 const ArticlesColumn = ({
   articles,
   quantities,
@@ -295,32 +457,29 @@ const ArticlesColumn = ({
   mode,
   showPrices = false,
   onQuantityChange,
-}: ArticlesColumnProps) => (
-  <div
-    style={{
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "flex-end",
-      minWidth: 0,
-      width: "100%",
-    }}
-  >
-    <ArticleHeaders showPrices={showPrices} />
-    <Stack spacing={1}>
-      {articles.map((article) => (
-        <ArticleCard
-          key={article.id}
-          article={article}
-          quantity={quantities[article.id] || 0}
-          price={prices?.[article.id]}
-          preferentialPrice={preferentialPrices?.[article.id]}
-          mode={mode}
-          onQuantityChange={onQuantityChange}
-        />
-      ))}
-    </Stack>
-  </div>
-);
+}: ArticlesColumnProps) => {
+  const subtotal = calculateColumnSubtotal(articles, quantities, true);
+
+  return (
+    <StyledColumn>
+      <Subtotal amount={subtotal} />
+      <ArticleHeaders showPrices={showPrices} />
+      <Stack spacing={1}>
+        {articles.map((article) => (
+          <ArticleCard
+            key={article.id}
+            article={article}
+            quantity={quantities[article.id] || 0}
+            price={prices?.[article.id]}
+            preferentialPrice={preferentialPrices?.[article.id]}
+            mode={mode}
+            onQuantityChange={onQuantityChange}
+          />
+        ))}
+      </Stack>
+    </StyledColumn>
+  );
+};
 
 interface ArticlesGridProps {
   articles: Article[];
@@ -332,6 +491,97 @@ interface ArticlesGridProps {
   onQuantityChange?: (articleId: number, value: string) => void;
   children?: ReactNode;
 }
+
+const StyledGridContainer = styled("div", {
+  background: "linear-gradient(135deg, $pink50 0%, $purple50 100%)",
+  borderRadius: "$3",
+  padding: "$2",
+  boxShadow: "$soft",
+  border: "1px solid $pink200",
+});
+
+const StyledMainRow = styled(Row, {
+  gap: "$2",
+});
+
+// Subtotal component
+const StyledSubtotal = styled("div", {
+  marginBottom: "$2",
+  padding: "$2 $3",
+  background: "linear-gradient(135deg, $pink200 0%, $purple200 100%)",
+  borderRadius: "$2",
+  border: "1px solid $pink300",
+  boxShadow: "$vlt",
+  textAlign: "center",
+});
+
+const SubtotalLabel = styled(Text, {
+  fontSize: "$xs",
+  fontWeight: "$bold",
+  color: "$slate600",
+  textTransform: "uppercase",
+  letterSpacing: "$base",
+  marginBottom: "$1",
+});
+
+const SubtotalAmount = styled(Text, {
+  fontSize: "$m",
+  fontWeight: "$bold",
+  color: "$pink700",
+  fontFamily: "$primary",
+});
+
+interface SubtotalProps {
+  amount: number;
+  label?: string;
+}
+
+const Subtotal = ({ amount, label = "Sous-total" }: SubtotalProps) => (
+  <StyledSubtotal>
+    <SubtotalLabel>{label}</SubtotalLabel>
+    <SubtotalAmount>{amount.toFixed(2)} €</SubtotalAmount>
+  </StyledSubtotal>
+);
+
+// Grand total component
+const StyledGrandTotal = styled("div", {
+  marginBottom: "$2",
+  padding: "$2 $3",
+  background: "linear-gradient(135deg, $pink300 0%, $purple300 100%)",
+  borderRadius: "$3",
+  border: "2px solid $pink400",
+  boxShadow: "$soft",
+  textAlign: "center",
+});
+
+const GrandTotalLabel = styled(Text, {
+  fontSize: "$s",
+  fontWeight: "$bold",
+  color: "$white",
+  textTransform: "uppercase",
+  letterSpacing: "$base",
+  marginBottom: "$1",
+});
+
+const GrandTotalAmount = styled(Text, {
+  fontSize: "$xl",
+  fontWeight: "$bolder",
+  color: "$white",
+  fontFamily: "$primary",
+  textShadow: "0 1px 2px rgba(0, 0, 0, 0.2)",
+});
+
+interface GrandTotalProps {
+  amount: number;
+  label?: string;
+}
+
+const GrandTotal = ({ amount, label = "Total Général" }: GrandTotalProps) => (
+  <StyledGrandTotal>
+    <GrandTotalLabel>{label}</GrandTotalLabel>
+    <GrandTotalAmount>{amount.toFixed(2)} €</GrandTotalAmount>
+  </StyledGrandTotal>
+);
 
 export const ArticlesGrid = ({
   articles,
@@ -352,29 +602,45 @@ export const ArticlesGrid = ({
     ARTICLES_SECOND_COLUMN
   );
 
+  // Calculate grand total
+  const firstColumnSubtotal = calculateColumnSubtotal(
+    firstColumnArticles,
+    quantities,
+    true
+  );
+  const secondColumnSubtotal = calculateColumnSubtotal(
+    secondColumnArticles,
+    quantities,
+    true
+  );
+  const grandTotal = firstColumnSubtotal + secondColumnSubtotal;
+
   return (
-    <Stack>
-      <Row>
-        <ArticlesColumn
-          articles={firstColumnArticles}
-          quantities={quantities}
-          prices={prices}
-          preferentialPrices={preferentialPrices}
-          mode={mode}
-          showPrices={showPrices}
-          onQuantityChange={onQuantityChange}
-        />
-        <ArticlesColumn
-          articles={secondColumnArticles}
-          quantities={quantities}
-          prices={prices}
-          preferentialPrices={preferentialPrices}
-          mode={mode}
-          showPrices={showPrices}
-          onQuantityChange={onQuantityChange}
-        />
-      </Row>
-      {children}
-    </Stack>
+    <StyledGridContainer>
+      <Stack spacing={2}>
+        <GrandTotal amount={grandTotal} />
+        <StyledMainRow align="stretch">
+          <ArticlesColumn
+            articles={firstColumnArticles}
+            quantities={quantities}
+            prices={prices}
+            preferentialPrices={preferentialPrices}
+            mode={mode}
+            showPrices={showPrices}
+            onQuantityChange={onQuantityChange}
+          />
+          <ArticlesColumn
+            articles={secondColumnArticles}
+            quantities={quantities}
+            prices={prices}
+            preferentialPrices={preferentialPrices}
+            mode={mode}
+            showPrices={showPrices}
+            onQuantityChange={onQuantityChange}
+          />
+        </StyledMainRow>
+        {children}
+      </Stack>
+    </StyledGridContainer>
   );
 };

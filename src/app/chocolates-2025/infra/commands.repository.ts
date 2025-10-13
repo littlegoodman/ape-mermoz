@@ -82,7 +82,7 @@ export class CommandsRepository {
         CommandArticlePersisted &
         ArticlePersisted)[]
     >(
-      "SELECT commands.id, commands.parent, students.id as student_id, students.first_name as first_name, students.last_name as last_name, classes.id as classId, classes.name as class, commands_articles.article_id as article_id, articles.name as name, articles.description as description, articles.price as price, articles.preferential_price as preferential_price, commands_articles.quantity as quantity FROM commands \
+      "SELECT commands.id, commands.parent, students.id as student_id, students.first_name as first_name, students.last_name as last_name, classes.id as class_id, classes.name as class_name, commands_articles.article_id as article_id, articles.name as name, articles.description as description, articles.price as price, articles.preferential_price as preferential_price, commands_articles.quantity as quantity FROM commands \
       INNER JOIN students ON commands.student_id = students.id \
       INNER JOIN classes ON students.class_id = classes.id \
       INNER JOIN commands_articles ON commands.id = commands_articles.command_id \

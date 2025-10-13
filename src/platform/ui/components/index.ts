@@ -10,3 +10,4 @@ export * from "./empty";
 export * from "./text";
 export * from "./list";
 export * from "./card";
+export * from "./combo-box";
