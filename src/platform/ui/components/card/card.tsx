@@ -5,23 +5,24 @@ import { HTMLAttributes } from "react";
 
 const cardVariables = {
   $$cardBorderWidth: "$borderWidths$1",
-  $$cardBorderColor: "$colors$neutralBorder",
-  $$cardBorderRadius: "$radii$8",
+  $$cardBorderColor: "$colors$pink200",
+  $$cardBorderRadius: "$radii$16",
   $$cardMinWidth: "200px",
-  $$cardShadow: "$shadows$md",
+  $$cardShadow: "$shadows$soft",
   $$cardFooterMaxHeight: "50px",
   $$cardContentMinHeight: "$24",
-  $$cardBackgrounColor: "$colors$gray100",
+  $$cardBackgrounColor: "$colors$cream100",
 };
 
 const StyledHeader = styled("div", {
   display: "flex",
   boxSizing: "border-box",
   alignItems: "center",
-  padding: "$3 $4 $3",
+  padding: "$4 $5 $4",
   position: "relative",
   borderRadius: "$$cardBorderRadius $$cardBorderRadius 0 0",
-  borderBottom: "1px solid $gray400",
+  borderBottom: "1px solid $pink200",
+  background: "$gradients$soft",
   variants: {
     draggable: {
       true: {
@@ -34,16 +35,6 @@ const StyledHeader = styled("div", {
       },
     },
   },
-  // '&:after': {
-  //   content: '""',
-  //   position: 'absolute',
-  //   left: 0,
-  //   right: 0,
-  //   bottom: 0,
-  //   height: 2,
-  //   margin: '0 $5',
-  //   backgroundColor: '$$cardBorderColor',
-  // },
 });
 
 const HeaderContent = styled("div", {
@@ -60,9 +51,11 @@ const StyledTitle = styled(Text, {
   whiteSpace: "nowrap",
   textOverflow: "ellipsis",
   userSelect: "none",
-  fontSize: "$m",
+  fontSize: "$l",
   fontWeight: "$bold",
-  color: "$text",
+  fontFamily: "$primary",
+  color: "$slate700",
+  letterSpacing: "$wide",
 });
 
 const TitleIcon = styled("span", {

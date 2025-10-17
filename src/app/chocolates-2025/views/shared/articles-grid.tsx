@@ -569,9 +569,9 @@ const Subtotal = ({ amount, label = "Sous-total" }: SubtotalProps) => (
 const StyledGrandTotal = styled("div", {
   marginBottom: "$2",
   padding: "$4 $5",
-  background: "linear-gradient(135deg, $slate700 0%, $slate800 100%)",
+  background: "linear-gradient(135deg, $pink600 0%, $purple600 100%)",
   borderRadius: "$3",
-  border: "2px solid $slate600",
+  border: "2px solid $pink500",
   boxShadow: "$lg",
   textAlign: "center",
   position: "relative",
@@ -602,25 +602,26 @@ const MetricItem = styled("div", {
   alignItems: "center",
   minWidth: "100px",
   padding: "$2 $3",
-  background: "rgba(255, 255, 255, 0.15)",
+  background: "rgba(0, 0, 0, 0.2)",
   borderRadius: "$2",
-  border: "1px solid rgba(255, 255, 255, 0.2)",
+  border: "1px solid rgba(255, 255, 255, 0.3)",
   backdropFilter: "blur(10px)",
   transition: "all 0.2s ease-in-out",
   "&:hover": {
-    background: "rgba(255, 255, 255, 0.25)",
+    background: "rgba(0, 0, 0, 0.3)",
     transform: "translateY(-2px)",
-    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
   },
 });
 
 const MetricLabel = styled(Text, {
   fontSize: "$xs",
   fontWeight: "$medium",
-  color: "$slate200",
+  color: "$white",
   marginBottom: "$2",
   textTransform: "uppercase",
   letterSpacing: "$tight",
+  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
 });
 
 const MetricValue = styled(Text, {
@@ -628,7 +629,7 @@ const MetricValue = styled(Text, {
   fontWeight: "$bolder",
   color: "$white",
   fontFamily: "$primary",
-  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+  textShadow: "0 2px 4px rgba(0, 0, 0, 0.5)",
 });
 
 interface GrandTotalProps {
