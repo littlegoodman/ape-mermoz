@@ -271,15 +271,6 @@ export const CommandArticlesGrid = ({
       preferentialPrices={preferentialPrices}
       mode="display"
       showPrices={true}
-    >
-      <GlobalTotal
-        firstColumnArticles={firstColumnArticles}
-        secondColumnArticles={secondColumnArticles}
-      />
-      <TotalBenefit
-        firstColumnArticles={firstColumnArticles}
-        secondColumnArticles={secondColumnArticles}
-      />
-    </ArticlesGrid>
+    ></ArticlesGrid>
   );
 };

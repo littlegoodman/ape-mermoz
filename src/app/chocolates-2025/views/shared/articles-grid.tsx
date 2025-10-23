@@ -117,6 +117,28 @@ export const calculateColumnSubtotal = (
   }, 0);
 };
 
+// Helper function to calculate total quantity
+export const calculateTotalQuantity = (
+  articles: Article[],
+  quantities: Record<number, number>
+) => {
+  return articles.reduce((total, article) => {
+    return total + (quantities[article.id] || 0);
+  }, 0);
+};
+
+// Helper function to calculate total benefits
+export const calculateTotalBenefits = (
+  articles: Article[],
+  quantities: Record<number, number>
+) => {
+  return articles.reduce((total, article) => {
+    const quantity = quantities[article.id] || 0;
+    const benefitPerUnit = article.price - article.preferentialPrice;
+    return total + quantity * benefitPerUnit;
+  }, 0);
+};
+
 // Styled components for elegant headers
 const HeaderCell = styled("div", {
   textAlign: "center",
@@ -546,12 +568,14 @@ const Subtotal = ({ amount, label = "Sous-total" }: SubtotalProps) => (
 // Grand total component
 const StyledGrandTotal = styled("div", {
   marginBottom: "$2",
-  padding: "$2 $3",
-  background: "linear-gradient(135deg, $pink300 0%, $purple300 100%)",
+  padding: "$4 $5",
+  background: "linear-gradient(135deg, $slate700 0%, $slate800 100%)",
   borderRadius: "$3",
-  border: "2px solid $pink400",
-  boxShadow: "$soft",
+  border: "2px solid $slate600",
+  boxShadow: "$lg",
   textAlign: "center",
+  position: "relative",
+  overflow: "hidden",
 });
 
 const GrandTotalLabel = styled(Text, {
@@ -560,26 +584,82 @@ const GrandTotalLabel = styled(Text, {
   color: "$white",
   textTransform: "uppercase",
   letterSpacing: "$base",
-  marginBottom: "$1",
+  marginBottom: "$3",
+  textShadow: "0 1px 2px rgba(0, 0, 0, 0.5)",
 });
 
-const GrandTotalAmount = styled(Text, {
-  fontSize: "$xl",
+const GrandTotalMetrics = styled("div", {
+  display: "flex",
+  justifyContent: "space-around",
+  alignItems: "center",
+  gap: "$4",
+  flexWrap: "wrap",
+});
+
+const MetricItem = styled("div", {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  minWidth: "100px",
+  padding: "$2 $3",
+  background: "rgba(255, 255, 255, 0.15)",
+  borderRadius: "$2",
+  border: "1px solid rgba(255, 255, 255, 0.2)",
+  backdropFilter: "blur(10px)",
+  transition: "all 0.2s ease-in-out",
+  "&:hover": {
+    background: "rgba(255, 255, 255, 0.25)",
+    transform: "translateY(-2px)",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+  },
+});
+
+const MetricLabel = styled(Text, {
+  fontSize: "$xs",
+  fontWeight: "$medium",
+  color: "$slate200",
+  marginBottom: "$2",
+  textTransform: "uppercase",
+  letterSpacing: "$tight",
+});
+
+const MetricValue = styled(Text, {
+  fontSize: "$l",
   fontWeight: "$bolder",
   color: "$white",
   fontFamily: "$primary",
-  textShadow: "0 1px 2px rgba(0, 0, 0, 0.2)",
+  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
 });
 
 interface GrandTotalProps {
-  amount: number;
+  totalQuantity: number;
+  totalPrice: number;
+  totalBenefits: number;
   label?: string;
 }
 
-const GrandTotal = ({ amount, label = "Total Général" }: GrandTotalProps) => (
+const GrandTotal = ({
+  totalQuantity,
+  totalPrice,
+  totalBenefits,
+  label = "Total Général",
+}: GrandTotalProps) => (
   <StyledGrandTotal>
     <GrandTotalLabel>{label}</GrandTotalLabel>
-    <GrandTotalAmount>{amount.toFixed(2)} €</GrandTotalAmount>
+    <GrandTotalMetrics>
+      <MetricItem>
+        <MetricLabel>Quantité</MetricLabel>
+        <MetricValue>{totalQuantity}</MetricValue>
+      </MetricItem>
+      <MetricItem>
+        <MetricLabel>Prix Total</MetricLabel>
+        <MetricValue>{totalPrice.toFixed(2)} €</MetricValue>
+      </MetricItem>
+      <MetricItem>
+        <MetricLabel>Bénéfices</MetricLabel>
+        <MetricValue>{totalBenefits.toFixed(2)} €</MetricValue>
+      </MetricItem>
+    </GrandTotalMetrics>
   </StyledGrandTotal>
 );
 
@@ -602,7 +682,7 @@ export const ArticlesGrid = ({
     ARTICLES_SECOND_COLUMN
   );
 
-  // Calculate grand total
+  // Calculate grand total metrics
   const firstColumnSubtotal = calculateColumnSubtotal(
     firstColumnArticles,
     quantities,
@@ -613,12 +693,18 @@ export const ArticlesGrid = ({
     quantities,
     true
   );
-  const grandTotal = firstColumnSubtotal + secondColumnSubtotal;
+  const totalPrice = firstColumnSubtotal + secondColumnSubtotal;
+  const totalQuantity = calculateTotalQuantity(articles, quantities);
+  const totalBenefits = calculateTotalBenefits(articles, quantities);
 
   return (
     <StyledGridContainer>
       <Stack spacing={2}>
-        <GrandTotal amount={grandTotal} />
+        <GrandTotal
+          totalQuantity={totalQuantity}
+          totalPrice={totalPrice}
+          totalBenefits={totalBenefits}
+        />
         <StyledMainRow align="stretch">
           <ArticlesColumn
             articles={firstColumnArticles}
