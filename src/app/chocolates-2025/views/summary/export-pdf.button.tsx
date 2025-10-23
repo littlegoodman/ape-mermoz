@@ -22,7 +22,7 @@ export const ExportPdfButton = ({
   return (
     <Button
       color="primary"
-      variant="contained"
+      variant="outlined"
       startIcon={<Eye size={16} />}
       onClick={handlePreview}
       disabled={isLoading || articles.length === 0}

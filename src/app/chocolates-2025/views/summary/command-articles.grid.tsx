@@ -255,14 +255,6 @@ export const CommandArticlesGrid = ({
     return acc;
   }, {} as Record<number, number>);
 
-  // Calculate totals for summary components
-  const firstColumnArticles = articles.filter((article) =>
-    ARTICLES_FIRST_COLUMN.includes(article.article.name)
-  );
-  const secondColumnArticles = articles.filter((article) =>
-    ARTICLES_SECOND_COLUMN.includes(article.article.name)
-  );
-
   return (
     <ArticlesGrid
       articles={allArticles}

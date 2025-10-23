@@ -12,6 +12,7 @@ export const TableContainer = styled("table", {
   // [`& ${StyledTableRow}:not(:first-child)`]: {
   [`& ${TableCell}`]: {
     borderTop: "1px solid $gray400",
+    padding: "$2 $5",
   },
   // },
   variants: {

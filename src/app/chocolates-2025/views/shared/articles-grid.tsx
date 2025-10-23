@@ -173,14 +173,11 @@ const StyledHeaderRow = styled(Row, {
   boxShadow: "$vlt",
 });
 
-const StyledHeaderActions = styled(Row, {
-  gap: "$2",
-});
+const StyledHeaderActions = styled(Row, {});
 
 const ArticleHeaders = ({ showPrices = false }: { showPrices?: boolean }) => (
   <StyledHeaderRow justify="space" align="center">
-    <div style={{ flex: 1 }}></div>
-    <StyledHeaderActions align="center">
+    <StyledHeaderActions justify="end">
       <QuantityHeader />
       {showPrices && <PriceHeader />}
       {showPrices && <PreferentialPriceHeader />}
@@ -247,7 +244,9 @@ const ArticleDescription = ({ article }: { article: Article }) => (
   <StyledDescriptionStack spacing={0}>
     <Text
       variant="bodyAlternate"
+      ellipsis={true}
       css={{
+        maxWidth: 140,
         fontWeight: "$medium",
         color: "$slate700",
         fontSize: "$xs",
@@ -262,6 +261,7 @@ const ArticleDescription = ({ article }: { article: Article }) => (
         size="xs"
         ellipsis={true}
         css={{
+          maxWidth: 140,
           color: "$slate500",
           lineHeight: "$xs",
           fontSize: "10px",
@@ -312,7 +312,7 @@ const QuantityDisplay = ({ quantity }: { quantity: number }) => (
       fontSize: "$xs",
     }}
   >
-    {quantity}
+    {quantity ? quantity : "-"}
   </Text>
 );
 
@@ -331,7 +331,7 @@ const PriceDisplay = ({ price }: { price: number }) => (
       fontSize: "$xs",
     }}
   >
-    {price.toFixed(2)} €
+    {price ? `${price.toFixed(2)} €` : "-"}
   </Text>
 );
 
@@ -351,7 +351,7 @@ const PreferentialPriceDisplay = ({ price }: { price: number }) => (
       fontSize: "$xs",
     }}
   >
-    {price.toFixed(2)} €
+    {price ? `${price.toFixed(2)} €` : "-"}
   </Text>
 );
 
@@ -385,7 +385,7 @@ const StyledArticleCard = styled(Card, {
   fullWidth: true,
   padding: "$2",
   marginBottom: "$1",
-  background: "linear-gradient(135deg, $white 0%, $pink50 100%)",
+  background: "$white",
   border: "1px solid $pink200",
   borderRadius: "$2",
   boxShadow: "$vlt",
@@ -515,11 +515,7 @@ interface ArticlesGridProps {
 }
 
 const StyledGridContainer = styled("div", {
-  background: "linear-gradient(135deg, $pink50 0%, $purple50 100%)",
-  borderRadius: "$3",
   padding: "$2",
-  boxShadow: "$soft",
-  border: "1px solid $pink200",
 });
 
 const StyledMainRow = styled(Row, {
@@ -701,11 +697,13 @@ export const ArticlesGrid = ({
   return (
     <StyledGridContainer>
       <Stack spacing={2}>
-        <GrandTotal
-          totalQuantity={totalQuantity}
-          totalPrice={totalPrice}
-          totalBenefits={totalBenefits}
-        />
+        <Row justify="center">
+          <GrandTotal
+            totalQuantity={totalQuantity}
+            totalPrice={totalPrice}
+            totalBenefits={totalBenefits}
+          />
+        </Row>
         <StyledMainRow align="stretch">
           <ArticlesColumn
             articles={firstColumnArticles}

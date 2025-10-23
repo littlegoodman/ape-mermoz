@@ -7,16 +7,21 @@ export type InputProps = ComponentPropsWithoutRef<"input"> & {
   focused?: boolean;
   multiline?: boolean;
   error?: boolean;
+  variant?: "default" | "white";
 };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ endAdornment, disabled, focused, multiline, error, ...props }, ref) => {
+  (
+    { endAdornment, disabled, focused, multiline, error, variant, ...props },
+    ref
+  ) => {
     return (
       <InputWrapper
         focused={focused}
         error={error}
         disabled={disabled}
         multiline={multiline}
+        variant={variant}
       >
         <InputBase
           as={multiline ? "textarea" : "input"}

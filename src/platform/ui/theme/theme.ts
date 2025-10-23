@@ -104,11 +104,11 @@ export const theme = {
     8: "40px",
   },
   fontSizes: {
-    base: "16px",
+    base: "14px",
     lead: "18px",
     xs: "10px",
     s: "12px",
-    m: "16px",
+    m: "14px",
     l: "20px",
     xl: "24px",
     xxl: "32px",
