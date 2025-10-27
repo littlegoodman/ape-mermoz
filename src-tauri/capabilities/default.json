@@ -8,5 +8,7 @@
     "opener:default",
     "sql:default",
     "sql:allow-execute"
-  ]
+  ],
+  "platforms": ["macOS"],
+  "path": "default.json"
 }

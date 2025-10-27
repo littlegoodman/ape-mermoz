@@ -12,6 +12,7 @@ export type Command = {
     article: Article;
     quantity: number;
   }[];
+  screenshot?: string | null;
 };
 
 export type CommandsSummary = {

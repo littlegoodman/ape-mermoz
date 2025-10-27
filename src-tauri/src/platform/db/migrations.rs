@@ -81,6 +81,12 @@ pub fn get_migrations() -> Vec<Migration> {
             );",
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 29,
+            description: "add_screenshot_to_commands",
+            sql: "ALTER TABLE commands ADD COLUMN screenshot TEXT;",
+            kind: MigrationKind::Up,
+        },
         // seeds...
     ]
 }
