@@ -9,8 +9,10 @@ import {
   Stack,
   Row,
   Button,
+  Item,
+  Select,
 } from "../../../../platform/ui/components";
-import { Article, Command, useCommands } from "../../hooks";
+import { Article, Command, PaymentMethod, useCommands } from "../../hooks";
 import { useStudents, Student } from "../../../students/hooks";
 import { CommandArticlesEditGrid } from "./command-articles-edit.grid";
 import { ComboBox } from "../../../../platform/ui";
@@ -28,6 +30,7 @@ export type NewCommand = {
     quantity: number;
   }[];
   screenshot?: string | null;
+  paymentMethod?: PaymentMethod | null;
 };
 
 export const CommandEditModal = Modal.create(
@@ -173,6 +176,15 @@ export const CommandEditModal = Modal.create(
 
     const stopCamera = () => {
       console.log("stopCamera called, setting isCapturing to false");
+      // Immediately stop all tracks from the camera
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach((track) => {
+          track.stop();
+          console.log("Stopped track:", track.kind);
+        });
+        videoRef.current.srcObject = null;
+      }
       setIsCapturing(false);
     };
 
@@ -203,55 +215,77 @@ export const CommandEditModal = Modal.create(
       >
         <Stack>
           <Row>
-            <FormControl
-              mandatory
-              width="large"
-              label={t("Student")}
-              error={!!errors.student}
-              helperText={errors.student?.message}
-            >
-              <ComboBox
-                items={
-                  students
-                    ?.sort((a, b) => a.lastName.localeCompare(b.lastName))
-                    .map((s) => ({
-                      key: s.id.toString(),
-                      value: `${s.lastName} ${s.firstName} (${s.class.name})`,
-                    })) ?? []
-                }
-                placeholder={t("Sélectionner un étudiant")}
-                value={
-                  student
-                    ? `${student?.lastName} ${student?.firstName} (${student?.class?.name})`
-                    : ""
-                }
-                onSelectionChange={(key) => {
-                  console.log("key", key);
-                  if (key) {
-                    const studentId = parseInt(key as string);
-                    const selectedStudent = students?.find(
-                      (s) => s.id === studentId
-                    );
-                    if (selectedStudent) {
-                      setValue("student", selectedStudent);
-                    }
-                  }
-                }}
+            <Stack>
+              <FormControl
+                mandatory
+                width="large"
+                label={t("Student")}
                 error={!!errors.student}
-              />
-            </FormControl>
+                helperText={errors.student?.message}
+              >
+                <ComboBox
+                  items={
+                    students
+                      ?.sort((a, b) => a.lastName.localeCompare(b.lastName))
+                      .map((s) => ({
+                        key: s.id.toString(),
+                        value: `${s.lastName} ${s.firstName} (${s.class.name})`,
+                      })) ?? []
+                  }
+                  placeholder={t("Sélectionner un étudiant")}
+                  value={
+                    student
+                      ? `${student?.lastName} ${student?.firstName} (${student?.class?.name})`
+                      : ""
+                  }
+                  onSelectionChange={(key) => {
+                    console.log("key", key);
+                    if (key) {
+                      const studentId = parseInt(key as string);
+                      const selectedStudent = students?.find(
+                        (s) => s.id === studentId
+                      );
+                      if (selectedStudent) {
+                        setValue("student", selectedStudent);
+                      }
+                    }
+                  }}
+                  error={!!errors.student}
+                />
+              </FormControl>
+              <FormControl
+                mandatory
+                label={t("Parent")}
+                error={!!errors.parent}
+                helperText={errors.parent?.message}
+              >
+                <Input {...register("parent", { required: false })} />
+              </FormControl>
+              <FormControl
+                label={t("Moyen de paiement")}
+                error={!!errors.paymentMethod}
+                helperText={errors.paymentMethod?.message}
+              >
+                <Select
+                  label={t("Moyen de paiement")}
+                  name="paymentMethod"
+                  value={watch("paymentMethod")?.toString() ?? undefined}
+                  items={Object.values(PaymentMethod).map((method) => ({
+                    key: method,
+                    value: method,
+                  }))}
+                  onChange={(event) => {
+                    setValue(
+                      "paymentMethod",
+                      event.target.value as PaymentMethod
+                    );
+                  }}
+                >
+                  {(item) => <Item key={item.key}>{t(item.value)}</Item>}
+                </Select>
+              </FormControl>
+            </Stack>
 
-            <FormControl
-              mandatory
-              label={t("Parent")}
-              error={!!errors.parent}
-              helperText={errors.parent?.message}
-            >
-              <Input {...register("parent", { required: false })} />
-            </FormControl>
-          </Row>
-
-          <Row align="start">
             <FormControl label={t("Screenshot de la commande")}>
               <Stack spacing={2}>
                 <input
