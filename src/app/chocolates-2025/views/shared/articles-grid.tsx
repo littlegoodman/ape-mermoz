@@ -142,15 +142,12 @@ export const calculateTotalBenefits = (
 // Styled components for elegant headers
 const HeaderCell = styled("div", {
   textAlign: "center",
-  fontSize: "10px",
-  fontWeight: "$bold",
-  color: "$slate600",
+  fontSize: "$xs",
+  fontWeight: "$semibold",
+  color: "$slate700",
   textTransform: "uppercase",
-  letterSpacing: "$base",
-  padding: "$1",
-  borderBottom: "1px solid $pink200",
-  background: "linear-gradient(135deg, $pink50 0%, $purple50 100%)",
-  borderRadius: "$1 $1 0 0",
+  letterSpacing: "$tight",
+  padding: "$2",
 });
 
 const QuantityHeader = () => (
@@ -168,9 +165,9 @@ const PreferentialPriceHeader = () => (
 const StyledHeaderRow = styled(Row, {
   marginBottom: "$2",
   padding: "$1 $2",
-  background: "linear-gradient(135deg, $pink100 0%, $purple100 100%)",
+  background: "$slate50",
   borderRadius: "$2",
-  boxShadow: "$vlt",
+  border: "1px solid $slate200",
 });
 
 const StyledHeaderActions = styled(Row, {});
@@ -190,12 +187,12 @@ const StyledArticleImage = styled("img", {
   height: "40px",
   objectFit: "cover",
   borderRadius: "$2",
-  border: "1px solid $pink200",
-  boxShadow: "$vlt",
+  border: "1px solid $slate200",
+  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
   transition: "all 0.2s ease-in-out",
   "&:hover": {
     transform: "scale(1.05)",
-    boxShadow: "$soft",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
   },
 });
 
@@ -207,11 +204,11 @@ const ArticleImage = ({ article }: { article: Article }) => {
           width: "40px",
           height: "40px",
           borderRadius: "6px",
-          background: "linear-gradient(135deg, $pink200 0%, $purple200 100%)",
+          background: "linear-gradient(135deg, #f3e8ff 0%, #fce7f3 100%)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "$slate500",
+          color: "#7e22ce",
           fontSize: "10px",
           fontWeight: "bold",
         }}
@@ -232,7 +229,7 @@ const ArticleImage = ({ article }: { article: Article }) => {
 const StyledDescriptionStack = styled(Stack, {
   flex: 1,
   minWidth: 0,
-  maxWidth: "200px",
+  maxWidth: "160px",
   width: "100%",
 });
 
@@ -247,15 +244,16 @@ const ArticleDescription = ({ article }: { article: Article }) => (
       ellipsis={true}
       css={{
         maxWidth: 140,
-        fontWeight: "$medium",
-        color: "$slate700",
+        fontWeight: "$semibold",
+        color: "$slate800",
         fontSize: "$xs",
         lineHeight: "$s",
+        marginBottom: "$1",
       }}
     >
       {article.name}
     </Text>
-    <div style={{ maxWidth: 160 }}>
+    <div style={{ maxWidth: 140, marginBottom: "$1" }}>
       <Text
         color="neutral"
         size="xs"
@@ -264,7 +262,7 @@ const ArticleDescription = ({ article }: { article: Article }) => (
           maxWidth: 140,
           color: "$slate500",
           lineHeight: "$xs",
-          fontSize: "10px",
+          fontSize: "$xs",
         }}
       >
         {article.description}
@@ -277,7 +275,7 @@ const ArticleDescription = ({ article }: { article: Article }) => (
         crossedOut={true}
         css={{
           color: "$slate400",
-          fontSize: "10px",
+          fontSize: "$xs",
         }}
       >
         {article.price.toFixed(2)} €
@@ -287,7 +285,7 @@ const ArticleDescription = ({ article }: { article: Article }) => (
         size="xs"
         css={{
           fontWeight: "$bold",
-          color: "$pink600",
+          color: "#7e22ce",
           fontSize: "$xs",
         }}
       >
@@ -299,17 +297,18 @@ const ArticleDescription = ({ article }: { article: Article }) => (
 
 const QuantityDisplay = ({ quantity }: { quantity: number }) => (
   <Text
-    size="xs"
+    size="s"
     weight="bold"
     noWrap
     css={{
       textAlign: "center",
       padding: "$1",
-      background: quantity > 0 ? "$pink100" : "$slate100",
-      color: quantity > 0 ? "$pink700" : "$slate500",
-      borderRadius: "$1",
-      minWidth: "30px",
+      background: quantity > 0 ? "#f3e8ff" : "$slate100",
+      color: quantity > 0 ? "#7e22ce" : "$slate500",
+      borderRadius: "$2",
+      minWidth: "35px",
       fontSize: "$xs",
+      border: quantity > 0 ? "1px solid #c084fc" : "1px solid $slate300",
     }}
   >
     {quantity ? quantity : "-"}
@@ -323,11 +322,11 @@ const PriceDisplay = ({ price }: { price: number }) => (
     noWrap
     css={{
       textAlign: "center",
-      padding: "$1",
+      padding: "2px $1",
       background: "$slate100",
       color: "$slate700",
       borderRadius: "$1",
-      minWidth: "50px",
+      minWidth: "45px",
       fontSize: "$xs",
     }}
   >
@@ -343,11 +342,11 @@ const PreferentialPriceDisplay = ({ price }: { price: number }) => (
     noWrap
     css={{
       textAlign: "center",
-      padding: "$1",
+      padding: "2px $1",
       background: "$pink100",
       color: "$pink700",
       borderRadius: "$1",
-      minWidth: "60px",
+      minWidth: "55px",
       fontSize: "$xs",
     }}
   >
@@ -358,17 +357,19 @@ const PreferentialPriceDisplay = ({ price }: { price: number }) => (
 const QuantityInput = styled(Input, {
   width: "50px",
   textAlign: "center",
-  fontSize: "$xs",
-  fontWeight: "$medium",
-  border: "1px solid $pink200",
-  borderRadius: "$1",
+  fontSize: "$s",
+  fontWeight: "$semibold",
+  border: "1px solid $slate300",
+  borderRadius: "$2",
   padding: "$1",
+  background: "$white",
   "&:focus": {
-    borderColor: "$pink400",
-    boxShadow: "0 0 0 2px rgba(244, 114, 182, 0.1)",
+    borderColor: "#a21caf",
+    boxShadow: "0 0 0 3px rgba(236, 72, 153, 0.1)",
+    outline: "none",
   },
   "&:hover": {
-    borderColor: "$pink300",
+    borderColor: "#c084fc",
   },
 });
 
@@ -386,9 +387,9 @@ const StyledArticleCard = styled(Card, {
   padding: "$2",
   marginBottom: "$1",
   background: "$white",
-  border: "1px solid $pink200",
+  border: "1px solid $slate200",
   borderRadius: "$2",
-  boxShadow: "$vlt",
+  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
   width: "100%",
   transition: "all 0.2s ease-in-out",
   minHeight: "60px",
@@ -396,18 +397,20 @@ const StyledArticleCard = styled(Card, {
   alignItems: "center",
   "&:hover": {
     transform: "translateY(-1px)",
-    boxShadow: "$soft",
-    borderColor: "$pink300",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
+    borderColor: "$slate300",
+    background: "$pink25",
   },
 });
 
 const StyledCardRow = styled(Row, {
-  gap: "$2",
+  gap: "$1",
 });
 
 const StyledActionsRow = styled(Row, {
   gap: "$1",
-  minWidth: "120px",
+  minWidth: "70px",
+  flexShrink: 0,
   justifyContent: "flex-end",
 });
 
@@ -463,12 +466,10 @@ const StyledColumn = styled("div", {
   flexDirection: "column",
   justifyContent: "flex-start",
   minWidth: 0,
-  width: "100%",
-  flex: "1 1 50%",
+  flex: "1 1 auto",
   padding: "$1",
-  background: "linear-gradient(135deg, $pink25 0%, $purple25 100%)",
-  borderRadius: "$3",
-  border: "1px solid $pink100",
+  background: "$white",
+  borderRadius: "$2",
 });
 
 const ArticlesColumn = ({
@@ -515,38 +516,45 @@ interface ArticlesGridProps {
 }
 
 const StyledGridContainer = styled("div", {
-  padding: "$2",
+  width: "100%",
+  padding: "$1",
+  boxSizing: "border-box",
 });
 
 const StyledMainRow = styled(Row, {
-  gap: "$2",
+  gap: "$1",
+  alignItems: "flex-start",
 });
 
 // Subtotal component
 const StyledSubtotal = styled("div", {
   marginBottom: "$2",
   padding: "$2 $3",
-  background: "linear-gradient(135deg, $pink200 0%, $purple200 100%)",
+  background: "linear-gradient(135deg, #fce7f3 0%, #f3e8ff 100%)",
   borderRadius: "$2",
-  border: "1px solid $pink300",
-  boxShadow: "$vlt",
+  border: "1px solid #f0abfc",
+  boxShadow: "0 2px 6px rgba(236, 72, 153, 0.1)",
   textAlign: "center",
 });
 
 const SubtotalLabel = styled(Text, {
   fontSize: "$xs",
   fontWeight: "$bold",
-  color: "$slate600",
   textTransform: "uppercase",
   letterSpacing: "$base",
   marginBottom: "$1",
+  "&": {
+    color: "#7e22ce !important",
+  },
 });
 
 const SubtotalAmount = styled(Text, {
-  fontSize: "$m",
+  fontSize: "$l",
   fontWeight: "$bold",
-  color: "$pink700",
   fontFamily: "$primary",
+  "&": {
+    color: "#a21caf !important",
+  },
 });
 
 interface SubtotalProps {
@@ -577,11 +585,13 @@ const StyledGrandTotal = styled("div", {
 const GrandTotalLabel = styled(Text, {
   fontSize: "$s",
   fontWeight: "$bold",
-  color: "$white",
   textTransform: "uppercase",
   letterSpacing: "$base",
   marginBottom: "$3",
-  textShadow: "0 1px 2px rgba(0, 0, 0, 0.5)",
+  "&": {
+    color: "white !important",
+    textShadow: "0 1px 2px rgba(0, 0, 0, 0.5)",
+  },
 });
 
 const GrandTotalMetrics = styled("div", {
@@ -613,19 +623,23 @@ const MetricItem = styled("div", {
 const MetricLabel = styled(Text, {
   fontSize: "$xs",
   fontWeight: "$medium",
-  color: "$white",
   marginBottom: "$2",
   textTransform: "uppercase",
   letterSpacing: "$tight",
-  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+  "&": {
+    color: "white !important",
+    textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+  },
 });
 
 const MetricValue = styled(Text, {
   fontSize: "$l",
   fontWeight: "$bolder",
-  color: "$white",
   fontFamily: "$primary",
-  textShadow: "0 2px 4px rgba(0, 0, 0, 0.5)",
+  "&": {
+    color: "white !important",
+    textShadow: "0 2px 4px rgba(0, 0, 0, 0.5)",
+  },
 });
 
 interface GrandTotalProps {
