@@ -1,5 +1,10 @@
 import { forwardRef, useRef } from "react";
-import { Trigger, TriggerIcon, TriggerText } from "./select.style";
+import {
+  Trigger,
+  TriggerIcon,
+  TriggerText,
+  TriggerWrapper,
+} from "./select.style";
 import { ChevronDown } from "lucide-react";
 import { AriaButtonProps, useButton } from "@react-aria/button";
 import { Popover } from "../popover";
@@ -86,22 +91,24 @@ export function Select<T extends object>({
         label={props.label}
         name={name}
       />
-      <TriggerButton
-        ref={ref as React.ForwardedRef<HTMLButtonElement>}
-        {...triggerProps}
-        isDisabled={props.isDisabled}
-        onBlur={onBlur as (e: React.FocusEvent<Element, Element>) => void}
-      >
-        {props.icon}
-        <TriggerText {...valueProps}>
-          {state.selectedItem
-            ? state.selectedItem.rendered
-            : placeholder ?? undefined}
-        </TriggerText>
-        <TriggerIcon>
-          <ChevronDown />
-        </TriggerIcon>
-      </TriggerButton>
+      <TriggerWrapper data-trigger-wrapper>
+        <TriggerButton
+          ref={ref as React.ForwardedRef<HTMLButtonElement>}
+          {...triggerProps}
+          isDisabled={props.isDisabled}
+          onBlur={onBlur as (e: React.FocusEvent<Element, Element>) => void}
+        >
+          {props.icon}
+          <TriggerText {...valueProps}>
+            {state.selectedItem
+              ? state.selectedItem.rendered
+              : placeholder ?? undefined}
+          </TriggerText>
+          <TriggerIcon>
+            <ChevronDown />
+          </TriggerIcon>
+        </TriggerButton>
+      </TriggerWrapper>
       {state.isOpen && (
         <Popover
           arrow={false}

@@ -1,6 +1,6 @@
 fn main() {
-    // Add camera permissions for macOS
-    #[cfg(target_os = "macOS")]
+    // Add camera permissions for macOS // TODO verify
+    #[cfg(target_os = "macos")]
     {
         use std::path::PathBuf;
         if PathBuf::from("Info.plist").exists() {

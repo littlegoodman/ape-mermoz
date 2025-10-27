@@ -50,8 +50,8 @@ export const CommandsTable = ({
         t("Classe"),
         t("Élève"),
         t("Parent"),
-        t("Quantité"),
-        t("Prix"),
+        t("Articles"),
+        t("Montant"),
         t("Moyen de Paiement"),
       ]}
       rows={commands?.map((command) => {
@@ -69,7 +69,7 @@ export const CommandsTable = ({
           command.parent,
           quantity,
           `${price.toFixed(2)} €`,
-          t(""), // TODO: add payment method
+          t(command.paymentMethod ?? ""),
         ];
       })}
       onEdit={handleEdit}

@@ -258,7 +258,7 @@ export const PdfPreviewModal = ({
               </thead>
               <tbody>{firstColumnArticles.map(generateArticleRow)}</tbody>
             </table>
-            {generateColumnTotal(firstColumnArticles, "Sous-total")}
+            {generateColumnTotal(firstColumnArticles, "Sous-total 1")}
           </div>
 
           {/* Second Column */}
@@ -337,7 +337,7 @@ export const PdfPreviewModal = ({
               </thead>
               <tbody>{secondColumnArticles.map(generateArticleRow)}</tbody>
             </table>
-            {generateColumnTotal(secondColumnArticles, "Sous-total")}
+            {generateColumnTotal(secondColumnArticles, "Sous-total 2")}
           </div>
         </div>
 
@@ -362,7 +362,7 @@ export const PdfPreviewModal = ({
             <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
               <div style={{ textAlign: "center" }}>
                 <div style={{ fontSize: "14px", marginBottom: "2px" }}>
-                  Quantité
+                  Articles
                 </div>
                 <div style={{ fontSize: "18px", fontWeight: "bold" }}>
                   {totalQuantity}

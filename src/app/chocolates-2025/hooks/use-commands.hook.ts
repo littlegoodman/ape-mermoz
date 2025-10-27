@@ -3,23 +3,30 @@ import { CommandsRepository } from "../infra/commands.repository";
 import { Student } from "../../students/hooks/use-students.hook";
 import { useFilteredQuery } from "../../common/hooks/use-filtered-query";
 import { Article } from "./use-articles.hook";
+import { Teacher } from "../../teachers/hooks";
 
 export const PaymentMethod = {
   CASH: "cash",
   CARD: "card",
-  TRANSFER: "transfer",
+  CHECK: "check",
+  WAITING_FOR_PAYMENT: "waiting_for_payment",
   OTHER: "other",
 } as const;
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod];
 export type Command = {
+  // TODO: remove null
   id: number;
   parent: string;
+  phone?: string | null;
+  email?: string | null;
   student: Student;
+  teacher?: Teacher; // TODO optimize building this object
   articles: {
     article: Article;
     quantity: number;
   }[];
   screenshot?: string | null;
+  paymentMethod?: PaymentMethod | null;
   paymentMethod?: PaymentMethod | null;
 };
 
@@ -47,11 +54,20 @@ export const useCommands = () => {
       queryFn: () => repository.getCommandsSummary(),
     });
 
-  const findAll = (filter?: string) =>
-    useFilteredQuery<Command[], { filter: string }>({
-      queryKey: [...keys, "findAll"],
+  const findAll = (filter?: string, paymentMethod?: PaymentMethod) =>
+    useFilteredQuery<
+      Command[],
+      { filter: string; paymentMethod: PaymentMethod }
+    >({
+      queryKey: [...keys, "findAll", paymentMethod],
       queryFn: (params) => repository.findAll(params),
       filter,
+    });
+
+  const findOne = (id: string) =>
+    useQuery<Command | undefined>({
+      queryKey: [...keys, "findOne", id],
+      queryFn: () => repository.findOne({ id }),
     });
 
   const { mutate: upsert } = useMutation({
@@ -65,5 +81,5 @@ export const useCommands = () => {
     onSuccess: () => client.invalidateQueries({ queryKey: [...keys] }),
   });
 
-  return { getSummary, findAll, upsert, del };
+  return { getSummary, findAll, findOne, upsert, del };
 };

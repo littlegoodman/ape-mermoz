@@ -105,16 +105,23 @@ export const getArticlesByColumn = (
 // Helper function to calculate column subtotal
 export const calculateColumnSubtotal = (
   articles: Article[],
-  quantities: Record<number, number>,
-  usePreferentialPrice: boolean = true
-) => {
-  return articles.reduce((total, article) => {
-    const quantity = quantities[article.id] || 0;
-    const price = usePreferentialPrice
-      ? article.preferentialPrice
-      : article.price;
-    return total + quantity * price;
-  }, 0);
+  quantities: Record<number, number>
+): { quantity: number; totalPriceToPay: number; totalPriceToGet: number } => {
+  return {
+    quantity: articles.reduce((total, article) => {
+      return total + (quantities[article.id] || 0);
+    }, 0),
+    totalPriceToPay: articles.reduce((total, article) => {
+      const quantity = quantities[article.id] || 0;
+      const price = article.preferentialPrice;
+      return total + quantity * price;
+    }, 0),
+    totalPriceToGet: articles.reduce((total, article) => {
+      const quantity = quantities[article.id] || 0;
+      const price = article.price;
+      return total + quantity * price;
+    }, 0),
+  };
 };
 
 // Helper function to calculate total quantity
@@ -172,12 +179,12 @@ const StyledHeaderRow = styled(Row, {
 
 const StyledHeaderActions = styled(Row, {});
 
-const ArticleHeaders = ({ showPrices = false }: { showPrices?: boolean }) => (
+const ArticleHeaders = () => (
   <StyledHeaderRow justify="space" align="center">
     <StyledHeaderActions justify="end">
       <QuantityHeader />
-      {showPrices && <PriceHeader />}
-      {showPrices && <PreferentialPriceHeader />}
+      <PriceHeader />
+      <PreferentialPriceHeader />
     </StyledHeaderActions>
   </StyledHeaderRow>
 );
@@ -545,12 +552,9 @@ const ArticlesColumn = ({
   showPrices = false,
   onQuantityChange,
 }: ArticlesColumnProps) => {
-  const subtotal = calculateColumnSubtotal(articles, quantities, true);
-
   return (
     <StyledColumn>
-      <Subtotal amount={subtotal} />
-      <ArticleHeaders showPrices={showPrices} />
+      {showPrices && <ArticleHeaders />}
       <Stack spacing={1}>
         {articles.map((article) => (
           <ArticleCard
@@ -612,24 +616,67 @@ const SubtotalLabel = styled(Text, {
   },
 });
 
-const SubtotalAmount = styled(Text, {
-  fontSize: "$l",
-  fontWeight: "$bold",
-  fontFamily: "$primary",
-  "&": {
-    color: "#a21caf !important",
-  },
-});
+// removed unused SubtotalAmount in favor of compact metrics display
 
 interface SubtotalProps {
-  amount: number;
   label?: string;
+  quantity: number;
+  totalPriceToPay: number;
+  totalPriceToGet: number;
 }
 
-const Subtotal = ({ amount, label = "Sous-total" }: SubtotalProps) => (
+const SubtotalMetrics = styled("div", {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  gap: "$3",
+  marginTop: "$1",
+  flexWrap: "wrap",
+});
+
+const SubMetric = styled("div", {
+  display: "flex",
+  alignItems: "center",
+  gap: "$1",
+  padding: "$1 $2",
+  background: "transparent",
+  borderRadius: "$2",
+  border: "1px solid $pink200",
+});
+
+const SubMetricLabel = styled(Text, {
+  fontSize: "$xs",
+  color: "$slate600",
+});
+
+const SubMetricValue = styled(Text, {
+  fontSize: "$s",
+  fontWeight: "$bold",
+  color: "#a21caf",
+});
+
+const Subtotal = ({
+  label = "Sous-total",
+  quantity,
+  totalPriceToPay,
+  totalPriceToGet,
+}: SubtotalProps) => (
   <StyledSubtotal>
     <SubtotalLabel>{label}</SubtotalLabel>
-    <SubtotalAmount>{amount.toFixed(2)} €</SubtotalAmount>
+    <SubtotalMetrics>
+      <SubMetric>
+        <SubMetricLabel>Articles</SubMetricLabel>
+        <SubMetricValue>{quantity}</SubMetricValue>
+      </SubMetric>
+      <SubMetric>
+        <SubMetricLabel>A encaisser</SubMetricLabel>
+        <SubMetricValue>{totalPriceToGet.toFixed(2)} €</SubMetricValue>
+      </SubMetric>
+      <SubMetric>
+        <SubMetricLabel>À payer</SubMetricLabel>
+        <SubMetricValue>{totalPriceToPay.toFixed(2)} €</SubMetricValue>
+      </SubMetric>
+    </SubtotalMetrics>
   </StyledSubtotal>
 );
 
@@ -637,7 +684,7 @@ const Subtotal = ({ amount, label = "Sous-total" }: SubtotalProps) => (
 const StyledGrandTotal = styled("div", {
   marginBottom: "$2",
   padding: "$4 $5",
-  background: "linear-gradient(135deg, $pink600 0%, $purple600 100%)",
+  background: "linear-gradient(135deg, $pink500 0%, $purple500 100%)",
   borderRadius: "$3",
   border: "2px solid $pink500",
   boxShadow: "$lg",
@@ -708,14 +755,16 @@ const MetricValue = styled(Text, {
 
 interface GrandTotalProps {
   totalQuantity: number;
-  totalPrice: number;
+  totalPriceToPay: number;
+  totalPriceToGet: number;
   totalBenefits: number;
   label?: string;
 }
 
 const GrandTotal = ({
   totalQuantity,
-  totalPrice,
+  totalPriceToPay,
+  totalPriceToGet,
   totalBenefits,
   label = "Total Général",
 }: GrandTotalProps) => (
@@ -723,12 +772,16 @@ const GrandTotal = ({
     <GrandTotalLabel>{label}</GrandTotalLabel>
     <GrandTotalMetrics>
       <MetricItem>
-        <MetricLabel>Quantité</MetricLabel>
+        <MetricLabel>Articles</MetricLabel>
         <MetricValue>{totalQuantity}</MetricValue>
       </MetricItem>
       <MetricItem>
-        <MetricLabel>Prix Total</MetricLabel>
-        <MetricValue>{totalPrice.toFixed(2)} €</MetricValue>
+        <MetricLabel>Montant à encaisser</MetricLabel>
+        <MetricValue>{totalPriceToGet.toFixed(2)} €</MetricValue>
+      </MetricItem>
+      <MetricItem>
+        <MetricLabel>Montant à payer à Jeff</MetricLabel>
+        <MetricValue>{totalPriceToPay.toFixed(2)} €</MetricValue>
       </MetricItem>
       <MetricItem>
         <MetricLabel>Bénéfices</MetricLabel>
@@ -760,15 +813,16 @@ export const ArticlesGrid = ({
   // Calculate grand total metrics
   const firstColumnSubtotal = calculateColumnSubtotal(
     firstColumnArticles,
-    quantities,
-    true
+    quantities
   );
   const secondColumnSubtotal = calculateColumnSubtotal(
     secondColumnArticles,
-    quantities,
-    true
+    quantities
   );
-  const totalPrice = firstColumnSubtotal + secondColumnSubtotal;
+  const totalPriceToPay =
+    firstColumnSubtotal.totalPriceToPay + secondColumnSubtotal.totalPriceToPay;
+  const totalPriceToGet =
+    firstColumnSubtotal.totalPriceToGet + secondColumnSubtotal.totalPriceToGet;
   const totalQuantity = calculateTotalQuantity(articles, quantities);
   const totalBenefits = calculateTotalBenefits(articles, quantities);
 
@@ -778,10 +832,12 @@ export const ArticlesGrid = ({
         <Row justify="center">
           <GrandTotal
             totalQuantity={totalQuantity}
-            totalPrice={totalPrice}
+            totalPriceToPay={totalPriceToPay}
+            totalPriceToGet={totalPriceToGet}
             totalBenefits={totalBenefits}
           />
         </Row>
+
         <StyledMainRow align="stretch">
           <ArticlesColumn
             articles={firstColumnArticles}
@@ -801,6 +857,24 @@ export const ArticlesGrid = ({
             showPrices={showPrices}
             onQuantityChange={onQuantityChange}
           />
+        </StyledMainRow>
+        <StyledMainRow align="stretch">
+          <StyledColumn>
+            <Subtotal
+              label="Sous-total 1"
+              quantity={firstColumnSubtotal.quantity}
+              totalPriceToPay={firstColumnSubtotal.totalPriceToPay}
+              totalPriceToGet={firstColumnSubtotal.totalPriceToGet}
+            />
+          </StyledColumn>
+          <StyledColumn>
+            <Subtotal
+              label="Sous-total 2"
+              quantity={secondColumnSubtotal.quantity}
+              totalPriceToPay={secondColumnSubtotal.totalPriceToPay}
+              totalPriceToGet={secondColumnSubtotal.totalPriceToGet}
+            />
+          </StyledColumn>
         </StyledMainRow>
         {children}
       </Stack>

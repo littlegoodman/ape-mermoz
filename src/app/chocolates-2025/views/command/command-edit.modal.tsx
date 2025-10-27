@@ -13,7 +13,9 @@ import {
   Item,
   Select,
   Toast,
+  Empty,
 } from "../../../../platform/ui/components";
+import { useModal as useNiceModal } from "@ebay/nice-modal-react";
 import {
   Article,
   Command,
@@ -24,15 +26,17 @@ import {
 import { useStudents, Student } from "../../../students/hooks";
 import { CommandArticlesEditGrid } from "./command-articles-edit.grid";
 import { ComboBox } from "../../../../platform/ui";
-import { CameraIcon, ScanLine, RotateCw } from "lucide-react";
+import { CameraIcon, ScanLine, RotateCw, ZoomIn, X } from "lucide-react";
 
 export type CommandEditModalProps = {
-  command: Command | undefined;
+  command: Pick<Command, "id"> | undefined;
 };
 
 export type NewCommand = {
   id?: number;
   parent?: string;
+  phone?: string | null;
+  email?: string | null;
   student?: Student;
   articles: {
     article: Article;
@@ -40,21 +44,33 @@ export type NewCommand = {
   }[];
   screenshot?: string | null;
   paymentMethod?: PaymentMethod | null;
+  paymentMethod?: PaymentMethod | null;
 };
 
 export const CommandEditModal = Modal.create(
-  ({ command }: CommandEditModalProps): JSX.Element => {
+  ({ command: props }: CommandEditModalProps): JSX.Element => {
     const { t } = useTranslation();
-    const { upsert } = useCommands();
+    const modal = useNiceModal();
+    const { findOne, upsert } = useCommands();
     const { findAll: findAllStudents } = useStudents();
     const { findAll: findAllArticles } = useArticles();
-    const [screenshot, setScreenshot] = useState<string | null>(
-      command?.screenshot || null
-    );
+
+    // State declarations
+    const [isCreatingNew, setIsCreatingNew] = useState(false);
+    const [screenshot, setScreenshot] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const [isCapturing, setIsCapturing] = useState(false);
     const [isProcessingOCR, setIsProcessingOCR] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+
+    // Always call the hook to follow React rules, but only use the data when appropriate
+    const queryId = props?.id?.toString() ?? "-1";
+    const commandQuery = findOne(queryId);
+    // Only use command data if we have an id and we're not in "create new" mode
+    const shouldUseCommand = !!props?.id && !isCreatingNew;
+    const command = shouldUseCommand ? commandQuery.data : undefined;
+    const isLoading = shouldUseCommand ? commandQuery.isLoading : false;
     const [toastMessage, setToastMessage] = useState<{
       title: string;
       message?: string;
@@ -78,6 +94,29 @@ export const CommandEditModal = Modal.create(
     });
 
     const student = watch("student");
+
+    // Update screenshot state when command loads
+    useEffect(() => {
+      if (command?.screenshot !== undefined) {
+        setScreenshot(command.screenshot || null);
+      }
+    }, [command?.screenshot]);
+
+    // Reset form when command data is loaded or when command id changes
+    useEffect(() => {
+      // Don't reload command data if we're in "create new" mode
+      if (isCreatingNew) {
+        return;
+      }
+      if (command) {
+        reset(command);
+      } else if (!props?.id) {
+        // Reset to empty form when opening a new command
+        reset({
+          articles: [],
+        });
+      }
+    }, [command, props?.id, reset, isCreatingNew]);
 
     useEffect(() => {
       if (isCapturing && videoRef.current) {
@@ -136,6 +175,19 @@ export const CommandEditModal = Modal.create(
       }
     }, [isCapturing]);
 
+    // Close fullscreen on ESC
+    useEffect(() => {
+      const onKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          setIsFullscreen(false);
+        }
+      };
+      if (isFullscreen) {
+        window.addEventListener("keydown", onKeyDown);
+      }
+      return () => window.removeEventListener("keydown", onKeyDown);
+    }, [isFullscreen]);
+
     const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (file) {
@@ -193,6 +245,15 @@ export const CommandEditModal = Modal.create(
 
     const stopCamera = () => {
       console.log("stopCamera called, setting isCapturing to false");
+      // Immediately stop all tracks from the camera
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach((track) => {
+          track.stop();
+          console.log("Stopped track:", track.kind);
+        });
+        videoRef.current.srcObject = null;
+      }
       // Immediately stop all tracks from the camera
       if (videoRef.current && videoRef.current.srcObject) {
         const stream = videoRef.current.srcObject as MediaStream;
@@ -286,7 +347,7 @@ export const CommandEditModal = Modal.create(
         } else {
           console.warn("No quantities extracted from screenshot");
           setToastMessage({
-            title: "Aucune quantité trouvée",
+            title: "Aucun article trouvé",
             message: "Veuillez vérifier la qualité de la photo",
             variant: "error",
           });
@@ -313,14 +374,41 @@ export const CommandEditModal = Modal.create(
       }
     }, [toastMessage]);
 
-    const onSubmit = (data: Command | NewCommand) => {
-      upsert({ ...data, screenshot } as Command);
+    const handleSave = async (data: Command | NewCommand) => {
+      await upsert({ ...data, screenshot } as Command);
     };
+
+    const handleSaveAndCreateNew = handleSubmit(async (data) => {
+      await handleSave(data);
+      // Reset form to create a new command
+      setIsCreatingNew(true);
+      reset({
+        articles: [],
+        parent: "",
+        phone: null,
+        email: null,
+        paymentMethod: null,
+      });
+      setScreenshot(null);
+      // Show success message
+      setToastMessage({
+        title: t("Commande enregistrée"),
+        message: t("Vous pouvez maintenant créer une nouvelle commande"),
+        variant: "success",
+      });
+    });
+
+    const handleSaveAndClose = handleSubmit(async (data) => {
+      await handleSave(data);
+      handleClose();
+      modal.remove();
+    });
 
     const handleClose = () => {
       stopCamera();
       reset();
       setScreenshot(null);
+      setIsCreatingNew(false);
     };
 
     return (
@@ -328,245 +416,353 @@ export const CommandEditModal = Modal.create(
         size="l"
         tone="pink"
         isValid={isValid}
-        onSubmit={handleSubmit(onSubmit)}
         onClose={handleClose}
       >
-        <Stack>
-          <Row spacing={4}>
-            <Stack>
-              <FormControl
-                mandatory
-                width="large"
-                label={t("Student")}
-                error={!!errors.student}
-                helperText={errors.student?.message}
-              >
-                <ComboBox
-                  items={
-                    students
-                      ?.sort((a, b) => a.lastName.localeCompare(b.lastName))
-                      .map((s) => ({
-                        key: s.id.toString(),
-                        value: `${s.lastName} ${s.firstName} (${s.class.name})`,
-                      })) ?? []
-                  }
-                  placeholder={t("Sélectionner un étudiant")}
-                  value={
-                    student
-                      ? `${student?.lastName} ${student?.firstName} (${student?.class?.name})`
-                      : ""
-                  }
-                  onSelectionChange={(key) => {
-                    console.log("key", key);
-                    if (key) {
-                      const studentId = parseInt(key as string);
-                      const selectedStudent = students?.find(
-                        (s) => s.id === studentId
-                      );
-                      if (selectedStudent) {
-                        setValue("student", selectedStudent);
+        {isLoading ? (
+          <Empty title={t("Chargement en cours...")} />
+        ) : (
+          <Stack>
+            <Row spacing={4}>
+              <Stack>
+                <Row>
+                  <FormControl
+                    mandatory
+                    width="large"
+                    label={t("Student")}
+                    error={!!errors.student}
+                    helperText={errors.student?.message}
+                  >
+                    <ComboBox
+                      items={
+                        students
+                          ?.sort((a, b) => a.lastName.localeCompare(b.lastName))
+                          .map((s) => ({
+                            key: s.id.toString(),
+                            value: `${s.lastName} ${s.firstName} (${s.class.name})`,
+                          })) ?? []
                       }
-                    }
-                  }}
-                  error={!!errors.student}
-                />
-              </FormControl>
-              <FormControl
-                mandatory
-                label={t("Parent")}
-                error={!!errors.parent}
-                helperText={errors.parent?.message}
-              >
-                <Input {...register("parent", { required: false })} />
-              </FormControl>
-              <FormControl
-                label={t("Moyen de paiement")}
-                error={!!errors.paymentMethod}
-                helperText={errors.paymentMethod?.message}
-              >
-                <Select
-                  label={t("Moyen de paiement")}
-                  name="paymentMethod"
-                  value={watch("paymentMethod")?.toString() ?? undefined}
-                  items={Object.values(PaymentMethod).map((method) => ({
-                    key: method,
-                    value: method,
-                  }))}
-                  onChange={(event) => {
-                    setValue(
-                      "paymentMethod",
-                      event.target.value as PaymentMethod
-                    );
-                  }}
-                >
-                  {(item) => <Item key={item.key}>{t(item.value)}</Item>}
-                </Select>
-              </FormControl>
-            </Stack>
-
-            <Row justify="end">
-              {screenshot && (
-                <div
-                  style={{
-                    width: "fit-content",
-                  }}
-                >
-                  <Stack spacing={1}>
-                    <Button
-                      variant="outlined"
-                      onClick={handleTakePhoto}
-                      title={t("Changer la photo")}
-                    >
-                      <RotateCw size={16} />
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      onClick={extractQuantitiesFromScreenshot}
-                      disabled={isProcessingOCR}
-                      title={
-                        isProcessingOCR
-                          ? t("Extraction en cours...")
-                          : t("Extraire les quantités")
+                      placeholder={t("Sélectionner un étudiant")}
+                      value={
+                        student
+                          ? `${student?.lastName} ${student?.firstName} (${student?.class?.name})`
+                          : ""
                       }
+                      onSelectionChange={(key) => {
+                        console.log("key", key);
+                        if (key) {
+                          const studentId = parseInt(key as string);
+                          const selectedStudent = students?.find(
+                            (s) => s.id === studentId
+                          );
+                          if (selectedStudent) {
+                            setValue("student", selectedStudent);
+                          }
+                        }
+                      }}
+                      error={!!errors.student}
+                    />
+                  </FormControl>
+                  <FormControl
+                    mandatory
+                    label={t("Parent")}
+                    error={!!errors.parent}
+                    helperText={errors.parent?.message}
+                  >
+                    <Input {...register("parent", { required: false })} />
+                  </FormControl>
+                </Row>
+                <Row>
+                  <FormControl
+                    label={t("Téléphone")}
+                    error={!!errors.phone}
+                    helperText={errors.phone?.message}
+                  >
+                    <Input {...register("phone", { required: false })} />
+                  </FormControl>
+                  <FormControl
+                    label={t("Email")}
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                  >
+                    <Input {...register("email", { required: false })} />
+                  </FormControl>
+                  <FormControl
+                    label={t("Moyen de paiement")}
+                    error={!!errors.paymentMethod}
+                    helperText={errors.paymentMethod?.message}
+                  >
+                    <Select
+                      label={t("Moyen de paiement")}
+                      name="paymentMethod"
+                      value={watch("paymentMethod")?.toString() ?? undefined}
+                      items={Object.values(PaymentMethod).map((method) => ({
+                        key: method,
+                        value: method,
+                      }))}
+                      onChange={(event) => {
+                        setValue(
+                          "paymentMethod",
+                          event.target.value as PaymentMethod
+                        );
+                      }}
                     >
-                      <ScanLine size={16} />
-                    </Button>
-                  </Stack>
-                </div>
-              )}
+                      {(item) => <Item key={item.key}>{t(item.value)}</Item>}
+                    </Select>
+                  </FormControl>
+                </Row>
+              </Stack>
 
-              <FormControl>
-                <Stack spacing={2}>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    onChange={handleFileSelect}
-                    style={{ display: "none" }}
-                  />
-                  {!isCapturing ? (
-                    <Stack spacing={2}>
-                      <div
-                        style={{
-                          maxWidth: "200px",
-                          height: "150px",
-                          borderRadius: "8px",
-                          overflow: "hidden",
-                          border: "2px dashed #ccc",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          background: "#f5f5f5",
-                          cursor: "pointer",
-                        }}
+              <Row justify="end">
+                {screenshot && !isCapturing && (
+                  <div
+                    style={{
+                      width: "fit-content",
+                    }}
+                  >
+                    <Stack spacing={1}>
+                      <Button
+                        variant="outlined"
+                        style={{ margin: "1px" }}
                         onClick={handleTakePhoto}
-                        title="Click to take photo"
+                        title={t("Changer la photo")}
                       >
+                        <RotateCw size={16} />
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        style={{ margin: "1px" }}
+                        onClick={() => setIsFullscreen(true)}
+                        title={t("Afficher en plein écran")}
+                      >
+                        <ZoomIn size={16} />
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        style={{ margin: "1px" }}
+                        onClick={extractQuantitiesFromScreenshot}
+                        disabled={isProcessingOCR}
+                        title={
+                          isProcessingOCR
+                            ? t("Extraction en cours...")
+                            : t("Extraire les articles")
+                        }
+                      >
+                        <ScanLine size={16} />
+                      </Button>
+                    </Stack>
+                  </div>
+                )}
+
+                <FormControl width="fit-content">
+                  <Stack spacing={2}>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onChange={handleFileSelect}
+                      style={{ display: "none" }}
+                    />
+                    {!isCapturing ? (
+                      <Stack spacing={2} align="end">
                         {screenshot ? (
                           <img
                             src={screenshot}
                             alt="Command photo"
                             style={{
+                              maxWidth: "150px",
+                              maxHeight: "120px",
                               width: "100%",
-                              height: "100%",
+                              height: "auto",
                               objectFit: "cover",
                             }}
                           />
                         ) : (
                           <div
                             style={{
-                              textAlign: "center",
-                              color: "#999",
-                              padding: "16px",
+                              maxWidth: "135px",
+                              height: "110px",
+                              borderRadius: "8px",
+                              overflow: "hidden",
+                              border: "2px dashed #ccc",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              background: "#f5f5f5",
+                              cursor: "pointer",
                             }}
+                            onClick={handleTakePhoto}
+                            title="Click to take photo"
                           >
                             <div
                               style={{
-                                fontSize: "48px",
-                                marginBottom: "8px",
-                              }}
-                            >
-                              <CameraIcon />
-                            </div>
-                            <div
-                              style={{ fontSize: "14px", fontWeight: "500" }}
-                            >
-                              Aucune photo
-                            </div>
-                            <div
-                              style={{
-                                fontSize: "12px",
+                                textAlign: "center",
                                 color: "#999",
-                                marginTop: "4px",
+                                padding: "16px",
                               }}
                             >
-                              Cliquer pour ajouter
+                              <div
+                                style={{
+                                  fontSize: "48px",
+                                  marginBottom: "8px",
+                                }}
+                              >
+                                <CameraIcon />
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "14px",
+                                  fontWeight: "500",
+                                }}
+                              >
+                                Aucune photo
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "12px",
+                                  color: "#999",
+                                  marginTop: "4px",
+                                }}
+                              >
+                                Cliquer pour ajouter
+                              </div>
                             </div>
                           </div>
                         )}
-                      </div>
-                    </Stack>
-                  ) : (
-                    <Stack spacing={2}>
-                      <div
-                        style={{
-                          backgroundColor: "#000",
-                          borderRadius: "8px",
-                          padding: "8px",
-                          display: "flex",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <video
-                          ref={videoRef}
-                          autoPlay
-                          playsInline
-                          muted
+                      </Stack>
+                    ) : (
+                      <Stack spacing={2} align="end">
+                        <div
                           style={{
-                            maxWidth: "300px",
-                            maxHeight: "400px",
-                            width: "100%",
-                            height: "auto",
-                            borderRadius: "4px",
+                            backgroundColor: "#000",
+                            borderRadius: "8px",
+                            padding: "8px",
+                            display: "flex",
+                            justifyContent: "center",
                           }}
-                        />
-                      </div>
-                      <Row justify="center">
-                        <Button
-                          variant="contained"
-                          onClick={capturePhoto}
-                          style={{ marginRight: "8px" }}
                         >
-                          {t("Capturer")}
-                        </Button>
-                        <Button variant="light" onClick={stopCamera}>
-                          {t("Annuler")}
-                        </Button>
-                      </Row>
-                    </Stack>
-                  )}
-                </Stack>
-              </FormControl>
+                          <video
+                            ref={videoRef}
+                            autoPlay
+                            playsInline
+                            muted
+                            style={{
+                              maxWidth: "135px",
+                              maxHeight: "110px",
+                              width: "100%",
+                              height: "auto",
+                              borderRadius: "4px",
+                            }}
+                          />
+                        </div>
+                        <Row justify="center">
+                          <Button
+                            variant="contained"
+                            onClick={capturePhoto}
+                            style={{ marginRight: "8px" }}
+                          >
+                            {t("Capturer")}
+                          </Button>
+                          <Button variant="light" onClick={stopCamera}>
+                            {t("Annuler")}
+                          </Button>
+                        </Row>
+                      </Stack>
+                    )}
+                  </Stack>
+                </FormControl>
+              </Row>
             </Row>
-          </Row>
 
-          <CommandArticlesEditGrid
-            {...register("articles")}
-            articles={watch("articles")}
-            onArticlesChange={(articles) => {
-              setValue("articles", articles);
-            }}
-            isLoading={false}
-            error={null}
-          />
-        </Stack>
+            <CommandArticlesEditGrid
+              {...register("articles")}
+              articles={watch("articles")}
+              onArticlesChange={(articles) => {
+                setValue("articles", articles);
+              }}
+              isLoading={false}
+              error={null}
+            />
+
+            <Row justify="end" spacing={2}>
+              <Button
+                variant="outlined"
+                disabled={!isValid}
+                onClick={handleSaveAndCreateNew}
+              >
+                {t("Enregistrer et créer nouveau")}
+              </Button>
+              <Button
+                variant="contained"
+                disabled={!isValid}
+                onClick={handleSaveAndClose}
+              >
+                {t("Enregistrer et fermer")}
+              </Button>
+            </Row>
+          </Stack>
+        )}
         {toastMessage && (
           <Toast
             title={toastMessage.title}
             message={toastMessage.message}
             variant={toastMessage.variant}
           />
+        )}
+        {isFullscreen && screenshot && (
+          <div
+            onClick={() => setIsFullscreen(false)}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.9)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 9999,
+              padding: "24px",
+            }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                position: "relative",
+                maxWidth: "95vw",
+                maxHeight: "95vh",
+              }}
+            >
+              <button
+                onClick={() => setIsFullscreen(false)}
+                aria-label={t("Fermer")}
+                style={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  background: "rgba(0,0,0,0.6)",
+                  border: "none",
+                  borderRadius: 8,
+                  padding: 6,
+                  cursor: "pointer",
+                  color: "#fff",
+                }}
+              >
+                <X size={18} />
+              </button>
+              <img
+                src={screenshot}
+                alt="Command photo fullscreen"
+                style={{
+                  maxWidth: "90vw",
+                  maxHeight: "90vh",
+                  width: "90vw",
+                  height: "auto",
+                  objectFit: "contain",
+                  borderRadius: 8,
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+                }}
+              />
+            </div>
+          </div>
         )}
       </ModalContainer>
     );

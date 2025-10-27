@@ -1,20 +1,21 @@
 import { Button } from "../../../../platform/ui";
 import { Download } from "lucide-react";
-import { useExportToPdf } from "./use-export-pdf.hook";
+import { useExportCommandsToPdf } from "./use-export-commands-pdf.hook";
+import { Command } from "../../hooks/use-commands.hook";
 
-interface ExportPdfButtonProps {
-  articles: any[];
+interface CommandsExportPdfButtonProps {
+  commands: Command[];
   isLoading?: boolean;
 }
 
-export const ExportPdfButton = ({
-  articles,
+export const CommandsExportPdfButton = ({
+  commands,
   isLoading,
-}: ExportPdfButtonProps) => {
-  const { exportToPdf, isExporting } = useExportToPdf();
+}: CommandsExportPdfButtonProps) => {
+  const { exportToPdf, isExporting } = useExportCommandsToPdf();
 
   const handleExport = () => {
-    exportToPdf(articles);
+    exportToPdf(commands);
   };
 
   return (
@@ -24,7 +25,7 @@ export const ExportPdfButton = ({
       startIcon={<Download size={16} />}
       onClick={handleExport}
       loading={isExporting}
-      disabled={isLoading || articles.length === 0}
+      disabled={isLoading || commands.length === 0}
       css={{
         whiteSpace: "nowrap",
       }}
