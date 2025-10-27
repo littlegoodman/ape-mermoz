@@ -354,22 +354,56 @@ const PreferentialPriceDisplay = ({ price }: { price: number }) => (
   </Text>
 );
 
+const QuantityInputWrapper = styled("div", {
+  display: "flex",
+  alignItems: "center",
+  position: "relative",
+  width: "60px",
+});
+
 const QuantityInput = styled(Input, {
-  width: "50px",
   textAlign: "center",
   fontSize: "$s",
   fontWeight: "$semibold",
-  border: "1px solid $slate300",
-  borderRadius: "$2",
-  padding: "$1",
-  background: "$white",
-  "&:focus": {
-    borderColor: "#a21caf",
-    boxShadow: "0 0 0 3px rgba(236, 72, 153, 0.1)",
-    outline: "none",
+  "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+    "-webkit-appearance": "none",
+    margin: 0,
   },
+  "-moz-appearance": "textfield",
+});
+
+const SpinnerButtons = styled("div", {
+  position: "absolute",
+  right: "4px",
+  top: "33%",
+  transform: "translateY(-50%)",
+  display: "flex",
+  flexDirection: "column",
+  gap: "0px",
+  borderRadius: "$1",
+  background: "transparent",
+});
+
+const SpinnerButton = styled("button", {
+  background: "transparent",
+  border: "none",
+  cursor: "pointer",
+  padding: "0",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "$xs",
+  color: "$slate500",
+  transition: "color 0.2s ease",
+  width: "14px",
+  height: "2px",
+  lineHeight: "0",
+  outline: "none",
   "&:hover": {
-    borderColor: "#c084fc",
+    color: "#a21caf",
+  },
+  "&:active": {
+    transform: "scale(0.95)",
   },
 });
 
@@ -381,6 +415,43 @@ interface ArticleCardProps {
   mode: "display" | "edit";
   onQuantityChange?: (articleId: number, value: string) => void;
 }
+
+interface CustomQuantityInputProps {
+  value: number;
+  onChange: (value: string) => void;
+}
+
+const CustomQuantityInput = ({ value, onChange }: CustomQuantityInputProps) => {
+  const handleIncrement = () => {
+    onChange(String((value || 0) + 1));
+  };
+
+  const handleDecrement = () => {
+    onChange(String(Math.max(0, (value || 0) - 1)));
+  };
+
+  return (
+    <QuantityInputWrapper>
+      <QuantityInput
+        type="number"
+        min="0"
+        value={value}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          onChange(e.target.value)
+        }
+        placeholder="0"
+      />
+      <SpinnerButtons>
+        <SpinnerButton onClick={handleIncrement} type="button">
+          ▲
+        </SpinnerButton>
+        <SpinnerButton onClick={handleDecrement} type="button">
+          ▼
+        </SpinnerButton>
+      </SpinnerButtons>
+    </QuantityInputWrapper>
+  );
+};
 
 const StyledArticleCard = styled(Card, {
   fullWidth: true,
@@ -428,14 +499,9 @@ const ArticleCard = ({
       <ArticleDescription article={article} />
       <StyledActionsRow align="center">
         {mode === "edit" ? (
-          <QuantityInput
-            type="number"
-            min="0"
+          <CustomQuantityInput
             value={quantity}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              onQuantityChange?.(article.id, e.target.value)
-            }
-            placeholder="0"
+            onChange={(value) => onQuantityChange?.(article.id, value)}
           />
         ) : (
           <>
@@ -468,8 +534,6 @@ const StyledColumn = styled("div", {
   minWidth: 0,
   flex: "1 1 auto",
   padding: "$1",
-  background: "$white",
-  borderRadius: "$2",
 });
 
 const ArticlesColumn = ({
