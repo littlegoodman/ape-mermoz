@@ -12,6 +12,7 @@ export type Command = {
     article: Article;
     quantity: number;
   }[];
+  screenshot?: string | null;
 };
 
 export type CommandsSummary = {
@@ -20,6 +21,7 @@ export type CommandsSummary = {
     quantity: number;
     price: number;
     preferentialPrice: number;
+    imageLink?: string;
   }[];
   totalPrice: number;
   totalPreferentialPrice: number;

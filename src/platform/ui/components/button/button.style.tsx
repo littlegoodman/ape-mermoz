@@ -3,15 +3,19 @@ import { styled } from "../../theme";
 
 const containedVariant = (color: string) => ({
   color: `$${color}Contrast`,
-  backgroundColor: `$${color}`,
+  background: color === "primary" ? "$gradients$primary" : `$${color}`,
   "&:hover": {
     boxShadow: "$btn",
+    transform: "translateY(-1px)",
+    transition: "all 0.2s ease-in-out",
   },
   "&:active": {
     backgroundColor: color === "negative" ? "$neutralLight" : `$${color}Solid`,
+    transform: "translateY(0px)",
   },
   "&:disabled": {
     backgroundColor: "$$disabledBackground",
+    transform: "none",
   },
 });
 
@@ -22,20 +26,26 @@ const outlinedVariant = (color: string) => ({
     color: color === "negative" ? "$negativeText" : "$text",
     borderColor: `$${color}Border`,
     backgroundColor: color === "negative" ? "transparent" : "$background",
+    borderWidth: "2px",
     "&:hover": {
-      color: color === "negative" ? "$negativeContrast" : "$text",
-      backgroundColor: color === "negative" ? "$neutralLight" : "$neutralLight",
-      boxShadow: "none",
+      color: color === "negative" ? "$negativeContrast" : `$${color}Solid`,
+      backgroundColor:
+        color === "negative" ? "$neutralLight" : `$${color}Background`,
+      boxShadow: "$soft",
+      transform: "translateY(-1px)",
+      transition: "all 0.2s ease-in-out",
     },
     "&:active": {
       backgroundColor: `$${color}Solid`,
       borderColor: `$${color}Solid`,
       color: `$${color}Contrast`,
+      transform: "translateY(0px)",
     },
     "&:disabled": {
       color: "$$disabledBackground",
       borderColor: "$$disabledBackground",
       backgroundColor: "$background",
+      transform: "none",
     },
   },
 });
@@ -91,19 +101,20 @@ export const ButtonBase = styled("button", {
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
-  borderRadius: "$3",
-  fontFamily: "$primary",
-  fontWeight: "$bold",
+  borderRadius: "$12", // More rounded for feminine look
+  fontFamily: "$secondary",
+  fontWeight: "$medium",
   fontSize: "$base",
   lineHeight: "$btn",
-  letterSpacing: "$base",
+  letterSpacing: "$wide",
   WebkitFontSmoothing: "antialiased",
   border: "0",
-  padding: "$1 $4",
+  padding: "$2 $5", // Slightly more padding
   boxSizing: "border-box",
   cursor: "pointer",
   userSelect: "none",
   backgroundColor: "transparent",
+  transition: "all 0.2s ease-in-out",
   "&:disabled": {
     pointerEvents: "none",
   },

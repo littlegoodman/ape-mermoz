@@ -160,6 +160,35 @@ export const InputWrapper = styled("div", {
         },
       },
     },
+    variant: {
+      default: {},
+      white: {
+        $$inputColor: "$colors$white",
+        $$inputBorderColor: "$colors$neutralBorder",
+        $$inputFocusedColor: "$colors$white",
+        $$inputFocusedBorderColor: "$colors$blue400",
+        boxShadow: "$vlt",
+        "&:focus-within": {
+          background: "$$inputColor",
+          borderColor: "$$inputFocusedBorderColor",
+          borderRadius: "$$inputBorderRadius",
+          boxShadow: "0 0 0 2px rgba(7, 138, 232, 0.1)",
+          "&:before": {
+            display: "none",
+          },
+        },
+        "&:hover": {
+          borderColor: "$colors$slate300",
+          background: "$$inputColor",
+        },
+        "& [data-end-adornment]": {
+          backgroundColor: "$colors$white",
+          borderRadius: "$1",
+          padding: "$1",
+          margin: "$1",
+        },
+      },
+    },
   },
 });
 

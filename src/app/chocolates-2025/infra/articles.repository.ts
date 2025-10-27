@@ -1,12 +1,13 @@
 import { ApeMermozDatabase } from "../../../platform/databases/ape-mermoz.database";
 import type { Article } from "../hooks";
 
-type ArticlePersisted = {
+export type ArticlePersisted = {
   id: number;
   name: string;
   description: string;
   price: number;
   preferential_price: number;
+  image_link?: string;
 };
 
 export class ArticlesRepository {
@@ -26,6 +27,7 @@ export class ArticlesRepository {
       description: article.description,
       price: article.price,
       preferentialPrice: article.preferential_price,
+      imageLink: article.image_link,
     }));
   }
 }

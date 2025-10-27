@@ -1,6 +1,13 @@
+import { Stack } from "../../../../platform/ui";
+import { ScrollArea } from "../../../../platform/ui/components/scroll-area";
+import {
+  Toolbar,
+  ToolbarSlot,
+} from "../../../../platform/ui/components/toolbar/toolbar";
 import { Page } from "../../../common/layout/page";
 import { useCommands } from "../../hooks/use-commands.hook";
 import { CommandArticlesGrid } from "./command-articles.grid";
+import { ExportPdfButton } from "./export-pdf.button";
 
 export const CommandsSummaryPage = () => {
   const { getSummary } = useCommands();
@@ -8,11 +15,23 @@ export const CommandsSummaryPage = () => {
 
   return (
     <Page title={"Bon de commande"}>
-      <CommandArticlesGrid
-        articles={summary?.articles ?? []}
-        isLoading={isLoading}
-        error={error}
-      />
+      <Stack>
+        <Toolbar>
+          <ToolbarSlot position="right">
+            <ExportPdfButton
+              articles={summary?.articles ?? []}
+              isLoading={isLoading}
+            />
+          </ToolbarSlot>
+        </Toolbar>
+        <ScrollArea>
+          <CommandArticlesGrid
+            articles={summary?.articles ?? []}
+            isLoading={isLoading}
+            error={error}
+          />
+        </ScrollArea>
+      </Stack>
     </Page>
   );
 };

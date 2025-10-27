@@ -54,7 +54,8 @@ pub fn get_migrations() -> Vec<Migration> {
                 name TEXT NOT NULL, \
                 description TEXT NOT NULL, \
                 price REAL NOT NULL, \
-                preferential_price REAL NOT NULL \
+                preferential_price REAL NOT NULL, \
+                image_link TEXT \
             );",
             kind: MigrationKind::Up,
         },
@@ -78,6 +79,12 @@ pub fn get_migrations() -> Vec<Migration> {
                 quantity INTEGER NOT NULL, \
                 PRIMARY KEY (command_id, article_id) \
             );",
+            kind: MigrationKind::Up,
+        },
+        Migration {
+            version: 29,
+            description: "add_screenshot_to_commands",
+            sql: "ALTER TABLE commands ADD COLUMN screenshot TEXT;",
             kind: MigrationKind::Up,
         },
         // seeds...

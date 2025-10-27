@@ -39,6 +39,9 @@ export const {
 });
 
 export const applyTheme = globalCss({
+  "@import": [
+    "url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap')",
+  ],
   "*": {
     margin: 0,
     padding: 0,
@@ -60,8 +63,21 @@ export const applyTheme = globalCss({
     fontSize: "$base",
     lineHeight: "$m",
     letterSpacing: "$base",
-    fontFamily: "$primary",
+    fontFamily: "$secondary",
     backgroundColor: "$background",
     color: "$text",
+    backgroundImage:
+      "radial-gradient(circle at 20% 80%, rgba(244, 114, 182, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(167, 139, 250, 0.05) 0%, transparent 50%)",
+  },
+
+  "h1, h2, h3, h4, h5, h6": {
+    fontFamily: "$primary",
+    fontWeight: "$bold",
+    letterSpacing: "$wide",
+    color: "$slate700",
+  },
+
+  "button, input, select, textarea": {
+    fontFamily: "$secondary",
   },
 });

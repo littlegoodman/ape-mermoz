@@ -1,112 +1,112 @@
 export const palette = {
   main: {
-    bleuNuit: '#455460',
-    vertTurquoise: '#05DBC3',
-    vertTurquoiseDark: '#01BEA9',
-    bleuAzur: '#078AE8',
+    rosePoudre: "#F8BBD9", // Soft powder pink
+    rosePoudree: "#F4A6D1", // Slightly deeper powder pink
+    rosePoudreee: "#F091C9", // Even deeper powder pink
+    rosePoudreeee: "#EC7CC1", // Deep powder pink
   },
   secondary: {
-    jauneSafran: '#FFD700',
-    rougeVermeil: '#FF0033',
+    orRose: "#E8B4B8", // Rose gold
+    roseVermeil: "#D4A5A5", // Rose vermillion
   },
-  blue: {
-    blue100: '#CCF4FD',
-    blue200: '#9AE4FC',
-    blue300: '#67CCF8',
-    blue400: '#41B1F1',
-    blue500: '#078AE8',
-    blue600: '#056BC7',
-    blue700: '#0350A7',
-    blue800: '#023886',
-    blue900: '#01286F',
+  pink: {
+    pink100: "#FDF2F8", // Very light pink
+    pink200: "#FCE7F3", // Light pink
+    pink300: "#FBCFE8", // Soft pink
+    pink400: "#F9A8D4", // Medium pink
+    pink500: "#F472B6", // Main pink
+    pink600: "#EC4899", // Deep pink
+    pink700: "#DB2777", // Darker pink
+    pink800: "#BE185D", // Dark pink
+    pink900: "#9D174D", // Very dark pink
   },
-  green: {
-    green100: '#CBFDE5',
-    green200: '#99FBD5',
-    green300: '#65F4C9',
-    green400: '#3EE9C6',
-    green500: '#05DBC3',
-    green600: '#03BCB8',
-    green700: '#02929D',
-    green800: '#016A7F',
-    green900: '#004E69',
+  purple: {
+    purple100: "#F3E8FF", // Very light purple
+    purple200: "#E9D5FF", // Light purple
+    purple300: "#DDD6FE", // Soft purple
+    purple400: "#C4B5FD", // Medium purple
+    purple500: "#A78BFA", // Main purple
+    purple600: "#9333EA", // Deep purple
+    purple700: "#7C3AED", // Darker purple
+    purple800: "#6B21A8", // Dark purple
+    purple900: "#581C87", // Very dark purple
   },
-  yellow: {
-    yellow100: '#FFFACC',
-    yellow200: '#FFF499',
-    yellow300: '#FFEC66',
-    yellow400: '#FFEF53',
-    yellow500: '#FFD700',
-    yellow600: '#DBB500',
-    yellow700: '#B79400',
-    yellow800: '#937500',
-    yellow900: '#7A5F00',
+  gold: {
+    gold100: "#FFFBEB", // Very light gold
+    gold200: "#FEF3C7", // Light gold
+    gold300: "#FDE68A", // Soft gold
+    gold400: "#FCD34D", // Medium gold
+    gold500: "#F59E0B", // Main gold
+    gold600: "#D97706", // Deep gold
+    gold700: "#B45309", // Darker gold
+    gold800: "#92400E", // Dark gold
+    gold900: "#78350F", // Very dark gold
   },
-  red: {
-    red100: '#FFD5CC',
-    red200: '#FFA199',
-    red300: '#FF6667',
-    red400: '#FF3F53',
-    red500: '#FF0033',
-    red600: '#DB0040',
-    red700: '#B70047',
-    red800: '#930047',
-    red900: '#7A0047',
+  rose: {
+    rose100: "#FFF1F2", // Very light rose
+    rose200: "#FFE4E6", // Light rose
+    rose300: "#FECDD3", // Soft rose
+    rose400: "#FDA4AF", // Medium rose
+    rose500: "#FB7185", // Main rose
+    rose600: "#F43F5E", // Deep rose
+    rose700: "#E11D48", // Darker rose
+    rose800: "#BE123C", // Dark rose
+    rose900: "#9F1239", // Very dark rose
   },
-  darkblue: {
-    dark100: '#E9F3F7',
-    dark200: '#D4E7EF',
-    dark300: '#ACC3CF',
-    dark400: '#7D929F',
-    dark500: '#455460',
-    dark600: '#324252',
-    dark700: '#223245',
-    dark800: '#162337',
-    dark900: '#0D182E',
+  slate: {
+    slate100: "#F8FAFC", // Very light slate
+    slate200: "#F1F5F9", // Light slate
+    slate300: "#E2E8F0", // Soft slate
+    slate400: "#CBD5E1", // Medium slate
+    slate500: "#94A3B8", // Main slate
+    slate600: "#64748B", // Deep slate
+    slate700: "#475569", // Darker slate
+    slate800: "#334155", // Dark slate
+    slate900: "#1E293B", // Very dark slate
   },
-  gray: {
-    gray100: '#FFFFFF',
-    gray200: '#FAFCFE',
-    gray300: '#F5F7F9',
-    gray400: '#EBEDEF',
-    gray500: '#E1E3E5',
-    gray600: '#D2D4D6',
-    gray700: '#C3C5C7',
-    gray800: '#AFB1B3',
-    gray900: '#9B9D9F',
+  cream: {
+    cream100: "#FFFBEB", // Very light cream
+    cream200: "#FEF3C7", // Light cream
+    cream300: "#FDE68A", // Soft cream
+    cream400: "#FCD34D", // Medium cream
+    cream500: "#F59E0B", // Main cream
+    cream600: "#D97706", // Deep cream
+    cream700: "#B45309", // Darker cream
+    cream800: "#92400E", // Dark cream
+    cream900: "#78350F", // Very dark cream
   },
   sequential: {
-    1: '#FF6900',
-    2: '#FF8700',
-    3: '#FFAF00',
-    4: '#FFD700',
-    5: '#FFFF00',
-    6: '#D7FF00',
-    7: '#87FF00',
-    8: '#00FF87',
-    9: '#00FFD7',
-    10: '#00FFFF',
-    11: '#00D7FF',
-    12: '#00AFFF',
-    13: '#0087FF',
-    14: '#005FFF',
-    15: '#5F00FF',
-    16: '#8700FF',
-    17: '#AF00FF',
-    18: '#D700FF',
-    19: '#FF00FF',
-    20: '#FF00AF',
+    1: "#FF6900",
+    2: "#FF8700",
+    3: "#FFAF00",
+    4: "#FFD700",
+    5: "#FFFF00",
+    6: "#D7FF00",
+    7: "#87FF00",
+    8: "#00FF87",
+    9: "#00FFD7",
+    10: "#00FFFF",
+    11: "#00D7FF",
+    12: "#00AFFF",
+    13: "#0087FF",
+    14: "#005FFF",
+    15: "#5F00FF",
+    16: "#8700FF",
+    17: "#AF00FF",
+    18: "#D700FF",
+    19: "#FF00FF",
+    20: "#FF00AF",
   },
   categorical: {
-    1: '#005FFF',
-    2: '#FF6900',
-    3: '#03BCB8',
-    4: '#FF0033',
-    5: '#8700FF',
-    6: '#7A5F00',
-    7: '#FF00FF',
-    8: '#7D929F',
-    9: '#00FF87',
-    10: '#00D7FF',
+    1: "#005FFF",
+    2: "#FF6900",
+    3: "#03BCB8",
+    4: "#FF0033",
+    5: "#8700FF",
+    6: "#7A5F00",
+    7: "#FF00FF",
+    8: "#7D929F",
+    9: "#00FF87",
+    10: "#00D7FF",
   },
 };

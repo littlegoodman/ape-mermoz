@@ -14,7 +14,7 @@ const AppBarShell = styled("header", {
   flexDirection: "column",
   flexShrink: 0,
   zIndex: "$appbar",
-  backgroundColor: "$background",
+  backgroundColor: "$white",
   color: "text",
   variants: {
     sidebarVisible: {

@@ -21,6 +21,7 @@ export const Modal = {
 
 export type ModalProps = {
   children: React.ReactNode;
+  size?: "s" | "m" | "l";
   onClose?: () => void;
   isValid?: boolean;
   onSubmit?: () => void;
@@ -28,6 +29,7 @@ export type ModalProps = {
 
 export const ModalContainer = ({
   children,
+  size,
   isValid,
   onClose,
   onSubmit,
@@ -37,7 +39,7 @@ export const ModalContainer = ({
 
   return (
     <ModalOverlay onClick={() => modal.remove()}>
-      <ModalContent onClick={(e) => e.stopPropagation()}>
+      <ModalContent size={size} onClick={(e) => e.stopPropagation()}>
         {children}
         <Row justify="end">
           <Button

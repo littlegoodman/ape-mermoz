@@ -1,97 +1,93 @@
 import { palette } from "./palette";
 
-const { blue, green, yellow, red, darkblue, gray, sequential } = palette;
+const { pink, purple, gold, rose, slate, cream, sequential } = palette;
 
 export const lightTheme = {
   white: "#ffffff",
-  background: "#ffffff",
-  text: "$dark500",
-  textWeak: "$gray900",
+  background: "#FFF8F9", // Soft pink background
+  text: "$slate700",
+  textWeak: "$slate600",
 
-  // Naming of the colors below has been influenced by NextUI:
-  // secondaryLight: '$purple200',
-  // secondaryLightHover: '$purple300',
-  // secondaryLightActive: '$purple400',
-  // secondaryLightContrast: '$purple600',
-  // secondary: '$purple600',
-  // secondaryBorder: '$purple500',
-  // secondaryBorderHover: '$purple600',
-  // secondarySolidHover: '$purple700',
-  // secondarySolidContrast: '$white',
-
-  primary: "$blue500",
+  // Primary color - elegant pink
+  primary: "$pink500",
   primaryContrast: "$white",
-  primarySolid: "$blue600",
-  primaryBorder: "$blue500",
-  primaryLight: "$blue200",
-  primaryLightHover: "$blue300",
-  primaryBackground: "$blue100",
-  primaryText: "$blue900",
+  primarySolid: "$pink600",
+  primaryBorder: "$pink500",
+  primaryLight: "$pink200",
+  primaryLightHover: "$pink300",
+  primaryBackground: "$pink100",
+  primaryText: "$pink900",
 
-  secondary: "$dark500",
+  // Secondary color - sophisticated purple
+  secondary: "$purple500",
   secondaryContrast: "$white",
-  secondarySolid: "$dark600",
-  secondaryBorder: "$dark500",
-  secondaryLight: "$dark200",
-  secondaryLightHover: "$dark300",
-  secondaryBackground: "$dark100",
-  secondaryText: "$dark900",
+  secondarySolid: "$purple600",
+  secondaryBorder: "$purple500",
+  secondaryLight: "$purple200",
+  secondaryLightHover: "$purple300",
+  secondaryBackground: "$purple100",
+  secondaryText: "$purple900",
 
-  neutral: "$gray700",
+  // Neutral - elegant slate
+  neutral: "$slate600",
   neutralContrast: "$white",
-  neutralSolid: "$dark600",
-  neutralBorder: "$gray500",
-  neutralBorderHover: "$gray600",
-  neutralLight: "$gray300",
-  neutralLightHover: "$gray400",
-  neutralBackground: "$gray200",
-  neutralText: "$gray900",
+  neutralSolid: "$slate700",
+  neutralBorder: "$slate400",
+  neutralBorderHover: "$slate500",
+  neutralLight: "$slate200",
+  neutralLightHover: "$slate300",
+  neutralBackground: "$slate100",
+  neutralText: "$slate800",
 
-  success: "$green600",
+  // Success - soft rose
+  success: "$rose500",
   successContrast: "$white",
-  successSolid: "$green700",
-  successBorder: "$green500",
-  successLight: "$green200",
-  successLightHover: "$green300",
-  successBackground: "$green100",
-  successText: "$green900",
+  successSolid: "$rose600",
+  successBorder: "$rose500",
+  successLight: "$rose200",
+  successLightHover: "$rose300",
+  successBackground: "$rose100",
+  successText: "$rose900",
 
-  warning: "$yellow600",
+  // Warning - elegant gold
+  warning: "$gold500",
   warningContrast: "$white",
-  warningSolid: "$yellow700",
-  warningBorder: "$yellow500",
-  warningLight: "$yellow200",
-  warningLightHover: "$yellow300",
-  warningBackground: "$yellow100",
-  warningText: "$yellow900",
+  warningSolid: "$gold600",
+  warningBorder: "$gold500",
+  warningLight: "$gold200",
+  warningLightHover: "$gold300",
+  warningBackground: "$gold100",
+  warningText: "$gold900",
 
-  error: "$red600",
+  // Error - deep rose
+  error: "$rose600",
   errorContrast: "$white",
-  errorSolid: "$red700",
-  errorBorder: "$red500",
-  errorLight: "$red200",
-  errorLightHover: "$red300",
-  errorBackground: "$red100",
-  errorText: "$red700",
+  errorSolid: "$rose700",
+  errorBorder: "$rose500",
+  errorLight: "$rose200",
+  errorLightHover: "$rose300",
+  errorBackground: "$rose100",
+  errorText: "$rose800",
 
-  negative: "$white",
-  negativeContrast: "$blue500",
-  negativeSolid: "$white",
-  negativeBorder: "$white",
-  negativeLight: "$white",
-  negativeLightHover: "$white",
-  negativeBackground: "$white",
-  negativeText: "$white",
+  // Negative - cream
+  negative: "$cream100",
+  negativeContrast: "$slate700",
+  negativeSolid: "$cream200",
+  negativeBorder: "$cream300",
+  negativeLight: "$cream100",
+  negativeLightHover: "$cream200",
+  negativeBackground: "$cream100",
+  negativeText: "$slate700",
 };
 
 export const theme = {
   colors: {
-    ...blue,
-    ...green,
-    ...yellow,
-    ...red,
-    ...darkblue,
-    ...gray,
+    ...pink,
+    ...purple,
+    ...gold,
+    ...rose,
+    ...slate,
+    ...cream,
     ...sequential,
     ...lightTheme,
   },
@@ -108,11 +104,11 @@ export const theme = {
     8: "40px",
   },
   fontSizes: {
-    base: "16px",
+    base: "14px",
     lead: "18px",
     xs: "10px",
     s: "12px",
-    m: "16px",
+    m: "14px",
     l: "20px",
     xl: "24px",
     xxl: "32px",
@@ -120,8 +116,9 @@ export const theme = {
     appname: "21px", // weird...
   },
   fonts: {
-    primary: "Inter, Avenir, Helvetica, Arial, sans-serif",
-    secondary: "Lato, sans-serif",
+    primary: "'Playfair Display', 'Georgia', serif", // Elegant serif for headings
+    secondary: "'Poppins', 'Inter', sans-serif", // Modern sans-serif for body text
+    accent: "'Dancing Script', cursive", // Script font for special elements
   },
   fontWeights: {
     bolder: 700,
@@ -130,6 +127,7 @@ export const theme = {
     regular: 400,
     light: 300,
     lighter: 200,
+    thin: 100,
   },
   lineHeights: {
     xs: "12px",
@@ -142,7 +140,10 @@ export const theme = {
     appname: "21px", // weird...
   },
   letterSpacings: {
-    base: "0.5px",
+    base: "0.3px",
+    wide: "0.8px",
+    wider: "1.2px",
+    tight: "0.1px",
   },
   sizes: {
     4: "4px",
@@ -165,10 +166,22 @@ export const theme = {
     32: "32px",
   },
   shadows: {
-    btn: "0px 0px 4px rgba(50, 66, 82, 0.4)",
-    md: "0px 0px 8px rgba(50, 66, 82, 0.4)", // dark600 @ 40%
-    lt: "2px 2px 4px rgba(153, 153, 153, 0.4)",
-    vlt: "2px 2px 4px 0px rgba(153, 153, 153, 0.161)",
+    btn: "0px 4px 12px rgba(244, 114, 182, 0.3), 0px 2px 4px rgba(244, 114, 182, 0.2)",
+    md: "0px 8px 25px rgba(244, 114, 182, 0.15), 0px 4px 10px rgba(244, 114, 182, 0.1)",
+    lt: "0px 2px 8px rgba(244, 114, 182, 0.1), 0px 1px 3px rgba(244, 114, 182, 0.05)",
+    vlt: "0px 1px 3px rgba(244, 114, 182, 0.1)",
+    soft: "0px 4px 20px rgba(244, 114, 182, 0.08), 0px 1px 3px rgba(244, 114, 182, 0.05)",
+    glow: "0px 0px 20px rgba(244, 114, 182, 0.3), 0px 0px 40px rgba(244, 114, 182, 0.1)",
+  },
+  gradients: {
+    primary: "linear-gradient(135deg, $pink400 0%, $pink600 100%)",
+    secondary: "linear-gradient(135deg, $purple400 0%, $purple600 100%)",
+    rose: "linear-gradient(135deg, $rose300 0%, $rose500 100%)",
+    gold: "linear-gradient(135deg, $gold300 0%, $gold500 100%)",
+    sunset: "linear-gradient(135deg, $pink300 0%, $rose400 50%, $gold300 100%)",
+    dream:
+      "linear-gradient(135deg, $purple200 0%, $pink300 50%, $rose200 100%)",
+    soft: "linear-gradient(135deg, $cream100 0%, $pink100 100%)",
   },
   zIndices: {
     1: "100",
@@ -189,10 +202,10 @@ export const theme = {
   },
   charts: {
     backgroundColor: "#fff",
-    axisColor: gray.gray400,
-    gridColor: gray.gray400,
+    axisColor: slate.slate400,
+    gridColor: slate.slate400,
     gridStrokeDashArray: "10, 5",
-    brushColor: blue.blue400,
-    crosshairColor: blue.blue400,
+    brushColor: pink.pink400,
+    crosshairColor: pink.pink400,
   },
 };

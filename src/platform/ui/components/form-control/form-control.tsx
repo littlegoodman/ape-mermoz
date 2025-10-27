@@ -10,6 +10,7 @@ import {
 export type FormControlProps = {
   label?: string;
   error?: boolean;
+  width?: "small" | "medium" | "large" | "full";
   helperText?: string;
   mandatory?: boolean;
   children: React.ReactNode;
@@ -18,6 +19,7 @@ export type FormControlProps = {
 export const FormControl = ({
   label,
   error,
+  width,
   helperText,
   mandatory,
   children,
@@ -25,7 +27,7 @@ export const FormControl = ({
   const id = useId();
 
   return (
-    <FormControlContainer error={error}>
+    <FormControlContainer error={error} width={width}>
       {label && (
         <Row spacing={2}>
           <InputLabel htmlFor={id}>{label}</InputLabel>

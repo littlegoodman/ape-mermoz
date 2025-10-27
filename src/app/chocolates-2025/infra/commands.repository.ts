@@ -1,19 +1,13 @@
 import { ApeMermozDatabase } from "../../../platform/databases/ape-mermoz.database";
 import type { CommandsSummary, Command } from "../hooks";
+import { ArticlePersisted } from "./articles.repository";
 
 type StudentPersisted = {
   id: number;
   first_name: string;
   last_name: string;
-  class: string;
-};
-
-type ArticlePersisted = {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  preferential_price: number;
+  class_id: number;
+  class_name: string;
 };
 
 type CommandArticlePersisted = {
@@ -26,6 +20,7 @@ type CommandPersisted = {
   id: string;
   student_id: number;
   parent: string;
+  screenshot?: string | null;
 };
 
 export class CommandsRepository {
@@ -49,6 +44,7 @@ export class CommandsRepository {
         description: article.description,
         price: article.price,
         preferentialPrice: article.preferential_price,
+        imageLink: article.image_link,
       },
       ...commands
         .filter((command) => command.article_id === article.id)
@@ -87,7 +83,7 @@ export class CommandsRepository {
         CommandArticlePersisted &
         ArticlePersisted)[]
     >(
-      "SELECT commands.id, commands.parent, students.id as student_id, students.first_name as first_name, students.last_name as last_name, classes.name as class, commands_articles.article_id as article_id, articles.name as name, articles.description as description, articles.price as price, articles.preferential_price as preferential_price, commands_articles.quantity as quantity FROM commands \
+      "SELECT commands.id, commands.parent, commands.screenshot, students.id as student_id, students.first_name as first_name, students.last_name as last_name, classes.id as class_id, classes.name as class_name, commands_articles.article_id as article_id, articles.name as name, articles.description as description, articles.price as price, articles.preferential_price as preferential_price, commands_articles.quantity as quantity FROM commands \
       INNER JOIN students ON commands.student_id = students.id \
       INNER JOIN classes ON students.class_id = classes.id \
       INNER JOIN commands_articles ON commands.id = commands_articles.command_id \
@@ -100,11 +96,15 @@ export class CommandsRepository {
           acc[command.id] = {
             id: command.id,
             parent: command.parent,
+            screenshot: command.screenshot || null,
             student: {
               id: command.student_id,
               firstName: command.first_name,
               lastName: command.last_name,
-              class: command.class,
+              class: {
+                id: command.class_id,
+                name: command.class_name,
+              },
             },
             articles: [],
           };
@@ -126,8 +126,13 @@ export class CommandsRepository {
 
   async upsert(command: Command): Promise<void> {
     const { lastInsertId } = await this.db.execute(
-      "INSERT OR REPLACE INTO commands (id, happening_id, student_id, parent) VALUES (?, (SELECT id FROM happenings WHERE name = 'Chocolats 2025'), ?, ?)",
-      [command.id, command.student.id, command.parent]
+      "INSERT OR REPLACE INTO commands (id, happening_id, student_id, parent, screenshot) VALUES (?, (SELECT id FROM happenings WHERE name = 'Chocolats 2025'), ?, ?, ?)",
+      [
+        command.id,
+        command.student.id,
+        command.parent,
+        command.screenshot || null,
+      ]
     );
     await Promise.all(
       command.articles.map((article) =>
