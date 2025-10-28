@@ -18,7 +18,7 @@ export const ModalContent = styled("div", {
   borderRadius: "8px",
   padding: "2rem",
   boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
-  maxWidth: "500px",
+  maxWidth: "90vw",
   width: "100%",
   maxHeight: "90vh",
   overflowY: "auto",
@@ -43,6 +43,14 @@ export const ModalContent = styled("div", {
       },
       l: {
         minWidth: "1000px",
+      },
+    },
+    tone: {
+      pink: {
+        background: "linear-gradient(135deg, $pink100 0%, $rose100 100%)",
+      },
+      default: {
+        backgroundColor: "#ffffff",
       },
     },
   },

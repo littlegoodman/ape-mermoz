@@ -24,6 +24,7 @@ import {
 import { useStudents, Student } from "../../../students/hooks";
 import { CommandArticlesEditGrid } from "./command-articles-edit.grid";
 import { ComboBox } from "../../../../platform/ui";
+import { CameraIcon, ScanLine, RotateCw } from "lucide-react";
 
 export type CommandEditModalProps = {
   command: Command | undefined;
@@ -325,12 +326,13 @@ export const CommandEditModal = Modal.create(
     return (
       <ModalContainer
         size="l"
+        tone="pink"
         isValid={isValid}
         onSubmit={handleSubmit(onSubmit)}
         onClose={handleClose}
       >
         <Stack>
-          <Row>
+          <Row spacing={4}>
             <Stack>
               <FormControl
                 mandatory
@@ -402,92 +404,151 @@ export const CommandEditModal = Modal.create(
               </FormControl>
             </Stack>
 
-            <FormControl label={t("Screenshot de la commande")}>
-              <Stack spacing={2}>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  onChange={handleFileSelect}
-                  style={{ display: "none" }}
-                />
-                {!isCapturing ? (
-                  <>
-                    <Button variant="outlined" onClick={handleTakePhoto}>
-                      {screenshot
-                        ? t("Changer la photo")
-                        : t("Prendre une photo")}
+            <Row justify="end">
+              {screenshot && (
+                <div
+                  style={{
+                    width: "fit-content",
+                  }}
+                >
+                  <Stack spacing={1}>
+                    <Button
+                      variant="outlined"
+                      onClick={handleTakePhoto}
+                      title={t("Changer la photo")}
+                    >
+                      <RotateCw size={16} />
                     </Button>
-                    {screenshot && (
-                      <Stack spacing={2}>
-                        <div
-                          style={{
-                            maxWidth: "200px",
-                            borderRadius: "8px",
-                            overflow: "hidden",
-                            border: "1px solid #ccc",
-                          }}
-                        >
+                    <Button
+                      variant="outlined"
+                      onClick={extractQuantitiesFromScreenshot}
+                      disabled={isProcessingOCR}
+                      title={
+                        isProcessingOCR
+                          ? t("Extraction en cours...")
+                          : t("Extraire les quantités")
+                      }
+                    >
+                      <ScanLine size={16} />
+                    </Button>
+                  </Stack>
+                </div>
+              )}
+
+              <FormControl>
+                <Stack spacing={2}>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={handleFileSelect}
+                    style={{ display: "none" }}
+                  />
+                  {!isCapturing ? (
+                    <Stack spacing={2}>
+                      <div
+                        style={{
+                          maxWidth: "200px",
+                          height: "150px",
+                          borderRadius: "8px",
+                          overflow: "hidden",
+                          border: "2px dashed #ccc",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          background: "#f5f5f5",
+                          cursor: "pointer",
+                        }}
+                        onClick={handleTakePhoto}
+                        title="Click to take photo"
+                      >
+                        {screenshot ? (
                           <img
                             src={screenshot}
                             alt="Command photo"
-                            style={{ width: "100%", height: "auto" }}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
                           />
-                        </div>
-                        <Button
-                          variant="outlined"
-                          onClick={extractQuantitiesFromScreenshot}
-                          disabled={isProcessingOCR}
-                        >
-                          {isProcessingOCR
-                            ? t("Extraction en cours...")
-                            : t("Extraire les quantités")}
-                        </Button>
-                      </Stack>
-                    )}
-                  </>
-                ) : (
-                  <Stack spacing={2}>
-                    <div
-                      style={{
-                        backgroundColor: "#000",
-                        borderRadius: "8px",
-                        padding: "8px",
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <video
-                        ref={videoRef}
-                        autoPlay
-                        playsInline
-                        muted
+                        ) : (
+                          <div
+                            style={{
+                              textAlign: "center",
+                              color: "#999",
+                              padding: "16px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontSize: "48px",
+                                marginBottom: "8px",
+                              }}
+                            >
+                              <CameraIcon />
+                            </div>
+                            <div
+                              style={{ fontSize: "14px", fontWeight: "500" }}
+                            >
+                              Aucune photo
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "12px",
+                                color: "#999",
+                                marginTop: "4px",
+                              }}
+                            >
+                              Cliquer pour ajouter
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </Stack>
+                  ) : (
+                    <Stack spacing={2}>
+                      <div
                         style={{
-                          maxWidth: "300px",
-                          maxHeight: "400px",
-                          width: "100%",
-                          height: "auto",
-                          borderRadius: "4px",
+                          backgroundColor: "#000",
+                          borderRadius: "8px",
+                          padding: "8px",
+                          display: "flex",
+                          justifyContent: "center",
                         }}
-                      />
-                    </div>
-                    <Row justify="center">
-                      <Button
-                        variant="contained"
-                        onClick={capturePhoto}
-                        style={{ marginRight: "8px" }}
                       >
-                        {t("Capturer")}
-                      </Button>
-                      <Button variant="light" onClick={stopCamera}>
-                        {t("Annuler")}
-                      </Button>
-                    </Row>
-                  </Stack>
-                )}
-              </Stack>
-            </FormControl>
+                        <video
+                          ref={videoRef}
+                          autoPlay
+                          playsInline
+                          muted
+                          style={{
+                            maxWidth: "300px",
+                            maxHeight: "400px",
+                            width: "100%",
+                            height: "auto",
+                            borderRadius: "4px",
+                          }}
+                        />
+                      </div>
+                      <Row justify="center">
+                        <Button
+                          variant="contained"
+                          onClick={capturePhoto}
+                          style={{ marginRight: "8px" }}
+                        >
+                          {t("Capturer")}
+                        </Button>
+                        <Button variant="light" onClick={stopCamera}>
+                          {t("Annuler")}
+                        </Button>
+                      </Row>
+                    </Stack>
+                  )}
+                </Stack>
+              </FormControl>
+            </Row>
           </Row>
 
           <CommandArticlesEditGrid
