@@ -22,6 +22,7 @@ export const Modal = {
 export type ModalProps = {
   children: React.ReactNode;
   size?: "s" | "m" | "l";
+  tone?: "default" | "pink";
   onClose?: () => void;
   isValid?: boolean;
   onSubmit?: () => void;
@@ -30,6 +31,7 @@ export type ModalProps = {
 export const ModalContainer = ({
   children,
   size,
+  tone = "default",
   isValid,
   onClose,
   onSubmit,
@@ -39,7 +41,11 @@ export const ModalContainer = ({
 
   return (
     <ModalOverlay onClick={() => modal.remove()}>
-      <ModalContent size={size} onClick={(e) => e.stopPropagation()}>
+      <ModalContent
+        size={size}
+        tone={tone}
+        onClick={(e) => e.stopPropagation()}
+      >
         {children}
         <Row justify="end">
           <Button

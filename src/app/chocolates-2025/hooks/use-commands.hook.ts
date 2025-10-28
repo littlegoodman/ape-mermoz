@@ -4,6 +4,13 @@ import { Student } from "../../students/hooks/use-students.hook";
 import { useFilteredQuery } from "../../common/hooks/use-filtered-query";
 import { Article } from "./use-articles.hook";
 
+export const PaymentMethod = {
+  CASH: "cash",
+  CARD: "card",
+  TRANSFER: "transfer",
+  OTHER: "other",
+} as const;
+export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod];
 export type Command = {
   id: number;
   parent: string;
@@ -13,6 +20,7 @@ export type Command = {
     quantity: number;
   }[];
   screenshot?: string | null;
+  paymentMethod?: PaymentMethod | null;
 };
 
 export type CommandsSummary = {
