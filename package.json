@@ -26,7 +26,8 @@
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.62.0",
     "react-i18next": "^15.7.3",
-    "react-router-dom": "^7.9.1"
+    "react-router-dom": "^7.9.1",
+    "tesseract.js": "^6.0.1"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",

@@ -1,6 +1,7 @@
 import { JSX, useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
+import { createWorker } from "tesseract.js";
 import {
   Modal,
   ModalContainer,
@@ -11,8 +12,15 @@ import {
   Button,
   Item,
   Select,
+  Toast,
 } from "../../../../platform/ui/components";
-import { Article, Command, PaymentMethod, useCommands } from "../../hooks";
+import {
+  Article,
+  Command,
+  PaymentMethod,
+  useCommands,
+  useArticles,
+} from "../../hooks";
 import { useStudents, Student } from "../../../students/hooks";
 import { CommandArticlesEditGrid } from "./command-articles-edit.grid";
 import { ComboBox } from "../../../../platform/ui";
@@ -38,14 +46,22 @@ export const CommandEditModal = Modal.create(
     const { t } = useTranslation();
     const { upsert } = useCommands();
     const { findAll: findAllStudents } = useStudents();
+    const { findAll: findAllArticles } = useArticles();
     const [screenshot, setScreenshot] = useState<string | null>(
       command?.screenshot || null
     );
     const fileInputRef = useRef<HTMLInputElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const [isCapturing, setIsCapturing] = useState(false);
+    const [isProcessingOCR, setIsProcessingOCR] = useState(false);
+    const [toastMessage, setToastMessage] = useState<{
+      title: string;
+      message?: string;
+      variant: "success" | "error" | "info";
+    } | null>(null);
 
     const { data: students } = findAllStudents();
+    const { data: allArticles } = findAllArticles();
 
     const {
       register,
@@ -196,6 +212,106 @@ export const CommandEditModal = Modal.create(
       }
     };
 
+    const extractQuantitiesFromScreenshot = async () => {
+      if (!screenshot || !allArticles) {
+        console.error("Screenshot or articles not available");
+        return;
+      }
+
+      setIsProcessingOCR(true);
+      console.log("Starting OCR extraction...");
+
+      try {
+        const worker = await createWorker("fra+eng");
+        const { data } = await worker.recognize(screenshot);
+        await worker.terminate();
+
+        console.log("OCR Result:", data.text);
+
+        // Parse the text to extract article names and quantities
+        const lines = data.text.split("\n").filter((line) => line.trim());
+        const extractedQuantities: Record<number, number> = {};
+
+        for (const article of allArticles) {
+          // Try to find the article name in the OCR text
+          // We'll look for partial matches since OCR might not be perfect
+          const articleNameWords = article.name.toLowerCase().split(" ");
+
+          for (const line of lines) {
+            const lineLower = line.toLowerCase();
+            // Check if this line contains key words from the article name
+            const containsKeyWords = articleNameWords.some(
+              (word) => word.length > 4 && lineLower.includes(word)
+            );
+
+            if (containsKeyWords) {
+              // Try to extract a number from this line
+              const numbers = line.match(/\d+/g);
+              if (numbers && numbers.length > 0) {
+                // Use the last number found as it's likely the quantity
+                const quantity = parseInt(numbers[numbers.length - 1]);
+                if (quantity > 0 && quantity <= 100) {
+                  extractedQuantities[article.id] = quantity;
+                  console.log(`Found ${quantity} for article: ${article.name}`);
+                  break;
+                }
+              }
+            }
+          }
+        }
+
+        console.log("Extracted quantities:", extractedQuantities);
+
+        // Update the articles in the form
+        if (Object.keys(extractedQuantities).length > 0) {
+          const updatedArticles = allArticles.map((article) => ({
+            article,
+            quantity: extractedQuantities[article.id] || 0,
+          }));
+          setValue("articles", updatedArticles);
+          console.log("Updated articles in form");
+
+          // Show success toast with count
+          const count = Object.keys(extractedQuantities).filter(
+            (id) => extractedQuantities[parseInt(id)] > 0
+          ).length;
+          setToastMessage({
+            title: "Extraction réussie",
+            message: `${count} ${count === 1 ? "article" : "articles"} extrait${
+              count > 1 ? "s" : ""
+            }`,
+            variant: "success",
+          });
+        } else {
+          console.warn("No quantities extracted from screenshot");
+          setToastMessage({
+            title: "Aucune quantité trouvée",
+            message: "Veuillez vérifier la qualité de la photo",
+            variant: "error",
+          });
+        }
+      } catch (error) {
+        console.error("Error during OCR:", error);
+        setToastMessage({
+          title: "Erreur d'extraction",
+          message: "Une erreur est survenue lors de l'OCR",
+          variant: "error",
+        });
+      } finally {
+        setIsProcessingOCR(false);
+      }
+    };
+
+    // Auto-hide toast after 3 seconds
+    useEffect(() => {
+      if (toastMessage) {
+        const timer = setTimeout(() => {
+          setToastMessage(null);
+        }, 3000);
+        return () => clearTimeout(timer);
+      }
+    }, [toastMessage]);
+
     const onSubmit = (data: Command | NewCommand) => {
       upsert({ ...data, screenshot } as Command);
     };
@@ -304,20 +420,31 @@ export const CommandEditModal = Modal.create(
                         : t("Prendre une photo")}
                     </Button>
                     {screenshot && (
-                      <div
-                        style={{
-                          maxWidth: "200px",
-                          borderRadius: "8px",
-                          overflow: "hidden",
-                          border: "1px solid #ccc",
-                        }}
-                      >
-                        <img
-                          src={screenshot}
-                          alt="Command photo"
-                          style={{ width: "100%", height: "auto" }}
-                        />
-                      </div>
+                      <Stack spacing={2}>
+                        <div
+                          style={{
+                            maxWidth: "200px",
+                            borderRadius: "8px",
+                            overflow: "hidden",
+                            border: "1px solid #ccc",
+                          }}
+                        >
+                          <img
+                            src={screenshot}
+                            alt="Command photo"
+                            style={{ width: "100%", height: "auto" }}
+                          />
+                        </div>
+                        <Button
+                          variant="outlined"
+                          onClick={extractQuantitiesFromScreenshot}
+                          disabled={isProcessingOCR}
+                        >
+                          {isProcessingOCR
+                            ? t("Extraction en cours...")
+                            : t("Extraire les quantités")}
+                        </Button>
+                      </Stack>
                     )}
                   </>
                 ) : (
@@ -373,6 +500,13 @@ export const CommandEditModal = Modal.create(
             error={null}
           />
         </Stack>
+        {toastMessage && (
+          <Toast
+            title={toastMessage.title}
+            message={toastMessage.message}
+            variant={toastMessage.variant}
+          />
+        )}
       </ModalContainer>
     );
   }
