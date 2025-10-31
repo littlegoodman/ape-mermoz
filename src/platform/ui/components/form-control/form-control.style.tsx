@@ -48,6 +48,9 @@ export const FormControlContainer = styled("div", {
       full: {
         width: "100%",
       },
+      "fit-content": {
+        width: "fit-content",
+      },
     },
   },
 });

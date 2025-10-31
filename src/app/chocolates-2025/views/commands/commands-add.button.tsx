@@ -14,6 +14,9 @@ export const CommandsAddButton = (): JSX.Element => {
           command: undefined,
         })
       }
+      css={{
+        whiteSpace: "nowrap",
+      }}
     >
       {t("Ajouter une commande")}
     </Button>

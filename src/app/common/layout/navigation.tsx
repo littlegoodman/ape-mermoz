@@ -98,7 +98,7 @@ export const Navigation = () => {
 
   return (
     <StyledNavigation>
-      <StyledListHeader noMarginTop>{t("L'École")}</StyledListHeader>
+      <StyledListHeader noMarginTop>{t("Les Écoles")}</StyledListHeader>
       <ListItem>
         <StyledListItemButton
           as={NavLink}

@@ -19,7 +19,7 @@ export const CommandsSearchInput = ({
 
   return (
     <SearchInput
-      placeholder={t("Rechercher une commande")}
+      placeholder={t("Rechercher")}
       onSearch={onSearch}
       onClear={onClear}
       value={value}

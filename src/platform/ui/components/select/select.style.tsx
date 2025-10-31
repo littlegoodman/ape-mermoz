@@ -5,19 +5,30 @@ export const TriggerIcon = styled("span", {
   fontSize: "$lead",
 });
 
+export const TriggerWrapper = styled("div", {
+  display: "inline-flex",
+  verticalAlign: "middle",
+  alignItems: "center",
+  width: "100%",
+  marginTop: "-15px", // TODO check if needed
+});
+
 export const Trigger = styled("button", {
   all: "unset",
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "space-between",
   gap: 5,
-  background: "$white",
+  background: "$colors$background",
   color: "$dark500",
   borderRadius: "$radii$2",
   border: "1px solid $neutralBorder",
-  fontWeight: "$medium",
-  fontSize: "$base",
-  padding: "$1 $3",
+  fontWeight: "inherit",
+  fontSize: "inherit",
+  lineHeight: "$lineHeights$3",
+  height: "$space$7",
+  width: "100%",
+  padding: "0 $space$2",
   cursor: "pointer",
   whiteSpace: "nowrap",
   variants: {
@@ -34,11 +45,13 @@ export const Trigger = styled("button", {
     },
     size: {
       small: {
-        padding: "$1 $2",
+        height: "$space$6",
+        padding: "0 $space$2",
         fontSize: "$sm",
       },
       large: {
-        padding: "$2 $3",
+        height: "$space$8",
+        padding: "0 $space$2",
         fontSize: "$base",
       },
     },

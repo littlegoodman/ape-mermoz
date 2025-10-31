@@ -10,7 +10,7 @@ import {
 export type FormControlProps = {
   label?: string;
   error?: boolean;
-  width?: "small" | "medium" | "large" | "full";
+  width?: "small" | "medium" | "large" | "full" | "fit-content";
   helperText?: string;
   mandatory?: boolean;
   children: React.ReactNode;

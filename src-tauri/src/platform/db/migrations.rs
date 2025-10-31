@@ -66,7 +66,11 @@ pub fn get_migrations() -> Vec<Migration> {
                 id INTEGER PRIMARY KEY, \
                 happening_id INTEGER NOT NULL REFERENCES happenings(id), \
                 student_id INTEGER NOT NULL REFERENCES students(id), \
-                parent TEXT NOT NULL \
+                parent TEXT NOT NULL, \
+                phone TEXT, \
+                email TEXT, \
+                payment_method TEXT CHECK(payment_method IN ('cash', 'card', 'check', 'waiting_for_payment', 'other')), \
+                screenshot TEXT \
             );",
             kind: MigrationKind::Up,
         },
@@ -79,12 +83,6 @@ pub fn get_migrations() -> Vec<Migration> {
                 quantity INTEGER NOT NULL, \
                 PRIMARY KEY (command_id, article_id) \
             );",
-            kind: MigrationKind::Up,
-        },
-        Migration {
-            version: 29,
-            description: "add_screenshot_to_commands",
-            sql: "ALTER TABLE commands ADD COLUMN screenshot TEXT;",
             kind: MigrationKind::Up,
         },
         // seeds...
