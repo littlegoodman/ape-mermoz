@@ -226,12 +226,14 @@ export class CommandsRepository {
       ]
     );
     await Promise.all(
-      command.articles.map((article) =>
-        this.db.execute(
-          "INSERT OR REPLACE INTO commands_articles (command_id, article_id, quantity) VALUES (?, ?, ?)",
-          [lastInsertId, article.article.id, article.quantity]
+      command.articles
+        .filter((article) => article.quantity > 0)
+        .map((article) =>
+          this.db.execute(
+            "INSERT OR REPLACE INTO commands_articles (command_id, article_id, quantity) VALUES (?, ?, ?)",
+            [lastInsertId, article.article.id, article.quantity]
+          )
         )
-      )
     ); // TODO: check if promise all is needed
   }
 

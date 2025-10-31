@@ -44,7 +44,6 @@ export type NewCommand = {
   }[];
   screenshot?: string | null;
   paymentMethod?: PaymentMethod | null;
-  paymentMethod?: PaymentMethod | null;
 };
 
 export const CommandEditModal = Modal.create(
