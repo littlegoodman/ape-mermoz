@@ -1,5 +1,10 @@
 import { ApeMermozDatabase } from "../../../platform/databases/ape-mermoz.database";
-import type { CommandsSummary, Command, PaymentMethod } from "../hooks";
+import type {
+  CommandsSummary,
+  Command,
+  PaymentMethod,
+  Article,
+} from "../hooks";
 import { ArticlePersisted } from "./articles.repository";
 
 type TeacherPersisted = {
@@ -89,127 +94,161 @@ export class CommandsRepository {
     filter?: string;
     paymentMethod?: PaymentMethod;
   }): Promise<Command[]> {
-    let query =
-      "SELECT commands.id, commands.parent, commands.phone, commands.email, commands.payment_method, teachers.id as teacher_id, teachers.title as teacher_title, teachers.last_name as teacher_last_name, students.id as student_id, students.first_name as first_name, students.last_name as last_name, classes.id as class_id, classes.name as class_name, commands_articles.article_id as article_id, articles.name as name, articles.description as description, articles.price as price, articles.preferential_price as preferential_price, commands_articles.quantity as quantity FROM commands \
+    let commandsQuery =
+      "SELECT commands.id, commands.parent, commands.phone, commands.email, commands.payment_method, teachers.id as teacher_id, teachers.title as teacher_title, teachers.last_name as teacher_last_name, students.id as student_id, students.first_name as first_name, students.last_name as last_name, classes.id as class_id, classes.name as class_name FROM commands \
       INNER JOIN students ON commands.student_id = students.id \
       INNER JOIN classes ON students.class_id = classes.id \
-      INNER JOIN teachers ON students.class_id = teachers.class_id \
-      INNER JOIN commands_articles ON commands.id = commands_articles.command_id \
-      INNER JOIN articles ON commands_articles.article_id = articles.id";
+      INNER JOIN teachers ON students.class_id = teachers.class_id";
     if (params.filter) {
-      query += ` WHERE commands.parent LIKE '%${params.filter}%' \
+      commandsQuery += ` WHERE commands.parent LIKE '%${params.filter}%' \
           OR students.first_name LIKE '%${params.filter}%' \
           OR students.last_name LIKE '%${params.filter}%' \
           OR commands.phone LIKE '%${params.filter}%' \
           OR commands.email LIKE '%${params.filter}%' \
         `;
       if (params.paymentMethod) {
-        query += ` AND commands.payment_method = '${params.paymentMethod}'`;
+        commandsQuery += ` AND commands.payment_method = '${params.paymentMethod}'`;
       }
     } else if (params.paymentMethod) {
-      query += ` WHERE commands.payment_method = '${params.paymentMethod}'`;
+      commandsQuery += ` WHERE commands.payment_method = '${params.paymentMethod}'`;
     }
-    const commands = await this.db.select<
-      (CommandPersisted &
-        TeacherPersisted &
-        StudentPersisted &
-        CommandArticlePersisted &
-        ArticlePersisted)[]
-    >(query);
-    return Object.values(
-      commands.reduce<Record<string, Command>>((acc, command) => {
-        if (!acc[command.id]) {
-          acc[command.id] = {
-            id: command.id,
-            parent: command.parent,
-            phone: command.phone || null,
-            email: command.email || null,
-            paymentMethod: command.payment_method || null,
-            screenshot: null,
-            student: {
-              id: command.student_id,
-              firstName: command.first_name,
-              lastName: command.last_name,
-              class: {
-                id: command.class_id,
-                name: command.class_name,
-              },
-            },
-            teacher: {
-              id: command.teacher_id,
-              title: command.teacher_title,
-              lastName: command.teacher_last_name,
-              class: {
-                id: command.class_id,
-                name: command.class_name,
-              },
-            },
-            articles: [],
-          };
-        }
-        acc[command.id].articles.push({
+    const persistedCommands = await this.db.select<
+      (CommandPersisted & TeacherPersisted & StudentPersisted)[]
+    >(commandsQuery);
+
+    if (persistedCommands.length === 0) {
+      return [];
+    }
+
+    const commands = persistedCommands.map<Command>((command) => ({
+      id: command.id,
+      parent: command.parent,
+      phone: command.phone,
+      email: command.email,
+      paymentMethod: command.payment_method,
+      screenshot: command.screenshot,
+      student: {
+        id: command.student_id,
+        firstName: command.first_name,
+        lastName: command.last_name,
+        class: {
+          id: command.class_id,
+          name: command.class_name,
+        },
+      },
+      teacher: {
+        id: command.teacher_id,
+        title: command.teacher_title,
+        lastName: command.teacher_last_name,
+        class: {
+          id: command.class_id,
+          name: command.class_name,
+        },
+      },
+      articles: [],
+    }));
+
+    const commandIds = commands.map((command) => command.id);
+    const articlesQuery = `SELECT commands_articles.command_id, commands_articles.article_id, commands_articles.quantity, articles.name, articles.description, articles.price, articles.preferential_price FROM commands_articles \
+      INNER JOIN articles ON commands_articles.article_id = articles.id \
+      WHERE commands_articles.command_id IN (${commandIds.join(",")})`;
+
+    const articles = await this.db.select<
+      (CommandArticlePersisted & ArticlePersisted)[]
+    >(articlesQuery);
+
+    const articlesByCommandId = articles.reduce<
+      Record<string, { article: Article; quantity: number }[]>
+    >((acc, article) => {
+      acc[article.command_id] = [
+        ...(acc[article.command_id] || []),
+        {
           article: {
-            id: command.article_id,
-            name: command.name,
-            description: command.description,
-            price: command.price,
-            preferentialPrice: command.preferential_price,
+            id: article.article_id,
+            name: article.name,
+            description: article.description,
+            price: article.price,
+            preferentialPrice: article.preferential_price,
           },
-          quantity: command.quantity,
-        });
-        return acc;
-      }, {})
-    );
+          quantity: article.quantity,
+        },
+      ];
+      return acc;
+    }, {});
+
+    return commands.map((command) => ({
+      ...command,
+      articles: articlesByCommandId[command.id] || [],
+    }));
   }
 
   async findOne(params: { id: string }): Promise<Command | undefined> {
-    const commands = await this.db.select<
+    const persistedCommand = await this.db.select<
       (CommandPersisted &
-        StudentPersisted &
-        CommandArticlePersisted &
-        ArticlePersisted)[]
+        TeacherPersisted &
+        StudentPersisted & { screenshot?: string | null })[]
     >(
-      `SELECT commands.id, commands.parent, commands.phone, commands.email, commands.payment_method, commands.screenshot, students.id as student_id, students.first_name as first_name, students.last_name as last_name, classes.id as class_id, classes.name as class_name, commands_articles.article_id as article_id, articles.name as name, articles.description as description, articles.price as price, articles.preferential_price as preferential_price, commands_articles.quantity as quantity FROM commands \
+      `SELECT commands.id, commands.parent, commands.phone, commands.email, commands.payment_method, commands.screenshot, teachers.id as teacher_id, teachers.title as teacher_title, teachers.last_name as teacher_last_name, students.id as student_id, students.first_name as first_name, students.last_name as last_name, classes.id as class_id, classes.name as class_name FROM commands \
       INNER JOIN students ON commands.student_id = students.id \
       INNER JOIN classes ON students.class_id = classes.id \
-      INNER JOIN commands_articles ON commands.id = commands_articles.command_id \
-      INNER JOIN articles ON commands_articles.article_id = articles.id \
+      INNER JOIN teachers ON students.class_id = teachers.class_id \
       WHERE commands.id = ${params.id.toString()}\
     `
     );
-    return commands.reduce<Command | undefined>((acc, command) => {
-      if (!acc) {
-        acc = {
-          id: command.id,
-          parent: command.parent,
-          phone: command.phone,
-          email: command.email,
-          paymentMethod: command.payment_method,
-          screenshot: command.screenshot || null,
-          student: {
-            id: command.student_id,
-            firstName: command.first_name,
-            lastName: command.last_name,
-            class: {
-              id: command.class_id,
-              name: command.class_name,
-            },
-          },
-          articles: [],
-        };
-      }
-      acc.articles.push({
-        article: {
-          id: command.article_id,
-          name: command.name,
-          description: command.description,
-          price: command.price,
-          preferentialPrice: command.preferential_price,
+
+    if (persistedCommand.length === 0) {
+      return undefined;
+    }
+
+    const commandData = persistedCommand[0];
+    const command: Command = {
+      id: commandData.id,
+      parent: commandData.parent,
+      phone: commandData.phone || null,
+      email: commandData.email || null,
+      paymentMethod: commandData.payment_method || null,
+      screenshot: commandData.screenshot || null,
+      student: {
+        id: commandData.student_id,
+        firstName: commandData.first_name,
+        lastName: commandData.last_name,
+        class: {
+          id: commandData.class_id,
+          name: commandData.class_name,
         },
-        quantity: command.quantity,
-      });
-      return acc;
-    }, undefined);
+      },
+      teacher: {
+        id: commandData.teacher_id,
+        title: commandData.teacher_title,
+        lastName: commandData.teacher_last_name,
+        class: {
+          id: commandData.class_id,
+          name: commandData.class_name,
+        },
+      },
+      articles: [],
+    };
+
+    const articles = await this.db.select<
+      (CommandArticlePersisted & ArticlePersisted)[]
+    >(
+      `SELECT commands_articles.command_id, commands_articles.article_id, commands_articles.quantity, articles.name, articles.description, articles.price, articles.preferential_price FROM commands_articles \
+      INNER JOIN articles ON commands_articles.article_id = articles.id \
+      WHERE commands_articles.command_id = ${params.id.toString()}`
+    );
+
+    command.articles = articles.map((article) => ({
+      article: {
+        id: article.article_id,
+        name: article.name,
+        description: article.description,
+        price: article.price,
+        preferentialPrice: article.preferential_price,
+      },
+      quantity: article.quantity,
+    }));
+
+    return command;
   }
 
   async upsert(command: Command): Promise<void> {
