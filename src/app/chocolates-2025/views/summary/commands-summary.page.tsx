@@ -9,6 +9,8 @@ import { useCommands } from "../../hooks/use-commands.hook";
 import { CommandArticlesGrid } from "./command-articles.grid";
 import { ExportPdfButton } from "./export-pdf.button";
 
+const HIDE = true; // TODO: remove this
+
 export const CommandsSummaryPage = () => {
   const { getSummary } = useCommands();
   const { data: summary, isLoading, error } = getSummary();
@@ -16,14 +18,16 @@ export const CommandsSummaryPage = () => {
   return (
     <Page title={"Bon de commande"}>
       <Stack>
-        <Toolbar>
-          <ToolbarSlot position="right">
-            <ExportPdfButton
-              articles={summary?.articles ?? []}
-              isLoading={isLoading}
-            />
-          </ToolbarSlot>
-        </Toolbar>
+        {!HIDE && (
+          <Toolbar>
+            <ToolbarSlot position="right">
+              <ExportPdfButton
+                articles={summary?.articles ?? []}
+                isLoading={isLoading}
+              />
+            </ToolbarSlot>
+          </Toolbar>
+        )}
         <ScrollArea>
           <CommandArticlesGrid
             articles={summary?.articles ?? []}

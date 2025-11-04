@@ -2,6 +2,25 @@ import { useState } from "react";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import { Command } from "../../hooks/use-commands.hook";
 
+/**
+ * Sanitizes text to be compatible with WinAnsi encoding used by PDF standard fonts.
+ * Replaces problematic Unicode characters (like narrow no-break space) with regular spaces,
+ * while preserving French accents and other WinAnsi-supported characters.
+ */
+const sanitizeTextForPdf = (text: string): string => {
+  return text
+    .replace(/\u202F/g, " ") // Replace narrow no-break space (0x202F) with regular space
+    .replace(/\u00A0/g, " ") // Replace non-breaking space with regular space
+    .replace(/\u2009/g, " ") // Replace thin space with regular space
+    .replace(/\u2006/g, " ") // Replace six-per-em space with regular space
+    .replace(/\u2007/g, " ") // Replace figure space with regular space
+    .replace(/\u2008/g, " ") // Replace punctuation space with regular space
+    .replace(/[\u2000-\u200F]/g, " ") // Replace other Unicode spaces with regular space
+    .replace(/\u2028/g, " ") // Replace line separator with regular space
+    .replace(/\u2029/g, " "); // Replace paragraph separator with regular space
+  // Note: WinAnsi encoding supports French accents (é, è, à, etc.), so we don't need to remove them
+};
+
 export const useExportCommandsToPdf = () => {
   const [isExporting, setIsExporting] = useState(false);
 
@@ -64,7 +83,7 @@ export const useExportCommandsToPdf = () => {
 
       // Title
       y -= 30;
-      currentPage.drawText("Commandes - Chocolats 2025", {
+      currentPage.drawText(sanitizeTextForPdf("Commandes - Chocolats 2025"), {
         x: margin,
         y,
         size: 20,
@@ -92,7 +111,9 @@ export const useExportCommandsToPdf = () => {
             ? `${totalQuantity} articles`
             : `${totalQuantity} article`,
         ];
-        const headerText = headerSegments.join(" • ");
+        const headerText = headerSegments
+          .filter((segment) => segment.length > 0)
+          .join(" • ");
 
         // Estimate height: 1 line for header + 1 info line + 1 per article
         const numLines = 2 + command.articles.length;
@@ -120,7 +141,7 @@ export const useExportCommandsToPdf = () => {
           currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
           y = pageHeight - margin;
         }
-        currentPage.drawText(headerText, {
+        currentPage.drawText(sanitizeTextForPdf(headerText), {
           x: margin,
           y,
           size: 12,
@@ -141,7 +162,7 @@ export const useExportCommandsToPdf = () => {
         ];
         const secondLineText = secondLineSegments.join(" • ");
         if (secondLineText) {
-          currentPage.drawText(secondLineText, {
+          currentPage.drawText(sanitizeTextForPdf(secondLineText), {
             x: margin,
             y,
             size: 10,
@@ -165,7 +186,7 @@ export const useExportCommandsToPdf = () => {
           //  : "";
 
           // Draw main part
-          currentPage.drawText(articleMain, {
+          currentPage.drawText(sanitizeTextForPdf(articleMain), {
             x: margin,
             y,
             size: 10,
@@ -198,7 +219,7 @@ export const useExportCommandsToPdf = () => {
       const dateText = `Généré le ${new Date().toLocaleDateString(
         "fr-FR"
       )} à ${new Date().toLocaleTimeString("fr-FR")}`;
-      currentPage.drawText(dateText, {
+      currentPage.drawText(sanitizeTextForPdf(dateText), {
         x: margin,
         y,
         size: 8,

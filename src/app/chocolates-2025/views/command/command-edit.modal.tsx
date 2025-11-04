@@ -44,7 +44,6 @@ export type NewCommand = {
   }[];
   screenshot?: string | null;
   paymentMethod?: PaymentMethod | null;
-  paymentMethod?: PaymentMethod | null;
 };
 
 export const CommandEditModal = Modal.create(
@@ -537,6 +536,7 @@ export const CommandEditModal = Modal.create(
                         <ZoomIn size={16} />
                       </Button>
                       <Button
+                        hidden={true}
                         variant="outlined"
                         style={{ margin: "1px" }}
                         onClick={extractQuantitiesFromScreenshot}
