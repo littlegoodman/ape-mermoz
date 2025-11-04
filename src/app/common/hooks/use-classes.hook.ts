@@ -1,7 +1,5 @@
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import { Teacher } from "../../teachers/hooks";
+import { useQuery } from "@tanstack/react-query";
 import { ClassesRepository } from "../infra/classes.repository";
-import { useFilteredQuery } from "./use-filtered-query";
 
 export type SchoolClass = {
   id: number;

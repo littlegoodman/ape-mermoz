@@ -1,7 +1,6 @@
 import React from "react";
-import { Search, SearchIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 import { Input, InputProps } from "./input";
-import { styled } from "../../theme/stitches.config";
 
 export type SearchInputProps = InputProps & {
   onSearch: (value: string) => void;

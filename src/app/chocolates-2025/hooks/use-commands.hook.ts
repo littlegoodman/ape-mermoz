@@ -27,7 +27,6 @@ export type Command = {
   }[];
   screenshot?: string | null;
   paymentMethod?: PaymentMethod | null;
-  paymentMethod?: PaymentMethod | null;
 };
 
 export type CommandsSummary = {

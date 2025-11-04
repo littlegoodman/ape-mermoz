@@ -14,7 +14,6 @@ export type StudentsTableProps = {
 
 export const StudentsTable = ({
   students,
-  isLoading,
   error,
 }: StudentsTableProps): JSX.Element => {
   const { t } = useTranslation();
