@@ -118,6 +118,9 @@ export const ButtonBase = styled("button", {
   "&:disabled": {
     pointerEvents: "none",
   },
+  "&[hidden]": {
+    display: "none !important",
+  },
 });
 
 export const ButtonIcon = styled("span", {

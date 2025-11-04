@@ -536,6 +536,7 @@ export const CommandEditModal = Modal.create(
                         <ZoomIn size={16} />
                       </Button>
                       <Button
+                        hidden={true}
                         variant="outlined"
                         style={{ margin: "1px" }}
                         onClick={extractQuantitiesFromScreenshot}
