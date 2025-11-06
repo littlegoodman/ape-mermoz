@@ -25,11 +25,11 @@ export class TeachersRepository {
         classes.id as class_id, \
         classes.name as class_name \
       FROM teachers \
-      INNER JOIN classes ON teachers.class_id = classes.id \
-      ORDER BY class_id ASC";
+      INNER JOIN classes ON teachers.class_id = classes.id";
     if (params.filter) {
       query += ` WHERE last_name LIKE '%${params.filter}%'`;
     }
+    query += " ORDER BY class_id ASC";
     const persistence = await this.db.select<PersistedTeacher[]>(query);
     return persistence.map(
       ({ id, title, last_name, class_id, class_name }) => ({

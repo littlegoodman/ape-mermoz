@@ -1,7 +1,7 @@
 import { ApeMermozDatabase } from "../../../platform/databases/ape-mermoz.database";
 import type { Article } from "../hooks";
 
-export type ArticlePersisted = {
+type ArticlePersisted = {
   id: number;
   name: string;
   description: string;

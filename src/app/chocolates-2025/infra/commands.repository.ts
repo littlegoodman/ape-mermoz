@@ -5,7 +5,16 @@ import type {
   PaymentMethod,
   Article,
 } from "../hooks";
-import { ArticlePersisted } from "./articles.repository";
+import { ArticlesRepository } from "./articles.repository";
+
+type ArticlePersisted = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  preferential_price: number;
+  image_link?: string;
+};
 
 type TeacherPersisted = {
   teacher_id: number;
@@ -14,11 +23,11 @@ type TeacherPersisted = {
 };
 
 type StudentPersisted = {
-  id: number;
-  first_name: string;
-  last_name: string;
-  class_id: number;
-  class_name: string;
+  student_id: number;
+  student_first_name: string;
+  student_last_name: string;
+  student_class_id: number;
+  student_class_name: string;
 };
 
 type CommandArticlePersisted = {
@@ -28,7 +37,7 @@ type CommandArticlePersisted = {
 };
 
 type CommandPersisted = {
-  id: string;
+  id: number;
   student_id: number;
   parent: string;
   phone?: string | null;
@@ -38,52 +47,45 @@ type CommandPersisted = {
 };
 
 export class CommandsRepository {
+  private readonly articlesRepository: ArticlesRepository;
+
   public static load(): CommandsRepository {
     return new CommandsRepository(ApeMermozDatabase.load());
   }
 
-  constructor(private readonly db: ApeMermozDatabase) {}
+  constructor(private readonly db: ApeMermozDatabase) {
+    this.articlesRepository = new ArticlesRepository(db);
+  }
 
   async getCommandsSummary(): Promise<CommandsSummary> {
+    const articles = await this.articlesRepository.findAll();
     const commands = await this.db.select<CommandArticlePersisted[]>(
       "SELECT * FROM commands_articles"
     );
-    const articles = await this.db.select<ArticlePersisted[]>(
-      "SELECT * FROM articles"
-    );
-    const articlesQuantities = articles.map((article) => ({
-      article: {
-        id: article.id,
-        name: article.name,
-        description: article.description,
-        price: article.price,
-        preferentialPrice: article.preferential_price,
-        imageLink: article.image_link,
+    const quantities = commands.reduce<Record<number, number>>(
+      (acc, command) => {
+        acc[command.article_id] =
+          (acc[command.article_id] || 0) + command.quantity;
+        return acc;
       },
-      ...commands
-        .filter((command) => command.article_id === article.id)
-        .reduce(
-          (acc, command) => ({
-            quantity: acc.quantity + command.quantity,
-            price: acc.price + article.price * command.quantity,
-            preferentialPrice:
-              acc.preferentialPrice +
-              article.preferential_price * command.quantity,
-          }),
-          {
-            quantity: 0,
-            price: 0,
-            preferentialPrice: 0,
-          }
-        ),
-    }));
+      {}
+    );
     return {
-      articles: articlesQuantities,
-      totalPrice: articlesQuantities.reduce(
-        (acc, article) => acc + article.price,
+      articles: articles.map((article) => {
+        const quantity = quantities[article.id] || 0;
+        return {
+          article,
+          quantity,
+          price: article.price * quantity,
+          preferentialPrice: article.preferentialPrice * quantity,
+          imageLink: article.imageLink,
+        };
+      }),
+      totalPrice: articles.reduce(
+        (acc, article) => acc + article.price * quantities[article.id] || 0,
         0
       ),
-      totalPreferentialPrice: articlesQuantities.reduce(
+      totalPreferentialPrice: articles.reduce(
         (acc, article) => acc + article.preferentialPrice,
         0
       ),
@@ -95,7 +97,21 @@ export class CommandsRepository {
     paymentMethod?: PaymentMethod;
   }): Promise<Command[]> {
     let commandsQuery =
-      "SELECT commands.id, commands.parent, commands.phone, commands.email, commands.payment_method, teachers.id as teacher_id, teachers.title as teacher_title, teachers.last_name as teacher_last_name, students.id as student_id, students.first_name as first_name, students.last_name as last_name, classes.id as class_id, classes.name as class_name FROM commands \
+      "SELECT \
+       commands.id, \
+       commands.parent, \
+       commands.phone, \
+       commands.email, \
+       commands.payment_method, \
+       teachers.id as teacher_id, \
+       teachers.title as teacher_title, \
+       teachers.last_name as teacher_last_name, \
+       students.id as student_id, \
+       students.first_name as student_first_name, \
+       students.last_name as student_last_name, \
+       classes.id as student_class_id, \
+       classes.name as student_class_name \
+      FROM commands \
       INNER JOIN students ON commands.student_id = students.id \
       INNER JOIN classes ON students.class_id = classes.id \
       INNER JOIN teachers ON students.class_id = teachers.class_id";
@@ -129,11 +145,11 @@ export class CommandsRepository {
       screenshot: command.screenshot,
       student: {
         id: command.student_id,
-        firstName: command.first_name,
-        lastName: command.last_name,
+        firstName: command.student_first_name,
+        lastName: command.student_last_name,
         class: {
-          id: command.class_id,
-          name: command.class_name,
+          id: command.student_class_id,
+          name: command.student_class_name,
         },
       },
       teacher: {
@@ -141,8 +157,8 @@ export class CommandsRepository {
         title: command.teacher_title,
         lastName: command.teacher_last_name,
         class: {
-          id: command.class_id,
-          name: command.class_name,
+          id: command.student_class_id,
+          name: command.student_class_name,
         },
       },
       articles: [],
@@ -188,7 +204,22 @@ export class CommandsRepository {
         TeacherPersisted &
         StudentPersisted & { screenshot?: string | null })[]
     >(
-      `SELECT commands.id, commands.parent, commands.phone, commands.email, commands.payment_method, commands.screenshot, teachers.id as teacher_id, teachers.title as teacher_title, teachers.last_name as teacher_last_name, students.id as student_id, students.first_name as first_name, students.last_name as last_name, classes.id as class_id, classes.name as class_name FROM commands \
+      `SELECT \
+      commands.id, \
+      commands.parent, \
+      commands.phone, \
+      commands.email, \
+      commands.payment_method, \
+      commands.screenshot, \
+      teachers.id as teacher_id, \
+      teachers.title as teacher_title, \
+      teachers.last_name as teacher_last_name, \
+      students.id as student_id, \
+      students.first_name as student_first_name, \
+      students.last_name as student_last_name, \
+      classes.id as student_class_id, \
+      classes.name as student_class_name \
+      FROM commands \
       INNER JOIN students ON commands.student_id = students.id \
       INNER JOIN classes ON students.class_id = classes.id \
       INNER JOIN teachers ON students.class_id = teachers.class_id \
@@ -210,11 +241,11 @@ export class CommandsRepository {
       screenshot: commandData.screenshot || null,
       student: {
         id: commandData.student_id,
-        firstName: commandData.first_name,
-        lastName: commandData.last_name,
+        firstName: commandData.student_first_name,
+        lastName: commandData.student_last_name,
         class: {
-          id: commandData.class_id,
-          name: commandData.class_name,
+          id: commandData.student_class_id,
+          name: commandData.student_class_name,
         },
       },
       teacher: {
@@ -222,8 +253,8 @@ export class CommandsRepository {
         title: commandData.teacher_title,
         lastName: commandData.teacher_last_name,
         class: {
-          id: commandData.class_id,
-          name: commandData.class_name,
+          id: commandData.student_class_id,
+          name: commandData.student_class_name,
         },
       },
       articles: [],
@@ -273,7 +304,7 @@ export class CommandsRepository {
             [lastInsertId, article.article.id, article.quantity]
           )
         )
-    ); // TODO: check if promise all is needed
+    );
   }
 
   async delete(command: Command): Promise<void> {
