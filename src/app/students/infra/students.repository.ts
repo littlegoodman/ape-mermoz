@@ -47,7 +47,7 @@ export class StudentsRepository {
 
   async upsert(student: Student & { id?: Student["id"] }): Promise<void> {
     await this.db.execute(
-      "INSERT OR REPLACE INTO students (id, first_name, last_name, class_id) VALUES (?, ?, ?, (SELECT id FROM classes WHERE name = ?))",
+      "INSERT OR REPLACE INTO students (id, first_name, last_name, class_id) VALUES (?, ?, ?, ?)",
       [student.id, student.firstName, student.lastName, student.class.id]
     );
   }

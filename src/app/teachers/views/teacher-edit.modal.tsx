@@ -11,6 +11,7 @@ import {
   Item,
   Stack,
   Row,
+  Empty,
 } from "../../../platform/ui/components";
 import { useClasses } from "../../common/hooks";
 
@@ -35,16 +36,14 @@ export const TeacherEditModal = Modal.create(
       defaultValues: teacher,
     });
 
-    const { data: classes } = findAll();
-    if (!classes) {
-      return <div>Loading...</div>;
+    const { data: classes, isLoading } = findAll();
+    if (isLoading) {
+      return <Empty title={t("Chargement...")} />;
     }
-
-    const selectedClassId = watch("class.id");
 
     const handleClassChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
       const classId = parseInt(event.target.value);
-      const selectedClass = classes.find((c) => c.id === classId);
+      const selectedClass = classes?.find((c) => c.id === classId);
       if (selectedClass) {
         setValue("class.id", classId);
         setValue("class.name", selectedClass.name);
@@ -52,27 +51,12 @@ export const TeacherEditModal = Modal.create(
     };
 
     const onSubmit = (data: Teacher) => {
-      // Ensure we have the complete class object
-      const selectedClass = classes.find((c) => c.id === data.class.id);
-      if (selectedClass) {
-        upsert({
-          ...data,
-          class: {
-            id: selectedClass.id,
-            name: selectedClass.name,
-          },
-        });
-      }
+      upsert(data);
     };
-
-    // Add validation for class selection
-    const isClassSelected = Boolean(
-      selectedClassId && classes.some((c) => c.id === selectedClassId)
-    );
 
     return (
       <ModalContainer
-        isValid={isValid && isClassSelected}
+        isValid={isValid}
         onSubmit={handleSubmit(onSubmit)}
         onClose={() => reset()}
       >
@@ -104,17 +88,19 @@ export const TeacherEditModal = Modal.create(
           <FormControl
             mandatory
             label={t("Classe")}
-            error={!isClassSelected}
+            error={!!errors.class?.id}
             helperText={
-              !isClassSelected ? t("La classe est requise") : undefined
+              errors.class?.id ? t("La classe est requise") : undefined
             }
           >
             <Select
               label={t("Classe")}
-              name="class.id"
-              value={selectedClassId?.toString()}
-              onChange={handleClassChange}
               items={classes}
+              value={watch("class.id")?.toString()}
+              {...register("class.id", {
+                required: t("La classe est requise"),
+                onChange: handleClassChange,
+              })}
             >
               {(item) => <Item key={item.id}>{item.name}</Item>}
             </Select>

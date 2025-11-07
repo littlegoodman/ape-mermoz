@@ -49,10 +49,10 @@ const TriggerButton = forwardRef<HTMLButtonElement, AriaButtonProps>(
 export function Select<T extends object>({
   placeholder,
   value,
-  onChange,
+  onChange, // TODO: use value instead of React.ChangeEvent<HTMLSelectElement>
   onBlur,
-  name,
-  ...props
+  name, // TODO: remove this prop?
+  ...props // TODO: value may not be a string?
 }: SelectProps<T>) {
   const state = useSelectState({
     ...props,
