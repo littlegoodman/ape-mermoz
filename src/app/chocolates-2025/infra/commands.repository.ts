@@ -26,8 +26,11 @@ type StudentPersisted = {
   student_id: number;
   student_first_name: string;
   student_last_name: string;
-  student_class_id: number;
-  student_class_name: string;
+};
+
+type ClassPersisted = {
+  class_id: number;
+  class_name: string;
 };
 
 type CommandArticlePersisted = {
@@ -39,7 +42,7 @@ type CommandArticlePersisted = {
 type CommandPersisted = {
   id: number;
   student_id: number;
-  parent: string;
+  contact: string;
   phone?: string | null;
   email?: string | null;
   payment_method?: PaymentMethod | null;
@@ -99,7 +102,7 @@ export class CommandsRepository {
     let commandsQuery =
       "SELECT \
        commands.id, \
-       commands.parent, \
+       commands.contact, \
        commands.phone, \
        commands.email, \
        commands.payment_method, \
@@ -109,18 +112,17 @@ export class CommandsRepository {
        students.id as student_id, \
        students.first_name as student_first_name, \
        students.last_name as student_last_name, \
-       classes.id as student_class_id, \
-       classes.name as student_class_name \
+       classes.id as class_id, \
+       classes.name as class_name \
       FROM commands \
-      INNER JOIN students ON commands.student_id = students.id \
-      INNER JOIN classes ON students.class_id = classes.id \
-      INNER JOIN teachers ON students.class_id = teachers.class_id";
+      INNER JOIN teachers ON commands.teacher_id = teachers.id \
+      INNER JOIN classes ON teachers.class_id = classes.id \
+      LEFT JOIN students ON commands.student_id = students.id";
     if (params.filter) {
-      commandsQuery += ` WHERE commands.parent LIKE '%${params.filter}%' \
+      commandsQuery += ` WHERE commands.contact LIKE '%${params.filter}%' \
           OR students.first_name LIKE '%${params.filter}%' \
           OR students.last_name LIKE '%${params.filter}%' \
-          OR commands.phone LIKE '%${params.filter}%' \
-          OR commands.email LIKE '%${params.filter}%' \
+          OR teachers.last_name LIKE '%${params.filter}%'
         `;
       if (params.paymentMethod) {
         commandsQuery += ` AND commands.payment_method = '${params.paymentMethod}'`;
@@ -128,8 +130,13 @@ export class CommandsRepository {
     } else if (params.paymentMethod) {
       commandsQuery += ` WHERE commands.payment_method = '${params.paymentMethod}'`;
     }
+    commandsQuery +=
+      " ORDER BY class_id ASC, students.last_name ASC, commands.contact ASC";
     const persistedCommands = await this.db.select<
-      (CommandPersisted & TeacherPersisted & StudentPersisted)[]
+      (CommandPersisted &
+        TeacherPersisted &
+        StudentPersisted &
+        ClassPersisted)[]
     >(commandsQuery);
 
     if (persistedCommands.length === 0) {
@@ -138,34 +145,45 @@ export class CommandsRepository {
 
     const commands = persistedCommands.map<Command>((command) => ({
       id: command.id,
-      parent: command.parent,
+      contact: command.contact,
       phone: command.phone,
       email: command.email,
       paymentMethod: command.payment_method,
       screenshot: command.screenshot,
-      student: {
-        id: command.student_id,
-        firstName: command.student_first_name,
-        lastName: command.student_last_name,
-        class: {
-          id: command.student_class_id,
-          name: command.student_class_name,
-        },
-      },
       teacher: {
         id: command.teacher_id,
         title: command.teacher_title,
         lastName: command.teacher_last_name,
         class: {
-          id: command.student_class_id,
-          name: command.student_class_name,
+          id: command.class_id,
+          name: command.class_name,
         },
       },
+      student: command.student_id
+        ? {
+            id: command.student_id,
+            firstName: command.student_first_name,
+            lastName: command.student_last_name,
+            class: {
+              id: command.class_id,
+              name: command.class_name,
+            },
+          }
+        : undefined,
       articles: [],
     }));
 
     const commandIds = commands.map((command) => command.id);
-    const articlesQuery = `SELECT commands_articles.command_id, commands_articles.article_id, commands_articles.quantity, articles.name, articles.description, articles.price, articles.preferential_price FROM commands_articles \
+    const articlesQuery = `
+      SELECT \
+      commands_articles.command_id, \
+      commands_articles.article_id, \
+      commands_articles.quantity, \
+      articles.name, \
+      articles.description, \
+      articles.price, \
+      articles.preferential_price \
+      FROM commands_articles \
       INNER JOIN articles ON commands_articles.article_id = articles.id \
       WHERE commands_articles.command_id IN (${commandIds.join(",")})`;
 
@@ -199,14 +217,15 @@ export class CommandsRepository {
   }
 
   async findOne(params: { id: string }): Promise<Command | undefined> {
-    const persistedCommand = await this.db.select<
+    const [persistedCommand] = await this.db.select<
       (CommandPersisted &
         TeacherPersisted &
-        StudentPersisted & { screenshot?: string | null })[]
+        StudentPersisted &
+        ClassPersisted & { screenshot?: string | null })[]
     >(
       `SELECT \
       commands.id, \
-      commands.parent, \
+      commands.contact, \
       commands.phone, \
       commands.email, \
       commands.payment_method, \
@@ -217,53 +236,62 @@ export class CommandsRepository {
       students.id as student_id, \
       students.first_name as student_first_name, \
       students.last_name as student_last_name, \
-      classes.id as student_class_id, \
-      classes.name as student_class_name \
+      classes.id as class_id, \
+      classes.name as class_name \
       FROM commands \
-      INNER JOIN students ON commands.student_id = students.id \
-      INNER JOIN classes ON students.class_id = classes.id \
-      INNER JOIN teachers ON students.class_id = teachers.class_id \
+      LEFT JOIN students ON commands.student_id = students.id \
+      INNER JOIN teachers ON commands.teacher_id = teachers.id \
+      INNER JOIN classes ON teachers.class_id = classes.id \
       WHERE commands.id = ${params.id.toString()}\
     `
     );
 
-    if (persistedCommand.length === 0) {
+    if (!persistedCommand) {
       return undefined;
     }
 
-    const commandData = persistedCommand[0];
     const command: Command = {
-      id: commandData.id,
-      parent: commandData.parent,
-      phone: commandData.phone || null,
-      email: commandData.email || null,
-      paymentMethod: commandData.payment_method || null,
-      screenshot: commandData.screenshot || null,
-      student: {
-        id: commandData.student_id,
-        firstName: commandData.student_first_name,
-        lastName: commandData.student_last_name,
-        class: {
-          id: commandData.student_class_id,
-          name: commandData.student_class_name,
-        },
-      },
+      id: persistedCommand.id,
+      contact: persistedCommand.contact,
+      phone: persistedCommand.phone || null,
+      email: persistedCommand.email || null,
+      paymentMethod: persistedCommand.payment_method || null,
+      screenshot: persistedCommand.screenshot || null,
       teacher: {
-        id: commandData.teacher_id,
-        title: commandData.teacher_title,
-        lastName: commandData.teacher_last_name,
+        id: persistedCommand.teacher_id,
+        title: persistedCommand.teacher_title,
+        lastName: persistedCommand.teacher_last_name,
         class: {
-          id: commandData.student_class_id,
-          name: commandData.student_class_name,
+          id: persistedCommand.class_id,
+          name: persistedCommand.class_name,
         },
       },
+      student: persistedCommand.student_id
+        ? {
+            id: persistedCommand.student_id,
+            firstName: persistedCommand.student_first_name,
+            lastName: persistedCommand.student_last_name,
+            class: {
+              id: persistedCommand.class_id,
+              name: persistedCommand.class_name,
+            },
+          }
+        : undefined,
       articles: [],
     };
 
     const articles = await this.db.select<
       (CommandArticlePersisted & ArticlePersisted)[]
     >(
-      `SELECT commands_articles.command_id, commands_articles.article_id, commands_articles.quantity, articles.name, articles.description, articles.price, articles.preferential_price FROM commands_articles \
+      `SELECT
+      commands_articles.command_id, \
+      commands_articles.article_id, \
+      commands_articles.quantity, \
+      articles.name, \
+      articles.description, \
+      articles.price, \
+      articles.preferential_price \
+      FROM commands_articles \
       INNER JOIN articles ON commands_articles.article_id = articles.id \
       WHERE commands_articles.command_id = ${params.id.toString()}`
     );
@@ -284,11 +312,12 @@ export class CommandsRepository {
 
   async upsert(command: Command): Promise<void> {
     const { lastInsertId } = await this.db.execute(
-      "INSERT OR REPLACE INTO commands (id, happening_id, student_id, parent, phone, email, payment_method, screenshot) VALUES (?, (SELECT id FROM happenings WHERE name = 'Chocolats 2025'), ?, ?, ?, ?, ?, ?)",
+      "INSERT OR REPLACE INTO commands (id, happening_id, student_id, teacher_id, contact, phone, email, payment_method, screenshot) VALUES (?, (SELECT id FROM happenings WHERE name = 'Chocolats 2025'), ?, ?, ?, ?, ?, ?, ?)",
       [
         command.id,
-        command.student.id,
-        command.parent,
+        command.student?.id,
+        command.teacher?.id,
+        command.contact,
         command.phone || null,
         command.email || null,
         command.paymentMethod || null,

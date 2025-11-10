@@ -63,10 +63,20 @@ export const CommandsTable = ({
           (acc, article) => acc + article.article.price * article.quantity,
           0
         );
+        if (command.student) {
+          return [
+            command.student.class.name,
+            `${command.student.firstName} ${command.student.lastName}`,
+            command.contact,
+            quantity,
+            `${price.toFixed(2)} €`,
+            t(command.paymentMethod ?? ""),
+          ];
+        }
         return [
-          command.student.class.name,
-          `${command.student.firstName} ${command.student.lastName}`,
-          command.parent,
+          command.teacher.class.name,
+          `${command.teacher.title} ${command.teacher.lastName}`,
+          command.contact,
           quantity,
           `${price.toFixed(2)} €`,
           t(command.paymentMethod ?? ""),

@@ -59,14 +59,15 @@ pub fn get_migrations() -> Vec<Migration> {
             );",
             kind: MigrationKind::Up,
         },
-        Migration { // tel - email - mode de paiement
+        Migration {
             version: 6,
             description: "create_commands_table",
             sql: "CREATE TABLE commands ( \
                 id INTEGER PRIMARY KEY, \
                 happening_id INTEGER NOT NULL REFERENCES happenings(id), \
-                student_id INTEGER NOT NULL REFERENCES students(id), \
-                parent TEXT NOT NULL, \
+                student_id INTEGER REFERENCES students(id), \
+                teacher_id INTEGER REFERENCES teachers(id), \
+                contact TEXT, \
                 phone TEXT, \
                 email TEXT, \
                 payment_method TEXT, \

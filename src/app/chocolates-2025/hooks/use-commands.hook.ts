@@ -16,11 +16,11 @@ export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod];
 export type Command = {
   // TODO: remove null
   id: number;
-  parent: string;
+  contact?: string;
   phone?: string | null;
   email?: string | null;
-  student: Student;
-  teacher?: Teacher; // TODO optimize building this object
+  student?: Student;
+  teacher: Teacher;
   articles: {
     article: Article;
     quantity: number;
