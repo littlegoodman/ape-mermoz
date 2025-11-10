@@ -302,24 +302,64 @@ const ArticleDescription = ({ article }: { article: Article }) => (
   </StyledDescriptionStack>
 );
 
-const QuantityDisplay = ({ quantity }: { quantity: number }) => (
-  <Text
-    size="s"
-    weight="bold"
-    noWrap
-    css={{
-      textAlign: "center",
-      padding: "$1",
-      background: quantity > 0 ? "#f3e8ff" : "$slate100",
-      color: quantity > 0 ? "#7e22ce" : "$slate500",
-      borderRadius: "$2",
-      minWidth: "35px",
-      fontSize: "$xs",
-      border: quantity > 0 ? "1px solid #c084fc" : "1px solid $slate300",
-    }}
-  >
-    {quantity ? quantity : "-"}
-  </Text>
+const QuantityContainer = styled("div", {
+  position: "relative",
+  display: "inline-block",
+});
+
+const GiftBadge = styled("div", {
+  position: "absolute",
+  top: "-14px",
+  right: "-30px",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "1px 4px",
+  background: "#fef3c7",
+  color: "#92400e",
+  borderRadius: "50%",
+  fontSize: "8px",
+  fontWeight: "$bold",
+  minWidth: "20px",
+  height: "18px",
+  border: "1.5px solid #fbbf24",
+  lineHeight: 1,
+  zIndex: 1,
+  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
+  gap: "2px",
+});
+
+const QuantityDisplay = ({
+  quantity,
+  gift,
+}: {
+  quantity: number;
+  gift?: number;
+}) => (
+  <QuantityContainer>
+    <Text
+      size="s"
+      weight="bold"
+      noWrap
+      css={{
+        textAlign: "center",
+        padding: "$1",
+        background: quantity > 0 ? "#f3e8ff" : "$slate100",
+        color: quantity > 0 ? "#7e22ce" : "$slate500",
+        borderRadius: "$2",
+        minWidth: "35px",
+        fontSize: "$xs",
+        border: quantity > 0 ? "1px solid #c084fc" : "1px solid $slate300",
+      }}
+    >
+      {quantity ? quantity : "-"}
+    </Text>
+    {gift !== undefined && gift > 0 && (
+      <GiftBadge title={`${gift} cadeau${gift > 1 ? "x" : ""}`}>
+        dont {gift} 🎁
+      </GiftBadge>
+    )}
+  </QuantityContainer>
 );
 
 const PriceDisplay = ({ price }: { price: number }) => (
@@ -417,6 +457,7 @@ const SpinnerButton = styled("button", {
 interface ArticleCardProps {
   article: Article;
   quantity: number;
+  gift?: number;
   price?: number;
   preferentialPrice?: number;
   mode: "display" | "edit";
@@ -495,6 +536,7 @@ const StyledActionsRow = styled(Row, {
 const ArticleCard = ({
   article,
   quantity,
+  gift,
   price,
   preferentialPrice,
   mode,
@@ -512,7 +554,7 @@ const ArticleCard = ({
           />
         ) : (
           <>
-            <QuantityDisplay quantity={quantity} />
+            <QuantityDisplay quantity={quantity} gift={gift} />
             {price !== undefined && <PriceDisplay price={price} />}
             {preferentialPrice !== undefined && (
               <PreferentialPriceDisplay price={preferentialPrice} />
@@ -527,6 +569,7 @@ const ArticleCard = ({
 interface ArticlesColumnProps {
   articles: Article[];
   quantities: Record<number, number>;
+  gifts?: Record<number, number>;
   prices?: Record<number, number>;
   preferentialPrices?: Record<number, number>;
   mode: "display" | "edit";
@@ -546,6 +589,7 @@ const StyledColumn = styled("div", {
 const ArticlesColumn = ({
   articles,
   quantities,
+  gifts,
   prices,
   preferentialPrices,
   mode,
@@ -561,6 +605,7 @@ const ArticlesColumn = ({
             key={article.id}
             article={article}
             quantity={quantities[article.id] || 0}
+            gift={gifts?.[article.id] || 0}
             price={prices?.[article.id]}
             preferentialPrice={preferentialPrices?.[article.id]}
             mode={mode}
@@ -575,6 +620,7 @@ const ArticlesColumn = ({
 interface ArticlesGridProps {
   articles: Article[];
   quantities: Record<number, number>;
+  gifts?: Record<number, number>;
   prices?: Record<number, number>;
   preferentialPrices?: Record<number, number>;
   mode: "display" | "edit";
@@ -794,6 +840,7 @@ const GrandTotal = ({
 export const ArticlesGrid = ({
   articles,
   quantities,
+  gifts,
   prices,
   preferentialPrices,
   mode,
@@ -842,6 +889,7 @@ export const ArticlesGrid = ({
           <ArticlesColumn
             articles={firstColumnArticles}
             quantities={quantities}
+            gifts={gifts}
             prices={prices}
             preferentialPrices={preferentialPrices}
             mode={mode}
@@ -851,6 +899,7 @@ export const ArticlesGrid = ({
           <ArticlesColumn
             articles={secondColumnArticles}
             quantities={quantities}
+            gifts={gifts}
             prices={prices}
             preferentialPrices={preferentialPrices}
             mode={mode}

@@ -39,14 +39,15 @@ export const useExportCommandsToPdf = () => {
       // Sort commands by class name, then student name, then parent
       const sortedCommands = [...filteredCommands].sort((a, b) => {
         // Sort by class name
-        const classCompare = a.teacher.class.name.localeCompare(
-          b.teacher.class.name
-        );
+        const classCompare = a.teacher.class.id
+          .toString()
+          .padStart(2, "0")
+          .localeCompare(b.teacher.class.id.toString().padStart(2, "0"));
         if (classCompare !== 0) return classCompare;
 
         // Sort by student last name
-        const lastNameCompare = (a.student ?? a.teacher).lastName.localeCompare(
-          b.student?.lastName ?? b.teacher.lastName
+        const lastNameCompare = (a.student?.lastName ?? "").localeCompare(
+          b.student?.lastName ?? ""
         );
         if (lastNameCompare !== 0) return lastNameCompare;
 

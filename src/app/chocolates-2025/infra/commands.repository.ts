@@ -62,8 +62,12 @@ export class CommandsRepository {
 
   async getCommandsSummary(): Promise<CommandsSummary> {
     const articles = await this.articlesRepository.findAll();
-    const commands = await this.db.select<CommandArticlePersisted[]>(
-      "SELECT * FROM commands_articles"
+    const commands = await this.db.select<
+      (CommandArticlePersisted & Pick<CommandPersisted, "payment_method">)[]
+    >(
+      "SELECT commands_articles.*, commands.payment_method \
+      FROM commands_articles \
+      INNER JOIN commands ON commands_articles.command_id = commands.id"
     );
     const quantities = commands.reduce<Record<number, number>>(
       (acc, command) => {
@@ -73,23 +77,34 @@ export class CommandsRepository {
       },
       {}
     );
+    const gifts = commands
+      .filter((command) => command.payment_method === "gift")
+      .reduce<Record<number, number>>((acc, command) => {
+        acc[command.article_id] =
+          (acc[command.article_id] || 0) + command.quantity;
+        return acc;
+      }, {});
+
     return {
       articles: articles.map((article) => {
         const quantity = quantities[article.id] || 0;
+        const gift = gifts[article.id] || 0;
         return {
           article,
           quantity,
-          price: article.price * quantity,
-          preferentialPrice: article.preferentialPrice * quantity,
+          gift,
+          priceToGet: article.price * quantity,
+          priceToPay: article.preferentialPrice * quantity,
           imageLink: article.imageLink,
         };
       }),
-      totalPrice: articles.reduce(
-        (acc, article) => acc + article.price * quantities[article.id] || 0,
+      totalPriceToGet: articles.reduce(
+        (acc, article) => acc + article.price * (quantities[article.id] || 0),
         0
       ),
-      totalPreferentialPrice: articles.reduce(
-        (acc, article) => acc + article.preferentialPrice,
+      totalPriceToPay: articles.reduce(
+        (acc, article) =>
+          acc + article.preferentialPrice * (quantities[article.id] || 0),
         0
       ),
     };

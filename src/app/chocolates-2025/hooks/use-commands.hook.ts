@@ -33,12 +33,13 @@ export type CommandsSummary = {
   articles: {
     article: Article;
     quantity: number;
-    price: number;
-    preferentialPrice: number;
+    gift: number;
+    priceToGet: number;
+    priceToPay: number;
     imageLink?: string;
   }[];
-  totalPrice: number;
-  totalPreferentialPrice: number;
+  totalPriceToGet: number;
+  totalPriceToPay: number;
 };
 
 const repository = CommandsRepository.load();

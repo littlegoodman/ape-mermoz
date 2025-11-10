@@ -32,12 +32,16 @@ export const CommandArticlesGrid = ({
     acc[item.article.id] = item.quantity;
     return acc;
   }, {} as Record<number, number>);
+  const gifts = articles.reduce((acc, item) => {
+    acc[item.article.id] = item.gift;
+    return acc;
+  }, {} as Record<number, number>);
   const prices = articles.reduce((acc, item) => {
-    acc[item.article.id] = item.price;
+    acc[item.article.id] = item.priceToGet;
     return acc;
   }, {} as Record<number, number>);
   const preferentialPrices = articles.reduce((acc, item) => {
-    acc[item.article.id] = item.preferentialPrice;
+    acc[item.article.id] = item.priceToPay;
     return acc;
   }, {} as Record<number, number>);
 
@@ -45,6 +49,7 @@ export const CommandArticlesGrid = ({
     <ArticlesGrid
       articles={allArticles}
       quantities={quantities}
+      gifts={gifts}
       prices={prices}
       preferentialPrices={preferentialPrices}
       mode="display"
