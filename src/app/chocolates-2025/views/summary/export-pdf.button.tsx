@@ -14,7 +14,7 @@ export const ExportPdfButton = ({
   const { exportToPdf, isExporting } = useExportToPdf();
 
   const handleExport = () => {
-    exportToPdf(articles);
+    exportToPdf();
   };
 
   return (

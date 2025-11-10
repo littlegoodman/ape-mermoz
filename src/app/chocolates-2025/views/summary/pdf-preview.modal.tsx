@@ -1,5 +1,4 @@
 import { JSX } from "react";
-import { ModalContainer } from "../../../../platform/ui";
 import { Button } from "../../../../platform/ui";
 import { Download, Eye } from "lucide-react";
 import { CommandsSummary } from "../../hooks";
@@ -17,7 +16,7 @@ export const PdfPreviewModal = ({
   const { exportToPdf, isExporting } = useExportToPdf();
 
   const handleExport = () => {
-    exportToPdf(articles);
+    exportToPdf();
   };
 
   // Generate the same content as the PDF but for preview
@@ -252,7 +251,7 @@ export const PdfPreviewModal = ({
                       width: "100px",
                     }}
                   >
-                    Prix préf.
+                    À payer
                   </th>
                 </tr>
               </thead>
@@ -331,7 +330,7 @@ export const PdfPreviewModal = ({
                       width: "100px",
                     }}
                   >
-                    Prix préf.
+                    À payer
                   </th>
                 </tr>
               </thead>

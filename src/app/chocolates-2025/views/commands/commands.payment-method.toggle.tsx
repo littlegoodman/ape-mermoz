@@ -7,7 +7,7 @@ import {
   CreditCard,
   ReceiptText,
   Clock3,
-  MoreHorizontal,
+  GiftIcon,
 } from "lucide-react";
 
 export type CommandsPaymentMethodToggleProps = {
@@ -22,7 +22,7 @@ const order: (PaymentMethod | undefined)[] = [
   PaymentMethod.CARD,
   PaymentMethod.CHECK,
   PaymentMethod.WAITING_FOR_PAYMENT,
-  PaymentMethod.OTHER,
+  PaymentMethod.GIFT,
 ];
 
 export const CommandsPaymentMethodToggle = ({
@@ -48,8 +48,8 @@ export const CommandsPaymentMethodToggle = ({
         return { icon: <ReceiptText size={18} />, label: t("check") };
       case PaymentMethod.WAITING_FOR_PAYMENT:
         return { icon: <Clock3 size={18} />, label: t("waiting_for_payment") };
-      case PaymentMethod.OTHER:
-        return { icon: <MoreHorizontal size={18} />, label: t("other") };
+      case PaymentMethod.GIFT:
+        return { icon: <GiftIcon size={18} />, label: t("gift") };
       default:
         return { icon: <Filter size={18} />, label: t("Tous les moyens") };
     }

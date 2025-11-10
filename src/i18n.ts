@@ -9,6 +9,7 @@ const resources = {
       check: "Chèque",
       waiting_for_payment: "En attente",
       transfer: "Virement",
+      gift: "Offert",
       other: "Autre",
     },
   },

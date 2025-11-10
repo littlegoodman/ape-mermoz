@@ -24,9 +24,10 @@ import {
   useArticles,
 } from "../../hooks";
 import { useStudents, Student } from "../../../students/hooks";
-import { CommandArticlesEditGrid } from "./command-articles-edit.grid";
+import { CommandEditArticlesGrid } from "./command-edit-article.grid";
 import { ComboBox } from "../../../../platform/ui";
 import { CameraIcon, ScanLine, RotateCw, ZoomIn, X } from "lucide-react";
+import { Teacher, useTeachers } from "../../../teachers/hooks";
 
 export type CommandEditModalProps = {
   command: Pick<Command, "id"> | undefined;
@@ -34,10 +35,11 @@ export type CommandEditModalProps = {
 
 export type NewCommand = {
   id?: number;
-  parent?: string;
+  contact?: string;
   phone?: string | null;
   email?: string | null;
   student?: Student;
+  teacher: Teacher;
   articles: {
     article: Article;
     quantity: number;
@@ -52,10 +54,12 @@ export const CommandEditModal = Modal.create(
     const modal = useNiceModal();
     const { findOne, upsert } = useCommands();
     const { findAll: findAllStudents } = useStudents();
+    const { findAll: findAllTeachers } = useTeachers();
     const { findAll: findAllArticles } = useArticles();
 
     // State declarations
     const [isCreatingNew, setIsCreatingNew] = useState(false);
+    const [newCommandCounter, setNewCommandCounter] = useState(0);
     const [screenshot, setScreenshot] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -77,6 +81,7 @@ export const CommandEditModal = Modal.create(
     } | null>(null);
 
     const { data: students } = findAllStudents();
+    const { data: teachers } = findAllTeachers();
     const { data: allArticles } = findAllArticles();
 
     const {
@@ -93,6 +98,7 @@ export const CommandEditModal = Modal.create(
     });
 
     const student = watch("student");
+    const teacher = watch("teacher");
 
     // Update screenshot state when command loads
     useEffect(() => {
@@ -374,20 +380,23 @@ export const CommandEditModal = Modal.create(
     }, [toastMessage]);
 
     const handleSave = async (data: Command | NewCommand) => {
-      await upsert({ ...data, screenshot } as Command);
+      upsert({ ...data, screenshot } as Command);
     };
 
     const handleSaveAndCreateNew = handleSubmit(async (data) => {
       await handleSave(data);
       // Reset form to create a new command
       setIsCreatingNew(true);
+      setNewCommandCounter((prev) => prev + 1);
       reset({
         articles: [],
-        parent: "",
+        contact: "",
         phone: null,
         email: null,
         paymentMethod: null,
       });
+      // Explicitly reset paymentMethod to ensure Select component updates
+      setValue("paymentMethod", null);
       setScreenshot(null);
       // Show success message
       setToastMessage({
@@ -408,6 +417,7 @@ export const CommandEditModal = Modal.create(
       reset();
       setScreenshot(null);
       setIsCreatingNew(false);
+      setNewCommandCounter(0);
     };
 
     return (
@@ -427,34 +437,63 @@ export const CommandEditModal = Modal.create(
                   <FormControl
                     mandatory
                     width="large"
-                    label={t("Student")}
+                    label={t("Élève ou enseignant")}
                     error={!!errors.student}
                     helperText={errors.student?.message}
                   >
                     <ComboBox
                       items={
-                        students
-                          ?.sort((a, b) => a.lastName.localeCompare(b.lastName))
-                          .map((s) => ({
-                            key: s.id.toString(),
-                            value: `${s.lastName} ${s.firstName} (${s.class.name})`,
-                          })) ?? []
+                        [...(students ?? []), ...(teachers ?? [])]
+                          .sort((a, b) => a.lastName.localeCompare(b.lastName))
+                          .map((s) => {
+                            const isTeacher = "title" in s;
+                            if (isTeacher) {
+                              return {
+                                key: `teacher-${s.id.toString()}`,
+                                value: `${s.title} ${s.lastName} (${s.class.name})`,
+                              };
+                            }
+                            return {
+                              key: `student-${s.id.toString()}`,
+                              value: `${s.firstName} ${s.lastName} (${s.class.name})`,
+                            };
+                          }) ?? []
                       }
-                      placeholder={t("Sélectionner un étudiant")}
+                      placeholder={t("Sélectionner un élève ou un enseignant")}
                       value={
                         student
                           ? `${student?.lastName} ${student?.firstName} (${student?.class?.name})`
+                          : teacher
+                          ? `${teacher?.title} ${teacher?.lastName} (${teacher?.class?.name})`
                           : ""
                       }
-                      onSelectionChange={(key) => {
-                        console.log("key", key);
-                        if (key) {
-                          const studentId = parseInt(key as string);
+                      onSelectionChange={(key: any) => {
+                        if (key?.startsWith("student-")) {
+                          const studentId = parseInt(
+                            key.replace("student-", "") as string
+                          );
                           const selectedStudent = students?.find(
                             (s) => s.id === studentId
                           );
                           if (selectedStudent) {
+                            const teacher = teachers?.find(
+                              (t) => t.class.id === selectedStudent.class.id
+                            );
                             setValue("student", selectedStudent);
+                            if (teacher) {
+                              setValue("teacher", teacher);
+                            }
+                          }
+                        } else if (key?.startsWith("teacher-")) {
+                          const teacherId = parseInt(
+                            key.replace("teacher-", "") as string
+                          );
+                          const selectedTeacher = teachers?.find(
+                            (t) => t.id === teacherId
+                          );
+                          if (selectedTeacher) {
+                            setValue("teacher", selectedTeacher);
+                            setValue("student", undefined);
                           }
                         }
                       }}
@@ -462,12 +501,11 @@ export const CommandEditModal = Modal.create(
                     />
                   </FormControl>
                   <FormControl
-                    mandatory
-                    label={t("Parent")}
-                    error={!!errors.parent}
-                    helperText={errors.parent?.message}
+                    label={t("Contact")}
+                    error={!!errors.contact}
+                    helperText={errors.contact?.message}
                   >
-                    <Input {...register("parent", { required: false })} />
+                    <Input {...register("contact", { required: false })} />
                   </FormControl>
                 </Row>
                 <Row>
@@ -491,6 +529,11 @@ export const CommandEditModal = Modal.create(
                     helperText={errors.paymentMethod?.message}
                   >
                     <Select
+                      key={`paymentMethod-${
+                        isCreatingNew
+                          ? `new-${newCommandCounter}`
+                          : props?.id ?? "default"
+                      }`}
                       label={t("Moyen de paiement")}
                       name="paymentMethod"
                       value={watch("paymentMethod")?.toString() ?? undefined}
@@ -674,7 +717,7 @@ export const CommandEditModal = Modal.create(
               </Row>
             </Row>
 
-            <CommandArticlesEditGrid
+            <CommandEditArticlesGrid
               {...register("articles")}
               articles={watch("articles")}
               onArticlesChange={(articles) => {

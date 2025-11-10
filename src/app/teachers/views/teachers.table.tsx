@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { Table } from "../../../platform/ui/components/";
+import { Empty, Table } from "../../../platform/ui/components/";
 import { Teacher, useTeachers } from "../hooks/use-teachers.hook";
 import { TeacherEditModal } from "./teacher-edit.modal";
 import { useTranslation } from "react-i18next";
@@ -33,21 +33,19 @@ export const TeachersTable = ({
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!teachers) {
-    return <div>No teachers found</div>;
+    return <Empty title={t("Chargement...")} />;
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return (
+      <Empty title={t("Une erreur est survenue")} subtitle={error.message} />
+    );
   }
 
   return (
     <Table
       headers={[t("Classe"), t("Titre"), t("Nom")]}
-      rows={teachers?.map((teacher) => [
+      rows={teachers.map((teacher) => [
         teacher.class.name,
         teacher.title,
         teacher.lastName,

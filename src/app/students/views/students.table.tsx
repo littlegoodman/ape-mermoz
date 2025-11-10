@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { Table } from "../../../platform/ui/components";
+import { Empty, Table } from "../../../platform/ui/components";
 import { Student, useStudents } from "../hooks/use-students.hook";
 import { StudentEditModal } from "./student-edit.modal";
 import { useTranslation } from "react-i18next";
@@ -14,7 +14,6 @@ export type StudentsTableProps = {
 
 export const StudentsTable = ({
   students,
-  isLoading,
   error,
 }: StudentsTableProps): JSX.Element => {
   const { t } = useTranslation();
@@ -39,24 +38,22 @@ export const StudentsTable = ({
   const { isLoading: isLoadingClasses, data: classes } = findAllClasses();
   const { isLoading: isLoadingTeachers, data: teachers } = findAllTeachers();
 
-  if (isLoadingClasses || isLoadingTeachers || !classes || !teachers) {
-    return <div>Loading...</div>;
-  }
-
-  if (!students) {
-    return <div>No students found</div>;
+  if (isLoadingClasses || isLoadingTeachers) {
+    return <Empty title={t("Chargement...")} />;
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return (
+      <Empty title={t("Une erreur est survenue")} subtitle={error.message} />
+    );
   }
 
   return (
     <Table
       headers={[t("Classe"), t("Enseignant"), t("Prénom"), t("Nom")]}
       rows={students?.map((student) => {
-        const schoolClass = classes.find((c) => c.id === student.class.id);
-        const teacher = teachers.find((t) => t.class.id === student.class.id);
+        const schoolClass = classes?.find((c) => c.id === student.class.id);
+        const teacher = teachers?.find((t) => t.class.id === student.class.id);
         return [
           schoolClass?.name,
           `${teacher?.title} ${teacher?.lastName}`,

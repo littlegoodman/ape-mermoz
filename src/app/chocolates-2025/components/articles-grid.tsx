@@ -1,35 +1,35 @@
 import { JSX, ReactNode } from "react";
-import { Article } from "../../hooks";
-import { Card, Row, Stack, Text, Input } from "../../../../platform/ui";
-import { styled } from "../../../../platform/ui/theme/stitches.config";
+import { Article } from "../hooks";
+import { Card, Row, Stack, Text, Input } from "../../../platform/ui";
+import { styled } from "../../../platform/ui/theme/stitches.config";
 
-import articleImage1 from "../../../../assets/articles/1.png";
-import articleImage2 from "../../../../assets/articles/2.png";
-import articleImage3 from "../../../../assets/articles/3.png";
-import articleImage4 from "../../../../assets/articles/4.png";
-import articleImage5 from "../../../../assets/articles/5.png";
-import articleImage6 from "../../../../assets/articles/6.png";
-import articleImage7 from "../../../../assets/articles/7.png";
-import articleImage8 from "../../../../assets/articles/8.png";
-import articleImage9 from "../../../../assets/articles/9.png";
-import articleImage10 from "../../../../assets/articles/10.png";
-import articleImage11 from "../../../../assets/articles/11.png";
-import articleImage12 from "../../../../assets/articles/12.png";
-import articleImage13 from "../../../../assets/articles/13.png";
-import articleImage14 from "../../../../assets/articles/14.png";
-import articleImage15 from "../../../../assets/articles/15.png";
-import articleImage16 from "../../../../assets/articles/16.png";
-import articleImage17 from "../../../../assets/articles/17.png";
-import articleImage18 from "../../../../assets/articles/18.png";
-import articleImage19 from "../../../../assets/articles/19.png";
-import articleImage20 from "../../../../assets/articles/20.png";
-import articleImage21 from "../../../../assets/articles/21.png";
-import articleImage22 from "../../../../assets/articles/22.png";
-import articleImage23 from "../../../../assets/articles/23.png";
-import articleImage24 from "../../../../assets/articles/24.png";
-import articleImage25 from "../../../../assets/articles/25.png";
-import articleImage26 from "../../../../assets/articles/26.png";
-import articleImage27 from "../../../../assets/articles/27.png";
+import articleImage1 from "../../../assets/articles/1.png";
+import articleImage2 from "../../../assets/articles/2.png";
+import articleImage3 from "../../../assets/articles/3.png";
+import articleImage4 from "../../../assets/articles/4.png";
+import articleImage5 from "../../../assets/articles/5.png";
+import articleImage6 from "../../../assets/articles/6.png";
+import articleImage7 from "../../../assets/articles/7.png";
+import articleImage8 from "../../../assets/articles/8.png";
+import articleImage9 from "../../../assets/articles/9.png";
+import articleImage10 from "../../../assets/articles/10.png";
+import articleImage11 from "../../../assets/articles/11.png";
+import articleImage12 from "../../../assets/articles/12.png";
+import articleImage13 from "../../../assets/articles/13.png";
+import articleImage14 from "../../../assets/articles/14.png";
+import articleImage15 from "../../../assets/articles/15.png";
+import articleImage16 from "../../../assets/articles/16.png";
+import articleImage17 from "../../../assets/articles/17.png";
+import articleImage18 from "../../../assets/articles/18.png";
+import articleImage19 from "../../../assets/articles/19.png";
+import articleImage20 from "../../../assets/articles/20.png";
+import articleImage21 from "../../../assets/articles/21.png";
+import articleImage22 from "../../../assets/articles/22.png";
+import articleImage23 from "../../../assets/articles/23.png";
+import articleImage24 from "../../../assets/articles/24.png";
+import articleImage25 from "../../../assets/articles/25.png";
+import articleImage26 from "../../../assets/articles/26.png";
+import articleImage27 from "../../../assets/articles/27.png";
 
 const ARTICLES_IMAGES = {
   "articles/1.png": articleImage1,
@@ -158,15 +158,15 @@ const HeaderCell = styled("div", {
 });
 
 const QuantityHeader = () => (
-  <HeaderCell css={{ width: "40px", minWidth: "40px" }}>Qté</HeaderCell>
+  <HeaderCell css={{ width: "30px", minWidth: "30px" }}>Qté</HeaderCell>
 );
 
 const PriceHeader = () => (
-  <HeaderCell css={{ width: "50px", minWidth: "50px" }}>Prix</HeaderCell>
+  <HeaderCell css={{ width: "50px", minWidth: "50px" }}>À encais.</HeaderCell>
 );
 
 const PreferentialPriceHeader = () => (
-  <HeaderCell css={{ width: "60px", minWidth: "60px" }}>Prix préf.</HeaderCell>
+  <HeaderCell css={{ width: "55px", minWidth: "55px" }}>À payer</HeaderCell>
 );
 
 const StyledHeaderRow = styled(Row, {
@@ -302,24 +302,64 @@ const ArticleDescription = ({ article }: { article: Article }) => (
   </StyledDescriptionStack>
 );
 
-const QuantityDisplay = ({ quantity }: { quantity: number }) => (
-  <Text
-    size="s"
-    weight="bold"
-    noWrap
-    css={{
-      textAlign: "center",
-      padding: "$1",
-      background: quantity > 0 ? "#f3e8ff" : "$slate100",
-      color: quantity > 0 ? "#7e22ce" : "$slate500",
-      borderRadius: "$2",
-      minWidth: "35px",
-      fontSize: "$xs",
-      border: quantity > 0 ? "1px solid #c084fc" : "1px solid $slate300",
-    }}
-  >
-    {quantity ? quantity : "-"}
-  </Text>
+const QuantityContainer = styled("div", {
+  position: "relative",
+  display: "inline-block",
+});
+
+const GiftBadge = styled("div", {
+  position: "absolute",
+  top: "-14px",
+  right: "-30px",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "1px 4px",
+  background: "#fef3c7",
+  color: "#92400e",
+  borderRadius: "50%",
+  fontSize: "8px",
+  fontWeight: "$bold",
+  minWidth: "20px",
+  height: "18px",
+  border: "1.5px solid #fbbf24",
+  lineHeight: 1,
+  zIndex: 1,
+  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
+  gap: "2px",
+});
+
+const QuantityDisplay = ({
+  quantity,
+  gift,
+}: {
+  quantity: number;
+  gift?: number;
+}) => (
+  <QuantityContainer>
+    <Text
+      size="s"
+      weight="bold"
+      noWrap
+      css={{
+        textAlign: "center",
+        padding: "$1",
+        background: quantity > 0 ? "#f3e8ff" : "$slate100",
+        color: quantity > 0 ? "#7e22ce" : "$slate500",
+        borderRadius: "$2",
+        minWidth: "35px",
+        fontSize: "$xs",
+        border: quantity > 0 ? "1px solid #c084fc" : "1px solid $slate300",
+      }}
+    >
+      {quantity ? quantity : "-"}
+    </Text>
+    {gift !== undefined && gift > 0 && (
+      <GiftBadge title={`${gift} cadeau${gift > 1 ? "x" : ""}`}>
+        dont {gift} 🎁
+      </GiftBadge>
+    )}
+  </QuantityContainer>
 );
 
 const PriceDisplay = ({ price }: { price: number }) => (
@@ -417,6 +457,7 @@ const SpinnerButton = styled("button", {
 interface ArticleCardProps {
   article: Article;
   quantity: number;
+  gift?: number;
   price?: number;
   preferentialPrice?: number;
   mode: "display" | "edit";
@@ -495,6 +536,7 @@ const StyledActionsRow = styled(Row, {
 const ArticleCard = ({
   article,
   quantity,
+  gift,
   price,
   preferentialPrice,
   mode,
@@ -512,7 +554,7 @@ const ArticleCard = ({
           />
         ) : (
           <>
-            <QuantityDisplay quantity={quantity} />
+            <QuantityDisplay quantity={quantity} gift={gift} />
             {price !== undefined && <PriceDisplay price={price} />}
             {preferentialPrice !== undefined && (
               <PreferentialPriceDisplay price={preferentialPrice} />
@@ -527,6 +569,7 @@ const ArticleCard = ({
 interface ArticlesColumnProps {
   articles: Article[];
   quantities: Record<number, number>;
+  gifts?: Record<number, number>;
   prices?: Record<number, number>;
   preferentialPrices?: Record<number, number>;
   mode: "display" | "edit";
@@ -546,6 +589,7 @@ const StyledColumn = styled("div", {
 const ArticlesColumn = ({
   articles,
   quantities,
+  gifts,
   prices,
   preferentialPrices,
   mode,
@@ -561,6 +605,7 @@ const ArticlesColumn = ({
             key={article.id}
             article={article}
             quantity={quantities[article.id] || 0}
+            gift={gifts?.[article.id] || 0}
             price={prices?.[article.id]}
             preferentialPrice={preferentialPrices?.[article.id]}
             mode={mode}
@@ -575,6 +620,7 @@ const ArticlesColumn = ({
 interface ArticlesGridProps {
   articles: Article[];
   quantities: Record<number, number>;
+  gifts?: Record<number, number>;
   prices?: Record<number, number>;
   preferentialPrices?: Record<number, number>;
   mode: "display" | "edit";
@@ -794,6 +840,7 @@ const GrandTotal = ({
 export const ArticlesGrid = ({
   articles,
   quantities,
+  gifts,
   prices,
   preferentialPrices,
   mode,
@@ -842,6 +889,7 @@ export const ArticlesGrid = ({
           <ArticlesColumn
             articles={firstColumnArticles}
             quantities={quantities}
+            gifts={gifts}
             prices={prices}
             preferentialPrices={preferentialPrices}
             mode={mode}
@@ -851,6 +899,7 @@ export const ArticlesGrid = ({
           <ArticlesColumn
             articles={secondColumnArticles}
             quantities={quantities}
+            gifts={gifts}
             prices={prices}
             preferentialPrices={preferentialPrices}
             mode={mode}

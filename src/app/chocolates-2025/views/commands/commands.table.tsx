@@ -2,7 +2,7 @@ import { JSX } from "react";
 import { Table } from "../../../../platform/ui/components";
 import { useTranslation } from "react-i18next";
 import { Command, useCommands } from "../../hooks";
-import { CommandEditModal } from "../command/command-edit.modal";
+import { CommandEditModal } from "../command-edit/command-edit.modal";
 
 export type CommandsTableProps = {
   commands: Command[];
@@ -49,7 +49,7 @@ export const CommandsTable = ({
       headers={[
         t("Classe"),
         t("Élève"),
-        t("Parent"),
+        t("Contact"),
         t("Articles"),
         t("Montant"),
         t("Moyen de Paiement"),
@@ -63,10 +63,20 @@ export const CommandsTable = ({
           (acc, article) => acc + article.article.price * article.quantity,
           0
         );
+        if (command.student) {
+          return [
+            command.student.class.name,
+            `${command.student.firstName} ${command.student.lastName}`,
+            command.contact,
+            quantity,
+            `${price.toFixed(2)} €`,
+            t(command.paymentMethod ?? ""),
+          ];
+        }
         return [
-          command.student.class.name,
-          `${command.student.firstName} ${command.student.lastName}`,
-          command.parent,
+          command.teacher.class.name,
+          `${command.teacher.title} ${command.teacher.lastName}`,
+          command.contact,
           quantity,
           `${price.toFixed(2)} €`,
           t(command.paymentMethod ?? ""),

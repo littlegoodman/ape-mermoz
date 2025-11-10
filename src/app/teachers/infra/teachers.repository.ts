@@ -4,8 +4,9 @@ import { ApeMermozDatabase } from "../../../platform/databases/ape-mermoz.databa
 type PersistedTeacher = {
   id: number;
   title: string;
-  lastName: string;
-  classId: number;
+  last_name: string;
+  class_id: number;
+  class_name: string;
 };
 
 export class TeachersRepository {
@@ -17,21 +18,27 @@ export class TeachersRepository {
 
   async findAll(params: { filter?: string }): Promise<Teacher[]> {
     let query =
-      "SELECT teachers.id, title, last_name as lastName, classes.id as classId, classes.name as className \
+      "SELECT \
+        teachers.id, \
+        title, \
+        last_name, \
+        classes.id as class_id, \
+        classes.name as class_name \
       FROM teachers \
       INNER JOIN classes ON teachers.class_id = classes.id";
     if (params.filter) {
       query += ` WHERE last_name LIKE '%${params.filter}%'`;
     }
-    const persistence = await this.db.select<
-      (PersistedTeacher & { className: string })[]
-    >(query);
-    return persistence.map(({ id, title, lastName, classId, className }) => ({
-      id,
-      title,
-      lastName,
-      class: { id: classId, name: className },
-    }));
+    query += " ORDER BY class_id ASC";
+    const persistence = await this.db.select<PersistedTeacher[]>(query);
+    return persistence.map(
+      ({ id, title, last_name, class_id, class_name }) => ({
+        id,
+        title,
+        lastName: last_name,
+        class: { id: class_id, name: class_name },
+      })
+    );
   }
 
   async upsert(teacher: Teacher & { id?: Teacher["id"] }): Promise<void> {

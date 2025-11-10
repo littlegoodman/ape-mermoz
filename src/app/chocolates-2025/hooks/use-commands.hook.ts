@@ -10,23 +10,22 @@ export const PaymentMethod = {
   CARD: "card",
   CHECK: "check",
   WAITING_FOR_PAYMENT: "waiting_for_payment",
-  OTHER: "other",
+  GIFT: "gift",
 } as const;
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod];
 export type Command = {
   // TODO: remove null
   id: number;
-  parent: string;
+  contact?: string;
   phone?: string | null;
   email?: string | null;
-  student: Student;
-  teacher?: Teacher; // TODO optimize building this object
+  student?: Student;
+  teacher: Teacher;
   articles: {
     article: Article;
     quantity: number;
   }[];
   screenshot?: string | null;
-  paymentMethod?: PaymentMethod | null;
   paymentMethod?: PaymentMethod | null;
 };
 
@@ -34,12 +33,13 @@ export type CommandsSummary = {
   articles: {
     article: Article;
     quantity: number;
-    price: number;
-    preferentialPrice: number;
+    gift: number;
+    priceToGet: number;
+    priceToPay: number;
     imageLink?: string;
   }[];
-  totalPrice: number;
-  totalPreferentialPrice: number;
+  totalPriceToGet: number;
+  totalPriceToPay: number;
 };
 
 const repository = CommandsRepository.load();

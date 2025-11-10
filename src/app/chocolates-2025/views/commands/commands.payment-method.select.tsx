@@ -35,7 +35,7 @@ export const CommandsPaymentMethodSelect = ({
       <Item key={PaymentMethod.WAITING_FOR_PAYMENT}>
         {t("waiting_for_payment")}
       </Item>
-      <Item key={PaymentMethod.OTHER}>{t("other")}</Item>
+      <Item key={PaymentMethod.GIFT}>{t("gift")}</Item>
     </Select>
   );
 };

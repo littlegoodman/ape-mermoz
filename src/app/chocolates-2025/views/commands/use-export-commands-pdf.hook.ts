@@ -39,25 +39,28 @@ export const useExportCommandsToPdf = () => {
       // Sort commands by class name, then student name, then parent
       const sortedCommands = [...filteredCommands].sort((a, b) => {
         // Sort by class name
-        const classCompare = a.student.class.name.localeCompare(
-          b.student.class.name
-        );
+        const classCompare = a.teacher.class.id
+          .toString()
+          .padStart(2, "0")
+          .localeCompare(b.teacher.class.id.toString().padStart(2, "0"));
         if (classCompare !== 0) return classCompare;
 
         // Sort by student last name
-        const lastNameCompare = a.student.lastName.localeCompare(
-          b.student.lastName
+        const lastNameCompare = (a.student?.lastName ?? "").localeCompare(
+          b.student?.lastName ?? ""
         );
         if (lastNameCompare !== 0) return lastNameCompare;
 
         // Sort by student first name
-        const firstNameCompare = a.student.firstName.localeCompare(
-          b.student.firstName
-        );
-        if (firstNameCompare !== 0) return firstNameCompare;
+        if (a.student && b.student) {
+          const firstNameCompare = a.student.firstName.localeCompare(
+            b.student.firstName
+          );
+          if (firstNameCompare !== 0) return firstNameCompare;
+        }
 
-        // Sort by parent name
-        return a.parent.localeCompare(b.parent);
+        // Sort by contact name
+        return a.contact?.localeCompare(b.contact ?? "") ?? 0;
       });
 
       // Create a new PDF document
@@ -98,11 +101,15 @@ export const useExportCommandsToPdf = () => {
           (sum, { quantity }) => sum + quantity,
           0
         );
-        const studentFullName = `${command.student.lastName.toUpperCase()} ${
-          command.student.firstName
-        }`;
+        const studentFullName = command.student
+          ? `${command.student.lastName.toUpperCase()} ${
+              command.student.firstName
+            }`
+          : `${
+              command.teacher.title
+            } ${command.teacher.lastName.toUpperCase()}`;
         const headerSegments = [
-          command.student.class.name,
+          (command.student ?? command.teacher).class.name,
           command.teacher?.title
             ? `${command.teacher.title} ${command.teacher.lastName}`
             : "",
@@ -156,7 +163,7 @@ export const useExportCommandsToPdf = () => {
           y = pageHeight - margin;
         }
         const secondLineSegments = [
-          command.parent,
+          command.contact,
           ...(command.phone ? [`Tel: ${command.phone}`] : []),
           ...(command.email ? [`Email: ${command.email}`] : []),
         ];
