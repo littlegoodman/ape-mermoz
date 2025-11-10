@@ -68,11 +68,14 @@ export const TeacherEditModal = Modal.create(
               error={!!errors.title}
               helperText={errors.title?.message}
             >
-              <Input
-                {...register("title", {
-                  required: t("Le prénom est requis"),
-                })}
-              />
+              <Select
+                label={t("Titre")}
+                items={[{ value: "Mme" }, { value: "M" }]}
+                value={watch("title")}
+                {...register("title")}
+              >
+                {(item) => <Item key={item.value}>{item.value}</Item>}
+              </Select>
             </FormControl>
             <FormControl
               mandatory

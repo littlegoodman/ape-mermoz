@@ -427,7 +427,7 @@ export const CommandEditModal = Modal.create(
                   <FormControl
                     mandatory
                     width="large"
-                    label={t("Student")}
+                    label={t("Élève")}
                     error={!!errors.student}
                     helperText={errors.student?.message}
                   >
