@@ -42,9 +42,9 @@ pub fn get_seeds() -> Vec<Migration> {
             ('Mme', 'Feuillerat', 11), \
             ('Mme', 'Camblanne', 12), \
             ('Mme', 'Durand', 13), \
-            ('Mr', 'Resseguier', 14), \
+            ('M', 'Resseguier', 14), \
             ('Mme', 'Sarrazin', 15), \
-            ('Mr', 'Jourdan', 16), \
+            ('M', 'Jourdan', 16), \
             ('Mme', 'Grand', 17);",
             kind: MigrationKind::Up,
         },
