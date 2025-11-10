@@ -1,21 +1,21 @@
 import { JSX, useCallback } from "react";
 import { Command, useArticles } from "../../hooks";
 import { Empty } from "../../../../platform/ui";
-import { ArticlesGrid } from "../shared/articles-grid";
+import { ArticlesGrid } from "../../components";
 
-interface CommandArticlesEditGridProps {
+interface CommandEditArticlesGridProps {
   articles: Command["articles"];
   onArticlesChange: (articles: Command["articles"]) => void;
   isLoading?: boolean;
   error?: Error | null;
 }
 
-export const CommandArticlesEditGrid = ({
+export const CommandEditArticlesGrid = ({
   articles,
   onArticlesChange,
   isLoading = false,
   error = null,
-}: CommandArticlesEditGridProps): JSX.Element => {
+}: CommandEditArticlesGridProps): JSX.Element => {
   const { findAll } = useArticles();
   const {
     data: allArticles,

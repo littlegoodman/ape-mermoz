@@ -1,7 +1,7 @@
 import { JSX } from "react";
 import { CommandsSummary } from "../../hooks";
 import { Empty } from "../../../../platform/ui";
-import { ArticlesGrid } from "../shared/articles-grid";
+import { ArticlesGrid } from "../../components";
 
 interface CommandArticlesGridProps {
   articles: CommandsSummary["articles"];

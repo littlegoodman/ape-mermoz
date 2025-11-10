@@ -24,7 +24,7 @@ import {
   useArticles,
 } from "../../hooks";
 import { useStudents, Student } from "../../../students/hooks";
-import { CommandArticlesEditGrid } from "./command-articles-edit.grid";
+import { CommandEditArticlesGrid } from "./command-edit-article.grid";
 import { ComboBox } from "../../../../platform/ui";
 import { CameraIcon, ScanLine, RotateCw, ZoomIn, X } from "lucide-react";
 
@@ -674,7 +674,7 @@ export const CommandEditModal = Modal.create(
               </Row>
             </Row>
 
-            <CommandArticlesEditGrid
+            <CommandEditArticlesGrid
               {...register("articles")}
               articles={watch("articles")}
               onArticlesChange={(articles) => {

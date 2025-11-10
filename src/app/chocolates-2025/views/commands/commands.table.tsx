@@ -2,7 +2,7 @@ import { JSX } from "react";
 import { Table } from "../../../../platform/ui/components";
 import { useTranslation } from "react-i18next";
 import { Command, useCommands } from "../../hooks";
-import { CommandEditModal } from "../command/command-edit.modal";
+import { CommandEditModal } from "../command-edit/command-edit.modal";
 
 export type CommandsTableProps = {
   commands: Command[];
