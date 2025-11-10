@@ -66,6 +66,7 @@ export const CommandEditModal = Modal.create(
     const [isCapturing, setIsCapturing] = useState(false);
     const [isProcessingOCR, setIsProcessingOCR] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const modalContentRef = useRef<HTMLDivElement>(null);
 
     // Always call the hook to follow React rules, but only use the data when appropriate
     const queryId = props?.id?.toString() ?? "-1";
@@ -398,6 +399,21 @@ export const CommandEditModal = Modal.create(
       // Explicitly reset paymentMethod to ensure Select component updates
       setValue("paymentMethod", null);
       setScreenshot(null);
+      // Scroll to top of modal after a small delay to ensure DOM is updated
+      setTimeout(() => {
+        if (modalContentRef.current) {
+          // Find the scrollable parent (ModalContent)
+          let scrollableParent = modalContentRef.current.parentElement;
+          while (scrollableParent) {
+            const style = window.getComputedStyle(scrollableParent);
+            if (style.overflowY === "auto" || style.overflowY === "scroll") {
+              scrollableParent.scrollTo({ top: 0, behavior: "smooth" });
+              break;
+            }
+            scrollableParent = scrollableParent.parentElement;
+          }
+        }
+      }, 100);
       // Show success message
       setToastMessage({
         title: t("Commande enregistrée"),
@@ -430,320 +446,326 @@ export const CommandEditModal = Modal.create(
         {isLoading ? (
           <Empty title={t("Chargement en cours...")} />
         ) : (
-          <Stack>
-            <Row spacing={4}>
-              <Stack>
-                <Row>
-                  <FormControl
-                    mandatory
-                    width="large"
-                    label={t("Élève ou enseignant")}
-                    error={!!errors.student}
-                    helperText={errors.student?.message}
-                  >
-                    <ComboBox
-                      items={
-                        [...(students ?? []), ...(teachers ?? [])]
-                          .sort((a, b) => a.lastName.localeCompare(b.lastName))
-                          .map((s) => {
-                            const isTeacher = "title" in s;
-                            if (isTeacher) {
-                              return {
-                                key: `teacher-${s.id.toString()}`,
-                                value: `${s.title} ${s.lastName} (${s.class.name})`,
-                              };
-                            }
-                            return {
-                              key: `student-${s.id.toString()}`,
-                              value: `${s.firstName} ${s.lastName} (${s.class.name})`,
-                            };
-                          }) ?? []
-                      }
-                      placeholder={t("Sélectionner un élève ou un enseignant")}
-                      value={
-                        student
-                          ? `${student?.lastName} ${student?.firstName} (${student?.class?.name})`
-                          : teacher
-                          ? `${teacher?.title} ${teacher?.lastName} (${teacher?.class?.name})`
-                          : ""
-                      }
-                      onSelectionChange={(key: any) => {
-                        if (key?.startsWith("student-")) {
-                          const studentId = parseInt(
-                            key.replace("student-", "") as string
-                          );
-                          const selectedStudent = students?.find(
-                            (s) => s.id === studentId
-                          );
-                          if (selectedStudent) {
-                            const teacher = teachers?.find(
-                              (t) => t.class.id === selectedStudent.class.id
-                            );
-                            setValue("student", selectedStudent);
-                            if (teacher) {
-                              setValue("teacher", teacher);
-                            }
-                          }
-                        } else if (key?.startsWith("teacher-")) {
-                          const teacherId = parseInt(
-                            key.replace("teacher-", "") as string
-                          );
-                          const selectedTeacher = teachers?.find(
-                            (t) => t.id === teacherId
-                          );
-                          if (selectedTeacher) {
-                            setValue("teacher", selectedTeacher);
-                            setValue("student", undefined);
-                          }
-                        }
-                      }}
+          <div ref={modalContentRef}>
+            <Stack>
+              <Row spacing={4}>
+                <Stack>
+                  <Row>
+                    <FormControl
+                      mandatory
+                      width="large"
+                      label={t("Élève ou enseignant")}
                       error={!!errors.student}
-                    />
-                  </FormControl>
-                  <FormControl
-                    label={t("Contact")}
-                    error={!!errors.contact}
-                    helperText={errors.contact?.message}
-                  >
-                    <Input {...register("contact", { required: false })} />
-                  </FormControl>
-                </Row>
-                <Row>
-                  <FormControl
-                    label={t("Téléphone")}
-                    error={!!errors.phone}
-                    helperText={errors.phone?.message}
-                  >
-                    <Input {...register("phone", { required: false })} />
-                  </FormControl>
-                  <FormControl
-                    label={t("Email")}
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                  >
-                    <Input {...register("email", { required: false })} />
-                  </FormControl>
-                  <FormControl
-                    label={t("Moyen de paiement")}
-                    error={!!errors.paymentMethod}
-                    helperText={errors.paymentMethod?.message}
-                  >
-                    <Select
-                      key={`paymentMethod-${
-                        isCreatingNew
-                          ? `new-${newCommandCounter}`
-                          : props?.id ?? "default"
-                      }`}
+                      helperText={errors.student?.message}
+                    >
+                      <ComboBox
+                        items={
+                          [...(students ?? []), ...(teachers ?? [])]
+                            .sort((a, b) =>
+                              a.lastName.localeCompare(b.lastName)
+                            )
+                            .map((s) => {
+                              const isTeacher = "title" in s;
+                              if (isTeacher) {
+                                return {
+                                  key: `teacher-${s.id.toString()}`,
+                                  value: `${s.title} ${s.lastName} (${s.class.name})`,
+                                };
+                              }
+                              return {
+                                key: `student-${s.id.toString()}`,
+                                value: `${s.firstName} ${s.lastName} (${s.class.name})`,
+                              };
+                            }) ?? []
+                        }
+                        placeholder={t(
+                          "Sélectionner un élève ou un enseignant"
+                        )}
+                        value={
+                          student
+                            ? `${student?.lastName} ${student?.firstName} (${student?.class?.name})`
+                            : teacher
+                            ? `${teacher?.title} ${teacher?.lastName} (${teacher?.class?.name})`
+                            : ""
+                        }
+                        onSelectionChange={(key: any) => {
+                          if (key?.startsWith("student-")) {
+                            const studentId = parseInt(
+                              key.replace("student-", "") as string
+                            );
+                            const selectedStudent = students?.find(
+                              (s) => s.id === studentId
+                            );
+                            if (selectedStudent) {
+                              const teacher = teachers?.find(
+                                (t) => t.class.id === selectedStudent.class.id
+                              );
+                              setValue("student", selectedStudent);
+                              if (teacher) {
+                                setValue("teacher", teacher);
+                              }
+                            }
+                          } else if (key?.startsWith("teacher-")) {
+                            const teacherId = parseInt(
+                              key.replace("teacher-", "") as string
+                            );
+                            const selectedTeacher = teachers?.find(
+                              (t) => t.id === teacherId
+                            );
+                            if (selectedTeacher) {
+                              setValue("teacher", selectedTeacher);
+                              setValue("student", undefined);
+                            }
+                          }
+                        }}
+                        error={!!errors.student}
+                      />
+                    </FormControl>
+                    <FormControl
+                      label={t("Contact")}
+                      error={!!errors.contact}
+                      helperText={errors.contact?.message}
+                    >
+                      <Input {...register("contact", { required: false })} />
+                    </FormControl>
+                  </Row>
+                  <Row>
+                    <FormControl
+                      label={t("Téléphone")}
+                      error={!!errors.phone}
+                      helperText={errors.phone?.message}
+                    >
+                      <Input {...register("phone", { required: false })} />
+                    </FormControl>
+                    <FormControl
+                      label={t("Email")}
+                      error={!!errors.email}
+                      helperText={errors.email?.message}
+                    >
+                      <Input {...register("email", { required: false })} />
+                    </FormControl>
+                    <FormControl
                       label={t("Moyen de paiement")}
-                      name="paymentMethod"
-                      value={watch("paymentMethod")?.toString() ?? undefined}
-                      items={Object.values(PaymentMethod).map((method) => ({
-                        key: method,
-                        value: method,
-                      }))}
-                      onChange={(event) => {
-                        setValue(
-                          "paymentMethod",
-                          event.target.value as PaymentMethod
-                        );
+                      error={!!errors.paymentMethod}
+                      helperText={errors.paymentMethod?.message}
+                    >
+                      <Select
+                        key={`paymentMethod-${
+                          isCreatingNew
+                            ? `new-${newCommandCounter}`
+                            : props?.id ?? "default"
+                        }`}
+                        label={t("Moyen de paiement")}
+                        name="paymentMethod"
+                        value={watch("paymentMethod")?.toString() ?? undefined}
+                        items={Object.values(PaymentMethod).map((method) => ({
+                          key: method,
+                          value: method,
+                        }))}
+                        onChange={(event) => {
+                          setValue(
+                            "paymentMethod",
+                            event.target.value as PaymentMethod
+                          );
+                        }}
+                      >
+                        {(item) => <Item key={item.key}>{t(item.value)}</Item>}
+                      </Select>
+                    </FormControl>
+                  </Row>
+                </Stack>
+
+                <Row justify="end">
+                  {screenshot && !isCapturing && (
+                    <div
+                      style={{
+                        width: "fit-content",
                       }}
                     >
-                      {(item) => <Item key={item.key}>{t(item.value)}</Item>}
-                    </Select>
-                  </FormControl>
-                </Row>
-              </Stack>
+                      <Stack spacing={1}>
+                        <Button
+                          variant="outlined"
+                          style={{ margin: "1px" }}
+                          onClick={handleTakePhoto}
+                          title={t("Changer la photo")}
+                        >
+                          <RotateCw size={16} />
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          style={{ margin: "1px" }}
+                          onClick={() => setIsFullscreen(true)}
+                          title={t("Afficher en plein écran")}
+                        >
+                          <ZoomIn size={16} />
+                        </Button>
+                        <Button
+                          hidden={true}
+                          variant="outlined"
+                          style={{ margin: "1px" }}
+                          onClick={extractQuantitiesFromScreenshot}
+                          disabled={isProcessingOCR}
+                          title={
+                            isProcessingOCR
+                              ? t("Extraction en cours...")
+                              : t("Extraire les articles")
+                          }
+                        >
+                          <ScanLine size={16} />
+                        </Button>
+                      </Stack>
+                    </div>
+                  )}
 
-              <Row justify="end">
-                {screenshot && !isCapturing && (
-                  <div
-                    style={{
-                      width: "fit-content",
-                    }}
-                  >
-                    <Stack spacing={1}>
-                      <Button
-                        variant="outlined"
-                        style={{ margin: "1px" }}
-                        onClick={handleTakePhoto}
-                        title={t("Changer la photo")}
-                      >
-                        <RotateCw size={16} />
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        style={{ margin: "1px" }}
-                        onClick={() => setIsFullscreen(true)}
-                        title={t("Afficher en plein écran")}
-                      >
-                        <ZoomIn size={16} />
-                      </Button>
-                      <Button
-                        hidden={true}
-                        variant="outlined"
-                        style={{ margin: "1px" }}
-                        onClick={extractQuantitiesFromScreenshot}
-                        disabled={isProcessingOCR}
-                        title={
-                          isProcessingOCR
-                            ? t("Extraction en cours...")
-                            : t("Extraire les articles")
-                        }
-                      >
-                        <ScanLine size={16} />
-                      </Button>
-                    </Stack>
-                  </div>
-                )}
-
-                <FormControl width="fit-content">
-                  <Stack spacing={2}>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      capture="environment"
-                      onChange={handleFileSelect}
-                      style={{ display: "none" }}
-                    />
-                    {!isCapturing ? (
-                      <Stack spacing={2} align="end">
-                        {screenshot ? (
-                          <img
-                            src={screenshot}
-                            alt="Command photo"
-                            style={{
-                              maxWidth: "150px",
-                              maxHeight: "120px",
-                              width: "100%",
-                              height: "auto",
-                              objectFit: "cover",
-                            }}
-                          />
-                        ) : (
-                          <div
-                            style={{
-                              maxWidth: "135px",
-                              height: "110px",
-                              borderRadius: "8px",
-                              overflow: "hidden",
-                              border: "2px dashed #ccc",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              background: "#f5f5f5",
-                              cursor: "pointer",
-                            }}
-                            onClick={handleTakePhoto}
-                            title="Click to take photo"
-                          >
+                  <FormControl width="fit-content">
+                    <Stack spacing={2}>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        onChange={handleFileSelect}
+                        style={{ display: "none" }}
+                      />
+                      {!isCapturing ? (
+                        <Stack spacing={2} align="end">
+                          {screenshot ? (
+                            <img
+                              src={screenshot}
+                              alt="Command photo"
+                              style={{
+                                maxWidth: "150px",
+                                maxHeight: "120px",
+                                width: "100%",
+                                height: "auto",
+                                objectFit: "cover",
+                              }}
+                            />
+                          ) : (
                             <div
                               style={{
-                                textAlign: "center",
-                                color: "#999",
-                                padding: "16px",
+                                maxWidth: "135px",
+                                height: "110px",
+                                borderRadius: "8px",
+                                overflow: "hidden",
+                                border: "2px dashed #ccc",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                background: "#f5f5f5",
+                                cursor: "pointer",
                               }}
+                              onClick={handleTakePhoto}
+                              title="Click to take photo"
                             >
                               <div
                                 style={{
-                                  fontSize: "48px",
-                                  marginBottom: "8px",
-                                }}
-                              >
-                                <CameraIcon />
-                              </div>
-                              <div
-                                style={{
-                                  fontSize: "14px",
-                                  fontWeight: "500",
-                                }}
-                              >
-                                Aucune photo
-                              </div>
-                              <div
-                                style={{
-                                  fontSize: "12px",
+                                  textAlign: "center",
                                   color: "#999",
-                                  marginTop: "4px",
+                                  padding: "16px",
                                 }}
                               >
-                                Cliquer pour ajouter
+                                <div
+                                  style={{
+                                    fontSize: "48px",
+                                    marginBottom: "8px",
+                                  }}
+                                >
+                                  <CameraIcon />
+                                </div>
+                                <div
+                                  style={{
+                                    fontSize: "14px",
+                                    fontWeight: "500",
+                                  }}
+                                >
+                                  Aucune photo
+                                </div>
+                                <div
+                                  style={{
+                                    fontSize: "12px",
+                                    color: "#999",
+                                    marginTop: "4px",
+                                  }}
+                                >
+                                  Cliquer pour ajouter
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        )}
-                      </Stack>
-                    ) : (
-                      <Stack spacing={2} align="end">
-                        <div
-                          style={{
-                            backgroundColor: "#000",
-                            borderRadius: "8px",
-                            padding: "8px",
-                            display: "flex",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <video
-                            ref={videoRef}
-                            autoPlay
-                            playsInline
-                            muted
+                          )}
+                        </Stack>
+                      ) : (
+                        <Stack spacing={2} align="end">
+                          <div
                             style={{
-                              maxWidth: "135px",
-                              maxHeight: "110px",
-                              width: "100%",
-                              height: "auto",
-                              borderRadius: "4px",
+                              backgroundColor: "#000",
+                              borderRadius: "8px",
+                              padding: "8px",
+                              display: "flex",
+                              justifyContent: "center",
                             }}
-                          />
-                        </div>
-                        <Row justify="center">
-                          <Button
-                            variant="contained"
-                            onClick={capturePhoto}
-                            style={{ marginRight: "8px" }}
                           >
-                            {t("Capturer")}
-                          </Button>
-                          <Button variant="light" onClick={stopCamera}>
-                            {t("Annuler")}
-                          </Button>
-                        </Row>
-                      </Stack>
-                    )}
-                  </Stack>
-                </FormControl>
+                            <video
+                              ref={videoRef}
+                              autoPlay
+                              playsInline
+                              muted
+                              style={{
+                                maxWidth: "135px",
+                                maxHeight: "110px",
+                                width: "100%",
+                                height: "auto",
+                                borderRadius: "4px",
+                              }}
+                            />
+                          </div>
+                          <Row justify="center">
+                            <Button
+                              variant="contained"
+                              onClick={capturePhoto}
+                              style={{ marginRight: "8px" }}
+                            >
+                              {t("Capturer")}
+                            </Button>
+                            <Button variant="light" onClick={stopCamera}>
+                              {t("Annuler")}
+                            </Button>
+                          </Row>
+                        </Stack>
+                      )}
+                    </Stack>
+                  </FormControl>
+                </Row>
               </Row>
-            </Row>
 
-            <CommandEditArticlesGrid
-              {...register("articles")}
-              articles={watch("articles")}
-              onArticlesChange={(articles) => {
-                setValue("articles", articles);
-              }}
-              isLoading={false}
-              error={null}
-            />
+              <CommandEditArticlesGrid
+                {...register("articles")}
+                articles={watch("articles")}
+                onArticlesChange={(articles) => {
+                  setValue("articles", articles);
+                }}
+                isLoading={false}
+                error={null}
+              />
 
-            <Row justify="end" spacing={2}>
-              <Button
-                variant="outlined"
-                disabled={!isValid}
-                onClick={handleSaveAndCreateNew}
-              >
-                {t("Enregistrer et créer nouveau")}
-              </Button>
-              <Button
-                variant="contained"
-                disabled={!isValid}
-                onClick={handleSaveAndClose}
-              >
-                {t("Enregistrer et fermer")}
-              </Button>
-            </Row>
-          </Stack>
+              <Row justify="end" spacing={2}>
+                <Button
+                  variant="outlined"
+                  disabled={!isValid}
+                  onClick={handleSaveAndCreateNew}
+                >
+                  {t("Enregistrer et créer nouveau")}
+                </Button>
+                <Button
+                  variant="contained"
+                  disabled={!isValid}
+                  onClick={handleSaveAndClose}
+                >
+                  {t("Enregistrer et fermer")}
+                </Button>
+              </Row>
+            </Stack>
+          </div>
         )}
         {toastMessage && (
           <Toast

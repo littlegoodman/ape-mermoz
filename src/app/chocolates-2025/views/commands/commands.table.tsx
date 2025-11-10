@@ -3,6 +3,22 @@ import { Table } from "../../../../platform/ui/components";
 import { useTranslation } from "react-i18next";
 import { Command, useCommands } from "../../hooks";
 import { CommandEditModal } from "../command-edit/command-edit.modal";
+import { styled } from "../../../../platform/ui/theme/stitches.config";
+
+const ContactCell = styled("div", {
+  overflow: "hidden",
+  whiteSpace: "nowrap",
+  textOverflow: "ellipsis",
+  maxWidth: "130px",
+});
+
+const ClassCell = styled("div", {
+  whiteSpace: "nowrap",
+});
+
+const PriceCell = styled("div", {
+  whiteSpace: "nowrap",
+});
 
 export type CommandsTableProps = {
   commands: Command[];
@@ -65,20 +81,20 @@ export const CommandsTable = ({
         );
         if (command.student) {
           return [
-            command.student.class.name,
+            <ClassCell>{command.student.class.name}</ClassCell>,
             `${command.student.firstName} ${command.student.lastName}`,
-            command.contact,
+            <ContactCell>{command.contact}</ContactCell>,
             quantity,
-            `${price.toFixed(2)} €`,
+            <PriceCell>{`${price.toFixed(2)} €`}</PriceCell>,
             t(command.paymentMethod ?? ""),
           ];
         }
         return [
-          command.teacher.class.name,
+          <ClassCell>{command.teacher.class.name}</ClassCell>,
           `${command.teacher.title} ${command.teacher.lastName}`,
-          command.contact,
+          <ContactCell>{command.contact}</ContactCell>,
           quantity,
-          `${price.toFixed(2)} €`,
+          <PriceCell>{`${price.toFixed(2)} €`}</PriceCell>,
           t(command.paymentMethod ?? ""),
         ];
       })}

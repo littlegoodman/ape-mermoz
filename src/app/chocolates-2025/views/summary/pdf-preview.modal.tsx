@@ -26,11 +26,11 @@ export const PdfPreviewModal = ({
       0
     );
     const totalPrice = articles.reduce(
-      (sum, article) => sum + article.price,
+      (sum, article) => sum + article.priceToGet,
       0
     );
     const totalPreferentialPrice = articles.reduce(
-      (sum, article) => sum + article.preferentialPrice,
+      (sum, article) => sum + article.priceToPay,
       0
     );
     const totalBenefit = totalPrice - totalPreferentialPrice;
@@ -84,7 +84,7 @@ export const PdfPreviewModal = ({
           {article.quantity}
         </td>
         <td style={{ padding: "8px", textAlign: "center", fontSize: "12px" }}>
-          {article.price.toFixed(2)} €
+          {article.priceToPay.toFixed(2)} €
         </td>
         <td
           style={{
@@ -94,7 +94,7 @@ export const PdfPreviewModal = ({
             color: "#059669",
           }}
         >
-          {article.preferentialPrice.toFixed(2)} €
+          {article.priceToGet.toFixed(2)} €
         </td>
       </tr>
     );
@@ -108,11 +108,11 @@ export const PdfPreviewModal = ({
         0
       );
       const price = columnArticles.reduce(
-        (sum, article) => sum + article.price,
+        (sum, article) => sum + article.priceToPay,
         0
       );
       const preferentialPrice = columnArticles.reduce(
-        (sum, article) => sum + article.preferentialPrice,
+        (sum, article) => sum + article.priceToGet,
         0
       );
 
