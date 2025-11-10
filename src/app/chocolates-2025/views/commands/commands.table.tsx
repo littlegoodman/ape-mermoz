@@ -49,7 +49,7 @@ export const CommandsTable = ({
       headers={[
         t("Classe"),
         t("Élève"),
-        t("Parent"),
+        t("Contact"),
         t("Articles"),
         t("Montant"),
         t("Moyen de Paiement"),

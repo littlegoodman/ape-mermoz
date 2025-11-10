@@ -463,7 +463,7 @@ export const CommandEditModal = Modal.create(
                   </FormControl>
                   <FormControl
                     mandatory
-                    label={t("Parent")}
+                    label={t("Contact")}
                     error={!!errors.parent}
                     helperText={errors.parent?.message}
                   >
