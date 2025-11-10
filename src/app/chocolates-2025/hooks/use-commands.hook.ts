@@ -10,7 +10,7 @@ export const PaymentMethod = {
   CARD: "card",
   CHECK: "check",
   WAITING_FOR_PAYMENT: "waiting_for_payment",
-  OTHER: "other",
+  GIFT: "gift",
 } as const;
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod];
 export type Command = {

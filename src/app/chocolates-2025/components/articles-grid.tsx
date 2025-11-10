@@ -158,15 +158,15 @@ const HeaderCell = styled("div", {
 });
 
 const QuantityHeader = () => (
-  <HeaderCell css={{ width: "40px", minWidth: "40px" }}>Qté</HeaderCell>
+  <HeaderCell css={{ width: "30px", minWidth: "30px" }}>Qté</HeaderCell>
 );
 
 const PriceHeader = () => (
-  <HeaderCell css={{ width: "50px", minWidth: "50px" }}>Prix</HeaderCell>
+  <HeaderCell css={{ width: "50px", minWidth: "50px" }}>À encais.</HeaderCell>
 );
 
 const PreferentialPriceHeader = () => (
-  <HeaderCell css={{ width: "60px", minWidth: "60px" }}>Prix préf.</HeaderCell>
+  <HeaderCell css={{ width: "55px", minWidth: "55px" }}>À payer</HeaderCell>
 );
 
 const StyledHeaderRow = styled(Row, {

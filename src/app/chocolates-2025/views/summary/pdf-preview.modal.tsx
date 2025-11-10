@@ -251,7 +251,7 @@ export const PdfPreviewModal = ({
                       width: "100px",
                     }}
                   >
-                    Prix préf.
+                    À payer
                   </th>
                 </tr>
               </thead>
@@ -330,7 +330,7 @@ export const PdfPreviewModal = ({
                       width: "100px",
                     }}
                   >
-                    Prix préf.
+                    À payer
                   </th>
                 </tr>
               </thead>

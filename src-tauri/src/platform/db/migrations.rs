@@ -69,7 +69,7 @@ pub fn get_migrations() -> Vec<Migration> {
                 parent TEXT NOT NULL, \
                 phone TEXT, \
                 email TEXT, \
-                payment_method TEXT CHECK(payment_method IN ('cash', 'card', 'check', 'waiting_for_payment', 'other')), \
+                payment_method TEXT, \
                 screenshot TEXT \
             );",
             kind: MigrationKind::Up,
